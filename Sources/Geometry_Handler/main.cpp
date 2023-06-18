@@ -25,7 +25,7 @@ void TestBinomial()
 
 void TestBezier()
 {
-    Point Pt1 = {1,2}, Pt2 = {1,4};
+    Point Pt1 = {100,200}, Pt2 = {100,400};
     vector<Point> CurvePoint = {Pt1,Pt2};
     for (Point Pt : CurvePoint)
     {
@@ -34,6 +34,10 @@ void TestBezier()
     cout << "Premier Point: " << CalculateOneBezierPoint(0,CurvePoint) << endl;
     cout << "Milieu Point: " << CalculateOneBezierPoint(0.5,CurvePoint) << endl;
     cout << "Dernier Point: " << CalculateOneBezierPoint(1,CurvePoint) << endl;
+    Point Pt3 = {200,500};
+    CurvePoint.push_back(Pt3);
+    cout << "Ajout de Pt3" << endl;
+    cout << CalculateAllBezierPoint(CurvePoint,5) << endl;
 }
 
 int main()

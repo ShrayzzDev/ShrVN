@@ -2,6 +2,7 @@
 #define POINT_HPP
 
 #include <ostream>
+#include <vector>
 
 struct Point
 {
@@ -9,9 +10,11 @@ struct Point
     int m_y;
 };
 
+Point MultiplyCoefPoint(float Coef, Point Pt);
+
 std::ostream & operator<<(std::ostream & os, Point Pt);
 
-Point MultiplyCoefPoint(float Coef, Point Pt);
+std::ostream & operator<<(std::ostream & os, std::vector<Point> Pts);
 
 Point operator*(float Coef, Point Pt);
 
