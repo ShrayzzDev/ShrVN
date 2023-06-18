@@ -8,8 +8,12 @@ struct Point;
 // Calculate the Binomial coefficient
 int Binomial(unsigned int N, unsigned int k);
 
-Point CalculateOneBezierPoint(float CurveRatio, const std::vector<Point> & ArrayPoint);
+// CurveRatio = Ratio to tell the function which point to calculate (from 0 to 1)
+// ControlPoint = An array of the points that control the curve
+Point CalculateOneBezierPoint(float CurveRatio, const std::vector<Point> & ControlPoint);
 
-std::vector<Point> CalculateAllBezierPoint (const std::vector<Point> & ControlPoint, int NbPoint);
+// ControlPoint = An array of the points that control the curve
+// NbPoint = Number of point the final curve will have
+std::vector<Point> CalculateAllBezierPoint (const std::vector<Point> & ControlPoint, unsigned int NbPoint);
 
 #endif // BEZIER_H

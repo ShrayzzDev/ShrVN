@@ -20,8 +20,6 @@ int Binomial(unsigned int N, unsigned int k)
     return result;
 }
 
-// CurveRatio = Ratio to tell the function which point to calculate (from 0 to 1)
-// ControlPoint = An array on Point
 Point CalculateOneBezierPoint(float CurveRatio, const vector<Point> & ControlPoint)
 {
     Point CurvePoint = {0,0};
