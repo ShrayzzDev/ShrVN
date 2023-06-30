@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 #include "point.hpp"
 #include "bezier.h"
+#include "characters.hpp"
 
 using namespace std;
 
@@ -40,8 +42,69 @@ void TestBezier()
     cout << CalculateAllBezierPoint(CurvePoint,5) << endl;
 }
 
+void ShowCharNameColors(const Characters & chr)
+{
+    cout << "Rouge: " << chr.GetRedValue() << endl;
+    cout << "Vert: " << chr.GetGreenValue() << endl;
+    cout << "Bleu: " << chr.GetBlueValue() << endl;
+    for (int i = 0; i < 50 ; ++i)
+        cout << "-" ;
+}
+
+void TestCharcters()
+{
+    filesystem::current_path(filesystem::path("../Scripts/ScriptTest"));
+    Characters chr1 = {"Jean"};
+    cout << chr1.GetName() << endl;
+    ShowCharNameColors(chr1);
+    cout << "\n";
+    cout << "Changing the red value to 150" << endl;
+    try
+    {
+        chr1.SetRedValue(150);
+    }
+    catch(const exception & e)
+    {
+        cerr << e.what() << endl;
+    }
+
+    ShowCharNameColors(chr1);
+    cout << "\n";
+    cout << "Setting the red value to 999" << endl;
+    try
+    {
+        chr1.SetRedValue(999);
+    }
+    catch(const exception & e)
+    {
+        cerr << e.what() << endl;
+    }
+    ShowCharNameColors(chr1);
+    cout << "\n";
+    cout << "Getting the image 'aaaa' from " << chr1.GetName() << endl;
+    try
+    {
+        cout << chr1.GetImage("aaaa") << endl;
+    }
+    catch (const exception & e)
+    {
+        cerr << e.what() << endl;
+    }
+    cout << "Adding the image 'bed.webp' to " << chr1.GetName() << endl;
+    chr1.AddImage("bed.webp");
+    cout << "Getting thte image 'bed.webp' from " << chr1.GetName() << endl;
+    try
+    {
+        cout << chr1.GetImage("bed.webp") << endl;
+    }
+    catch (const exception & e)
+    {
+        cerr << e.what() << endl;
+    }
+}
+
 int main()
 {
-    TestBezier();
+    TestCharcters();
     return 0;
 }
