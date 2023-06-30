@@ -24,7 +24,7 @@ public:
     void SetBlueValue(unsigned short blue_value);
     const std::string & GetName() const;
     const std::string & GetImage(const std::string & image_name) const;
-    bool AddImage(const std::string & image_name, const std::string & image_path = "");
+    bool AddImage(const std::string & image_instance_name, const std::string & image_name, const std::string & image_path = "");
     friend const std::string & DefaultImage(const Characters & Character);
 };
 

@@ -67,7 +67,6 @@ void TestCharcters()
     {
         cerr << e.what() << endl;
     }
-
     ShowCharNameColors(chr1);
     cout << "\n";
     cout << "Setting the red value to 999" << endl;
@@ -91,11 +90,31 @@ void TestCharcters()
         cerr << e.what() << endl;
     }
     cout << "Adding the image 'bed.webp' to " << chr1.GetName() << endl;
-    chr1.AddImage("bed.webp");
+    chr1.AddImage("bed","bed.webp");
     cout << "Getting thte image 'bed.webp' from " << chr1.GetName() << endl;
     try
     {
-        cout << chr1.GetImage("bed.webp") << endl;
+        cout << chr1.GetImage("bed") << endl;
+    }
+    catch (const exception & e)
+    {
+        cerr << e.what() << endl;
+    }
+    cout << "Adding a 'default' image to " << chr1.GetName() << endl;
+    chr1.AddImage("default","Akane.png");
+    cout << "Getting the default image." << chr1.GetName() << endl;
+    try
+    {
+        cout << chr1.GetImage("default") << endl;
+    }
+    catch (const exception & e)
+    {
+        cerr << e.what() << endl;
+    }
+    cout << "Getting the image 'aaaa' from " << chr1.GetName() << endl;
+    try
+    {
+        cout << chr1.GetImage("aaaa") << endl;
     }
     catch (const exception & e)
     {

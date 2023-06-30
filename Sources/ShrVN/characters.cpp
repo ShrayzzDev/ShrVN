@@ -101,20 +101,25 @@ const string & Characters::GetImage(const string & image_name) const
     return m_char_pictures.at(image_name);
 }
 
-bool Characters::AddImage(const std::string &image_name, const std::string &image_path)
+bool Characters::AddImage(const string & image_instance_name, const string & image_name, const string & image_path)
 {
-    if (((m_char_pictures.find(image_name) != m_char_pictures.end())))
+    if (image_instance_name.size() == 1)
     {
-        cerr << "ERROR : The image " << image_name << " already exists for the character " << m_name << endl;
+        cerr << "ERROR : The name of the instance is too short/empty. Name it another way. (short names usualy are a bad idea)" << endl;
+        return false;
+    }
+    if (((m_char_pictures.find(image_instance_name) != m_char_pictures.end())))
+    {
+        cerr << "ERROR : The image " << image_instance_name << " already exists for the character " << m_name << endl;
         return false;
     }
     filesystem::path full_image_path = filesystem::path(filesystem::current_path().generic_string() + "/images/" + m_image_folder_name + image_path + image_name);
     if (! filesystem::exists(full_image_path))
     {
-        cerr << "ERROR : The image " << image_name << " couldn't be found in the " + full_image_path.generic_string() << " path";
+        cerr << "ERROR : The image " << image_name << " couldn't be found in the " + full_image_path.generic_string() << " path" << endl;
         return false;
     }
-    m_char_pictures[image_name] = full_image_path.generic_string();
+    m_char_pictures[image_instance_name] = full_image_path.generic_string();
     return true;
 }
 
