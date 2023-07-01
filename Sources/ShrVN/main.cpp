@@ -102,7 +102,7 @@ void TestCharcters()
     }
     cout << "Adding a 'default' image to " << chr1.GetName() << endl;
     chr1.AddImage("default","Akane.png");
-    cout << "Getting the default image." << chr1.GetName() << endl;
+    cout << "Getting the default image." << endl << chr1.GetName() << endl;
     try
     {
         cout << chr1.GetImage("default") << endl;

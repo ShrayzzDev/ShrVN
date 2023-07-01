@@ -113,6 +113,11 @@ bool Characters::AddImage(const string & image_instance_name, const string & ima
         cerr << "ERROR : The image " << image_instance_name << " already exists for the character " << m_name << endl;
         return false;
     }
+    if ( ! image_name.ends_with(".png") && ! image_name.ends_with(".jpg") && ! image_name.ends_with(".jpeg"))
+    {
+        cerr << "ERROR : The image " << image_name << " has a wrong format. Needs to be .png, .jpg, .jpeg" << endl;
+        return false;
+    }
     filesystem::path full_image_path = filesystem::path(filesystem::current_path().generic_string() + "/images/" + m_image_folder_name + image_path + image_name);
     if (! filesystem::exists(full_image_path))
     {
@@ -129,7 +134,7 @@ const string & DefaultImage(const Characters & Character)
     {
         if (Character.m_char_pictures.find(base) != Character.m_char_pictures.end())
         {
-            cerr << "Using the " << base << " sprite instead";
+            cerr << "Using the " << base << " sprite instead" << endl;
             return Character.m_char_pictures.at(base);
         }
     }
