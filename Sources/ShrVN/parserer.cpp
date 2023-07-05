@@ -7,11 +7,6 @@
 
 using namespace std;
 
-ostream & operator<<(ostream & os, Characters chr)
-{
-    return os << " " << chr.GetName();
-}
-
 map<string,Characters> * ParseCharacterFile()
 {
 
@@ -22,7 +17,7 @@ map<string,Characters> * ParseCharacterFile()
     }
     map<string, Characters> *Character_map = new map<string, Characters>();
     ifstream read_file(file_name);
-    string instance_name, character_name, first_word, temp_int_value;
+    string instance_name, character_name, first_word, temp_int_value, temp;
     unsigned short red_value = 255, green_value = 255, blue_value = 255;
     unsigned long long nb_line = 1;
     while (!read_file.eof())
@@ -35,26 +30,31 @@ map<string,Characters> * ParseCharacterFile()
             {
                 throw invalid_argument("ERROR : line " + to_string(nb_line) + " : There is already a chracter with this instance name.");
             }
-            getline(read_file, character_name, '"');
-            if (character_name.front() != '"')
+            char temp_dbquotes;
+            read_file.get(temp_dbquotes);
+            if (temp_dbquotes != '"')
             {
                 throw invalid_argument("ERROR : line " + to_string(nb_line) + " : characters name must be between quotes");
             }
-            character_name.erase(0,1);
-            if ((char)read_file.peek() == ')')
+            getline(read_file, character_name, '"');
+            char closing_parenthesis;
+            read_file.get(closing_parenthesis);
+            if (closing_parenthesis == ')')
             {
-                (*Character_map).find(instance_name)->second = Characters(character_name);
+                (*Character_map).emplace(instance_name,Characters(character_name));
+                getline(read_file, temp, '\n');
                 ++nb_line;
                 continue;
             }
-            if ((char)read_file.peek() != ',')
+            if (closing_parenthesis != ',')
             {
                 throw invalid_argument("ERROR : line " + to_string(nb_line) + " : invalid enclosure of definition, need a ')' (or a ',' if you want to specify rgb values)");
             }
             red_value = ReadShortValue(read_file,',');
             green_value = ReadShortValue(read_file,',');
             blue_value = ReadShortValue(read_file,')');
-            (*Character_map).find(instance_name)->second = *new Characters(character_name,red_value,green_value,blue_value);
+            (*Character_map).emplace(instance_name, Characters(character_name,red_value,green_value,blue_value));
+            getline(read_file, temp, '\n');
         }
         else if (first_word == "From")
         {
@@ -63,7 +63,7 @@ map<string,Characters> * ParseCharacterFile()
         }
         else
         {
-            throw invalid_argument("ERROR : line " + to_string(nb_line) + " : unknown key word '" + first_word + "'");
+            throw invalid_argument("ERROR : line " + to_string(nb_line) + " : unknown key word ' " + first_word + " '");
         }
         ++nb_line;
     }
