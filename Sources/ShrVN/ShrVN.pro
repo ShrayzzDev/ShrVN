@@ -13,6 +13,7 @@ SOURCES += \
         main.cpp \
         menuparameters.cpp \
         optionsmenuparameters.cpp \
+        parserer.cpp \
         point.cpp \
         savesmenuparameters.cpp
 
@@ -24,5 +25,6 @@ HEADERS += \
     init.h \
     menuparameters.hpp \
     optionsmenuparameters.hpp \
+    parserer.h \
     point.hpp \
     savesmenuparameters.hpp
