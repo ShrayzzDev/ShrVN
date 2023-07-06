@@ -6,6 +6,8 @@ TARGET = ShrVN
 
 SOURCES += \
         bezier_curve.cpp \
+        characterinstantiator.cpp \
+        characterparserer.cpp \
         characters.cpp \
         ingamemenuparameters.cpp \
         ingameoverlayparameters.cpp \
@@ -13,18 +15,19 @@ SOURCES += \
         main.cpp \
         menuparameters.cpp \
         optionsmenuparameters.cpp \
-        parserer.cpp \
         point.cpp \
         savesmenuparameters.cpp
 
 HEADERS += \
     bezier.h \
+    characterinstantiator.hpp \
+    characterparserer.h \
     characters.hpp \
+    icharacterinterpreter.hpp \
     ingamemenuparameters.hpp \
     ingameoverlayparameters.hpp \
     init.h \
     menuparameters.hpp \
     optionsmenuparameters.hpp \
-    parserer.h \
     point.hpp \
     savesmenuparameters.hpp

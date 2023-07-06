@@ -90,12 +90,13 @@ const string & Characters::GetImage(const string & image_name) const
              << " couldn't be found." << endl;
         return DefaultImage(*this);
     }
-    filesystem::path full_image_path = filesystem::current_path().generic_string() + "/images/" + m_image_folder_name + image_name;
+    filesystem::path full_image_path = m_char_pictures.at(image_name);
+    cout << "image path " << full_image_path << endl;
     if (! filesystem::exists(full_image_path))
     {
         cerr << "ERROR : Didn't find the image " << image_name
-             << "in the folder " + filesystem::current_path().generic_string() << "/images/" << m_image_folder_name << " ."
-             << "Did you delete it while the program was running ?" << endl;
+             << " in the folder " + filesystem::current_path().generic_string() << "/images/" << m_image_folder_name << " ."
+             << " Did you delete it while the program was running ?" << endl;
         return DefaultImage(*this);
     }
     return m_char_pictures.at(image_name);
@@ -124,7 +125,7 @@ bool Characters::AddImage(const string & image_instance_name, const string & ima
         cerr << "ERROR : The image " << image_name << " couldn't be found in the " + full_image_path.generic_string() << " path" << endl;
         return false;
     }
-    m_char_pictures[image_instance_name] = full_image_path.generic_string();
+    m_char_pictures.emplace(image_instance_name,full_image_path.generic_string());
     return true;
 }
 

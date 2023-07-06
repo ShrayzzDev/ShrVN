@@ -5,7 +5,8 @@
 #include "point.hpp"
 #include "bezier.h"
 #include "characters.hpp"
-#include "parserer.h"
+#include "characterparserer.h"
+#include "characterinstantiator.hpp"
 
 using namespace std;
 
@@ -126,13 +127,16 @@ void TestCharcters()
 void TestCharParserer()
 {
     filesystem::current_path(filesystem::path("../Scripts/ScriptTest"));
-    map<string, Characters>& Characters_map = *ParseCharacterFile();
+    CharacterInstantiator test;
+    CharacterParserer parserer(&test);
+    map<string, Characters>& Characters_map =  *(parserer.ParseCharacterFile());
     cout << Characters_map.at("Jean").GetName() << endl;
     cout << Characters_map.at("Jean").GetBlueValue() << endl;
     cout << Characters_map.at("Jean2").GetName() << endl;
     cout << Characters_map.at("Jean2").GetBlueValue() << endl;
     cout << Characters_map.at("Jean2").GetGreenValue() << endl;
     cout << Characters_map.at("Jean2").GetRedValue() << endl;
+    cout << Characters_map.at("Jean").GetImage("akane") << endl;
 }
 
 int main()
