@@ -91,7 +91,6 @@ const string & Characters::GetImage(const string & image_name) const
         return DefaultImage(*this);
     }
     filesystem::path full_image_path = m_char_pictures.at(image_name);
-    cout << "image path " << full_image_path << endl;
     if (! filesystem::exists(full_image_path))
     {
         cerr << "ERROR : Didn't find the image " << image_name
