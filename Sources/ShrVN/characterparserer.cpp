@@ -25,7 +25,7 @@ map<string,Characters> * CharacterParserer::ParseCharacterFile()
     map<string, Characters> *Character_map = new map<string, Characters>();
     ifstream read_file(file_name);
     string instance_name, character_name, first_word, temp_int_value, temp;
-    unsigned short red_value = 255, green_value = 255, blue_value = 255;
+    unsigned short red_value, green_value, blue_value;
     unsigned long long nb_line = 1;
     while (!read_file.eof())
     {
