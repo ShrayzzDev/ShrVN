@@ -15,7 +15,7 @@ class Characters
     unsigned short m_name_color_green;
     unsigned short m_name_color_blue;
 public:
-    Characters(const std::string & name, unsigned short name_red_value = 255, unsigned short name_green_value = 255, unsigned short name_blue_value = 255);
+    Characters(const std::string & name, unsigned short name_red_value = 0, unsigned short name_green_value = 0, unsigned short name_blue_value = 0);
     unsigned short GetRedValue() const;
     unsigned short GetGreenValue() const;
     unsigned short GetBlueValue() const;
