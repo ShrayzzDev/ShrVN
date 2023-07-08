@@ -73,7 +73,7 @@ map<string,Characters> * CharacterParserer::ParseCharacterFile()
         {
             string next_keyword, image_path;
             getline(read_file, character_name, ' ');
-            if (! Character_map->contains(character_name))
+            if (Character_map->find(character_name) == Character_map->end())
             {
                 throw invalid_argument("ERROR : line " + to_string(nb_line) + " : character " + character_name + " couldn't be found. Maybe a typo ?");
             }
