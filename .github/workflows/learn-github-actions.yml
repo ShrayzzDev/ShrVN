@@ -1,0 +1,27 @@
+name: learn-github-actions
+run-name: ${{ github.actor }} is learning GitHub Actions
+on: [push]
+jobs:
+  build-on-linux:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v3
+
+        - name: Install Qt
+          uses: jurplel/install-qt-action@v3
+
+        - run: qmake -o Makefile Sources/test/test.pro
+
+        - run: make
+
+  build-on-windows:
+    runs-on: windows-latest
+    steps:
+        - uses: actions/checkout@v3
+        
+        - name: Install Qt
+          uses: jurplel/install-qt-action@v3
+        
+        - run: qmake -o Makefile Sources/test/test.pro
+        
+        - run: make
