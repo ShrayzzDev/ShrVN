@@ -5,8 +5,8 @@
 #include "point.hpp"
 #include "bezier.h"
 #include "characters.hpp"
-#include "characterparserer.h"
-#include "characterinstantiator.hpp"
+#include "character_parserer.h"
+#include "character_instantiator.hpp"
 
 using namespace std;
 

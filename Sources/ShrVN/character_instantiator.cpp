@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <iostream>
 
-#include "characterinstantiator.hpp"
+#include "character_instantiator.hpp"
 
 using namespace std;
 

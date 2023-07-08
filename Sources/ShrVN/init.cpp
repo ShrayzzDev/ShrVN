@@ -4,11 +4,11 @@
 #include <fstream>
 
 #include "init.h"
-#include "ingamemenuparameters.hpp"
-#include "ingameoverlayparameters.hpp"
-#include "menuparameters.hpp"
-#include "optionsmenuparameters.hpp"
-#include "savesmenuparameters.hpp"
+#include "in_game_menu_parameters.hpp"
+#include "in_game_overlay_parameters.hpp"
+#include "main_menu_parameters.hpp"
+#include "options_menu_parameters.hpp"
+#include "saves_menu_parameters.hpp"
 
 using namespace std;
 

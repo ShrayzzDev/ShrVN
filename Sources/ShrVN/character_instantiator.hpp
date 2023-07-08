@@ -1,9 +1,9 @@
-#ifndef CHARACTERINSTANTIATOR_HPP
-#define CHARACTERINSTANTIATOR_HPP
+#ifndef CHARACTER_INSTANTIATOR_H
+#define CHARACTER_INSTANTIATOR_H
 
-#include "icharacterinterpreter.hpp"
+#include "ICharacter_Interpreter.hpp"
 
-class CharacterInstantiator: virtual public ICharacterInterpreter
+class CharacterInstantiator: public ICharacterInterpreter
 {
 public:
     CharacterInstantiator();
@@ -11,4 +11,4 @@ public:
     void AddImage(std::map<std::string, Characters> & Characters_map, const std::string & char_inst_name, const std::string & inst_name, const std::string & img_path) const override;
 };
 
-#endif // CHARACTERINSTANTIATOR_HPP
+#endif // CHARACTER_INSTANTIATOR_H

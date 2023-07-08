@@ -1,5 +1,5 @@
-#ifndef ICHARACTERINTERPRETER_HPP
-#define ICHARACTERINTERPRETER_HPP
+#ifndef ICHARACTER_INTERPRETER_H
+#define ICHARACTER_INTERPRETER_H
 
 #include <map>
 #include <string>
@@ -13,4 +13,4 @@ public:
     virtual void AddImage(std::map<std::string, Characters> & Characters_map, const std::string & char_inst_name, const std::string & inst_name, const std::string & img_path) const = 0;
 };
 
-#endif // ICHARACTERINTERPRETER_HPP
+#endif // ICHARACTER_INTERPRETER_H

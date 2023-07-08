@@ -1,11 +1,11 @@
-#ifndef CHARACTERPARSERER_H
-#define CHARACTERPARSERER_H
+#ifndef CHARACTER_PARSERER_H
+#define CHARACTER_PARSERER_H
 
 #include <map>
 #include <string>
 #include <fstream>
 
-#include "icharacterinterpreter.hpp"
+#include "ICharacter_Interpreter.hpp"
 
 class Characters;
 
@@ -19,4 +19,4 @@ public:
 
 unsigned short ReadShortValue(std::ifstream & file, char end_of_value);
 
-#endif // CHARACTERPARSERER_H
+#endif // CHARACTER_PARSERER_H

@@ -1,5 +1,5 @@
-#ifndef INGAMEMENUPARAMETERS_H
-#define INGAMEMENUPARAMETERS_H
+#ifndef IN_GAME_MENU_PARAMETERS_H
+#define IN_GAME_MENU_PARAMETERS_H
 
 #include <fstream>
 
@@ -12,4 +12,4 @@ void InitInGameMenu(const std::ofstream & file);
 
 InGameMenuParameters ReadInGameMenuParametersFile(const std::ofstream & file);
 
-#endif // INGAMEMENUPARAMETERS_H
+#endif // IN_GAME_MENU_PARAMETERS_H
