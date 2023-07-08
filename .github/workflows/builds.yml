@@ -16,6 +16,6 @@ jobs:
         - name: Install Qt
           uses: jurplel/install-qt-action@v3
 
-        - run: qmake -o Makefile Sources/ShrVN/ShrVN.pro
+        - run: qmake -makefile -o Makefile "CONFIG += console c++20" Sources/ShrVN/ShrVN.pro
 
         - run: make
