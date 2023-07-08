@@ -1,8 +1,11 @@
-TEMPLATE = app
+TEMPLATE = subdirs
 CONFIG += console c++20
 CONFIG -= app_bundle
 CONFIG -= qt
 TARGET = ShrVN
+
+SUBDIRS += \
+    ../ShrVN-Tests
 
 SOURCES += \
         bezier_curve.cpp \
