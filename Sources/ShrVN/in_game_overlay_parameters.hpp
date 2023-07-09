@@ -22,8 +22,10 @@ struct InGameOverlayParameters
 };
 
 // Use the file given in parameter and write base parameters.
-void InitInGameOverlay(const std::ofstream & file);
+void InitInGameOverlay(std::ofstream & file);
 
-InGameOverlayParameters ReadInGameOverlayParametersFile(const std::ofstream & file);
+InGameOverlayParameters * ReadInGameOverlayParametersFile(std::ifstream & file);
+
+std::ostream & operator<<(std::ostream & os, InGameOverlayParameters & Parameters);
 
 #endif // IN_GAME_OVERLAY_PARAMETERS_H

@@ -18,6 +18,7 @@ SOURCES += \
         main.cpp \
         main_menu_parameters.cpp \
         options_menu_parameters.cpp \
+        parserer_utils.cpp \
         point.cpp \
         saves_menu_parameters.cpp
 
@@ -33,6 +34,7 @@ HEADERS += \
     init.h \
     main_menu_parameters.hpp \
     options_menu_parameters.hpp \
+    parserer_utils.h \
     point.hpp \
     saves_menu_parameters.hpp \
     text_block_shape.h \

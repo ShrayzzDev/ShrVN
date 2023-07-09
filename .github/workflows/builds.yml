@@ -10,7 +10,7 @@ jobs:
         - name: Install Qt
           uses: jurplel/install-qt-action@v3
 
-        - run: qmake -makefile -o Makefile Sources/ShrVN/ShrVN.pro
+        - run: qmake -makefile -o Makefile "TEMPLATE = app" Sources/ShrVN/ShrVN.pro
 
         - run: sed 's/CXX           = g++/CXX           = g++ -std=c++20/g' -i Makefile
 

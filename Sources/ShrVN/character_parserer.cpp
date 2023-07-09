@@ -31,11 +31,17 @@ map<string,Characters> * CharacterParserer::ParseCharacterFile()
     {
         if ((char)read_file.peek() == '\n')
         {
-            getline(read_file, temp, '\n');
+            read_file.get();
             continue;
         }
         getline(read_file, first_word, ' ');
-        if (first_word == "Character")
+        if (first_word.starts_with("//"))
+        {
+            getline(read_file, temp, '\n');
+            ++nb_line;
+            continue;
+        }
+        else if (first_word == "Character")
         {
             getline(read_file, instance_name, '(');
             if (Character_map->find(instance_name) != Character_map->end())

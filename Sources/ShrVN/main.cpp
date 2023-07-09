@@ -7,6 +7,7 @@
 #include "characters.hpp"
 #include "character_parserer.h"
 #include "character_instantiator.hpp"
+#include "in_game_overlay_parameters.hpp"
 
 using namespace std;
 
@@ -139,8 +140,25 @@ void TestCharParserer()
     cout << Characters_map.at("Jean").GetImage("akane") << endl;
 }
 
+void TestFileInit()
+{
+    filesystem::current_path("../Scripts/ScriptTest/init");
+    ofstream file;
+    file.open("InGameOverlay.shrvn");
+    InitInGameOverlay(file);
+}
+
+void TestReadInitFiles()
+{
+    filesystem::current_path("../Scripts/ScriptTest/init");
+    ifstream file;
+    file.open("InGameOverlay.shrvn");
+    InGameOverlayParameters * Parameters = ReadInGameOverlayParametersFile(file);
+    cout << *Parameters << endl;
+}
+
 int main()
 {
-    TestCharParserer();
+    TestReadInitFiles();
     return 0;
 }
