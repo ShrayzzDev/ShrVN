@@ -1,6 +1,9 @@
 name: builds
 run-name: ${{ github.actor }} is building ShrVN
-on: [push]
+on: 
+  push:
+    branches:
+      - main
 jobs:
   build-on-linux:
     runs-on: ubuntu-latest
