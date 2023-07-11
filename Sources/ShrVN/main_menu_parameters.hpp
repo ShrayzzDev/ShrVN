@@ -9,7 +9,11 @@
 struct MainMenuParameters
 {
     std::string m_background_image;
-    Point m_new_game_position;
+    std::string m_logo_image;
+    Point m_logo_pos;
+    Point m_new_game_pos;
+    Point m_load_save_pos;
+    Point m_credit_btn_pos;
 };
 
 void InitMenu(const std::ofstream & file);

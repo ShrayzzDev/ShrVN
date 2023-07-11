@@ -11,8 +11,8 @@ struct SavesMenuParameters
     unsigned short m_nb_saves_per_pages;
 };
 
-void InitSavesMenu(const std::ofstream & file);
+void InitSavesMenu(std::ofstream & file);
 
-SavesMenuParameters ReadSavesMenuParametersFile(const std::ofstream & file);
+std::ostream & operator<<(std::ostream & os, SavesMenuParameters & smp);
 
 #endif // SAVES_MENU_PARAMETERS_H

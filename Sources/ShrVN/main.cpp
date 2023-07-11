@@ -8,6 +8,11 @@
 #include "character_parserer.h"
 #include "character_instantiator.hpp"
 #include "in_game_overlay_parameters.hpp"
+#include "in_game_overlay_parserer.hpp"
+#include "in_game_overlay_interpretor.hpp"
+#include "saves_menu_parameters.hpp"
+#include "saves_menu_parserer.hpp"
+#include "saves_menu_interpertor.h"
 
 using namespace std;
 
@@ -146,6 +151,10 @@ void TestFileInit()
     ofstream file;
     file.open("InGameOverlay.shrvn");
     InitInGameOverlay(file);
+    file.close();
+    file.open("SavesMenu.shrvn");
+    InitSavesMenu(file);
+    filesystem::current_path("../../");
 }
 
 void TestReadInitFiles()
@@ -153,12 +162,21 @@ void TestReadInitFiles()
     filesystem::current_path("../Scripts/ScriptTest/init");
     ifstream file;
     file.open("InGameOverlay.shrvn");
-    InGameOverlayParameters * Parameters = ReadInGameOverlayParametersFile(file);
-    cout << *Parameters << endl;
+    InGameOverlayInterpretor igo_interpretor;
+    InGameOverlayParserer igo_parse(&igo_interpretor);
+    InGameOverlayParameters * ig_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
+    cout << *ig_Parameters << endl;
+    file.close();
+    file.open("SavesMenu.shrvn");
+    SavesMenuInterpretor smi_interpretor;
+    SavesMenuParserer smi_parse(&smi_interpretor);
+    SavesMenuParameters * sm_Parameters = smi_parse.ReadSavesMenuParametersFile(file);
+    cout << *sm_Parameters << endl;
 }
 
 int main()
 {
+    //TestFileInit();
     TestReadInitFiles();
     return 0;
 }

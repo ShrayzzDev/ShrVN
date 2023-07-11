@@ -13,29 +13,39 @@ SOURCES += \
         character_parserer.cpp \
         characters.cpp \
         in_game_menu_parameters.cpp \
+        in_game_overlay_interpretor.cpp \
         in_game_overlay_parameters.cpp \
+        in_game_overlay_parserer.cpp \
         init.cpp \
         main.cpp \
         main_menu_parameters.cpp \
         options_menu_parameters.cpp \
         parserer_utils.cpp \
         point.cpp \
-        saves_menu_parameters.cpp
+        saves_menu_interpertor.cpp \
+        saves_menu_parameters.cpp \
+        saves_menu_parserer.cpp
 
 HEADERS += \
     ICharacter_Interpreter.hpp \
+    IInGameOverlayInterpretor.h \
     bezier.h \
     character_instantiator.hpp \
     character_parserer.h \
     characters.hpp \
     in_game_menu_parameters.hpp \
     in_game_options_position.h \
+    in_game_overlay_interpretor.hpp \
     in_game_overlay_parameters.hpp \
+    in_game_overlay_parserer.hpp \
     init.h \
+    isave_menu_interpretor.hpp \
     main_menu_parameters.hpp \
     options_menu_parameters.hpp \
     parserer_utils.h \
     point.hpp \
+    saves_menu_interpertor.h \
     saves_menu_parameters.hpp \
+    saves_menu_parserer.hpp \
     text_block_shape.h \
     text_mode.h

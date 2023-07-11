@@ -7,6 +7,7 @@
 struct OptionsMenuParameters
 {
     std::string m_background_image;
+
 };
 
 void InitOptionsMenu(const std::ofstream & file);

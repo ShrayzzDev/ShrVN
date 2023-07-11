@@ -17,14 +17,11 @@ struct InGameOverlayParameters
     unsigned short m_text_block_lenght = 750;
     unsigned short m_text_block_opacity = 80;
     Point m_text_block_position;
-    std::string m_font;
     unsigned short m_font_size = 17;
 };
 
 // Use the file given in parameter and write base parameters.
 void InitInGameOverlay(std::ofstream & file);
-
-InGameOverlayParameters * ReadInGameOverlayParametersFile(std::ifstream & file);
 
 std::ostream & operator<<(std::ostream & os, InGameOverlayParameters & Parameters);
 
