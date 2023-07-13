@@ -8,4 +8,8 @@ void ReadStringVarAssignation(std::ifstream & file, const std::string & word, st
 
 void ReadIntVarAssignation(std::ifstream & file, const std::string & word, int & result);
 
+bool CheckEmptyLine(std::ifstream & file);
+
+bool CheckComment(std::ifstream & file, const std::string & word);
+
 #endif // PARSERER_UTILS_H

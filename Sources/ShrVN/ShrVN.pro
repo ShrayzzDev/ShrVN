@@ -18,7 +18,9 @@ SOURCES += \
         in_game_overlay_parserer.cpp \
         init.cpp \
         main.cpp \
+        main_menu_interpretor.cpp \
         main_menu_parameters.cpp \
+        main_menu_parserer.cpp \
         options_menu_parameters.cpp \
         parserer_utils.cpp \
         point.cpp \
@@ -29,6 +31,7 @@ SOURCES += \
 HEADERS += \
     ICharacter_Interpreter.hpp \
     IInGameOverlayInterpretor.h \
+    IMainMenuInterpretor.h \
     bezier.h \
     character_instantiator.hpp \
     character_parserer.h \
@@ -40,7 +43,9 @@ HEADERS += \
     in_game_overlay_parserer.hpp \
     init.h \
     isave_menu_interpretor.hpp \
+    main_menu_interpretor.hpp \
     main_menu_parameters.hpp \
+    main_menu_parserer.hpp \
     options_menu_parameters.hpp \
     parserer_utils.h \
     point.hpp \

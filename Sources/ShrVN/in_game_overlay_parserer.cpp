@@ -20,15 +20,14 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
     string word, temp, equal_sign, next_word;
     while (!file.eof())
     {
-        if ((char)file.peek() == '\n')
+        if (CheckEmptyLine(file))
         {
-            file.get();
+            ++nb_line;
             continue;
         }
         getline(file,word,' ');
-        if (word.starts_with("//"))
+        if (CheckComment(file,word))
         {
-            getline(file, temp, '\n');
             ++nb_line;
             continue;
         }

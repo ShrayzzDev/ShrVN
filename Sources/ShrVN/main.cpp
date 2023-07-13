@@ -13,6 +13,9 @@
 #include "saves_menu_parameters.hpp"
 #include "saves_menu_parserer.hpp"
 #include "saves_menu_interpertor.h"
+#include "main_menu_parameters.hpp"
+#include "main_menu_interpretor.hpp"
+#include "main_menu_parserer.hpp"
 
 using namespace std;
 
@@ -154,6 +157,10 @@ void TestFileInit()
     file.close();
     file.open("SavesMenu.shrvn");
     InitSavesMenu(file);
+    file.close();
+    cout << filesystem::current_path() << endl;
+    file.open("MainMenu.shrvn");
+    InitMenu(file);
     filesystem::current_path("../../");
 }
 
@@ -167,11 +174,19 @@ void TestReadInitFiles()
     InGameOverlayParameters * ig_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
     cout << *ig_Parameters << endl;
     file.close();
-    file.open("SavesMenu.shrvn");
+    file.open("SavesMenu.shrvn"); 
     SavesMenuInterpretor smi_interpretor;
     SavesMenuParserer smi_parse(&smi_interpretor);
     SavesMenuParameters * sm_Parameters = smi_parse.ReadSavesMenuParametersFile(file);
     cout << *sm_Parameters << endl;
+    file.close();
+    file.open("MainMenu.shrvn");
+    MainMenuInterpretor mmi_interpretor;
+    MainMenuParserer mmi_parse(&mmi_interpretor);
+    MainMenuParameters * mmi_Parameters = mmi_parse.ReadMainMenuParametersFile(file);
+    cout << mmi_Parameters->m_background_image << endl;
+    cout << *mmi_Parameters << endl;
+    file.close();
 }
 
 int main()

@@ -16,8 +16,8 @@ struct MainMenuParameters
     Point m_credit_btn_pos;
 };
 
-void InitMenu(const std::ofstream & file);
+std::ostream & operator<<(std::ostream & os, MainMenuParameters mmp);
 
-MainMenuParameters ReadMenuParametersFile(const std::ofstream & file);
+void InitMenu(std::ofstream & file);
 
 #endif // MAIN_MENU_PARAMETERS_H

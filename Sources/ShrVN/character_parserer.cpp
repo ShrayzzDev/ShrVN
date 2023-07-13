@@ -32,6 +32,7 @@ map<string,Characters> * CharacterParserer::ParseCharacterFile()
         if ((char)read_file.peek() == '\n')
         {
             read_file.get();
+            ++nb_line;
             continue;
         }
         getline(read_file, first_word, ' ');

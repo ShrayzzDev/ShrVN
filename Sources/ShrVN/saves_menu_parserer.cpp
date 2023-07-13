@@ -17,36 +17,28 @@ SavesMenuParameters * SavesMenuParserer::ReadSavesMenuParametersFile(std::ifstre
     unsigned long long nb_line = 1;
     int value;
     SavesMenuParameters *Parameters = new SavesMenuParameters();
-    string word, temp, equal_sign, next_word;
+    string word, temp, equal_sign, next_word, current_path;
     while (!file.eof())
     {
-        if ((char)file.peek() == '\n')
+        if (filesystem::current_path().generic_string().ends_with("init"))
         {
-            file.get();
+            current_path = filesystem::current_path().generic_string() + "/..";
+        }
+        if (CheckEmptyLine(file))
+        {
+            ++nb_line;
             continue;
         }
         getline(file,word,' ');
-        if (word.starts_with("//"))
+        if (CheckComment(file,word))
         {
-            getline(file, temp, '\n');
             ++nb_line;
             continue;
         }
         else if (word.starts_with("background_image"))
         {
             ReadStringVarAssignation(file,word,next_word);
-            if (!filesystem::current_path().generic_string().ends_with("images"))
-            {
-                if (filesystem::current_path().generic_string().ends_with("init"))
-                {
-                    filesystem::current_path("../images");
-                }
-                else
-                {
-                    filesystem::current_path(filesystem::current_path().generic_string() + "/images");
-                }
-            }
-            filesystem::path full_path = filesystem::current_path().generic_string() + "/" +next_word;
+            filesystem::path full_path = current_path + "/images/" + next_word;
             if (! filesystem::exists(full_path))
             {
                 throw invalid_argument("ERROR : line " + to_string(nb_line) + " : invalid path.");
