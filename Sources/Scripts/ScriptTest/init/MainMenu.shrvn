@@ -34,6 +34,6 @@ credit_btn_ypos = 500
 
 load_save_xpos = 500
 
-// x pos of the load save button (bottom left of the image)
+// y pos of the load save button (bottom left of the image)
 
-load_save_xpos = 500
+load_save_ypos = 500

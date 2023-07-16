@@ -27,8 +27,8 @@ void CreateEmptyProject(const string & project_path, const string & project_name
     filesystem::current_path(full_project_path);
     ofstream CharFile("Characters.shrvn");
     CharFile.close();
-    filesystem::current_path("/init");
-    ofstream InGameMenuFile("InGameMenu.shvrn"), InGameOverlayFile("InGameOverlay.shrvn"), MenuFile("Menu.shrvn"), OptionsFile("OptionsMenu.shrvn"), SavesFile("SavesMenu.shrvn");
+    filesystem::current_path("init/");
+    ofstream InGameMenuFile("InGameMenu.shrvn"), InGameOverlayFile("InGameOverlay.shrvn"), MenuFile("Menu.shrvn"), OptionsFile("OptionsMenu.shrvn"), SavesFile("SavesMenu.shrvn");
     InitInGameMenu(InGameMenuFile);
     InGameMenuFile.close();
     InitInGameOverlay(InGameOverlayFile);

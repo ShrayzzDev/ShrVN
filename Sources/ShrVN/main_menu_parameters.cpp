@@ -50,7 +50,7 @@ void InitMenu(ofstream & file)
          << '\n'
          << "load_save_xpos = 500" << '\n'
          << '\n'
-         << "// x pos of the load save button (bottom left of the image)" << '\n'
+         << "// y pos of the load save button (bottom left of the image)" << '\n'
          << '\n'
-         << "load_save_xpos = 500";
+         << "load_save_ypos = 500";
 }

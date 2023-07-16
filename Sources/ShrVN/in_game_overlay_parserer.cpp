@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <iostream>
 
 #include "in_game_overlay_parserer.hpp"
 #include "parserer_utils.h"
@@ -46,8 +47,6 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
             {
                 goto wrong_argument;
             }
-            ++nb_line;
-            continue;
         }
         else if (word.starts_with("in_game_option_position"))
         {
@@ -68,8 +67,6 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
             {
                 goto wrong_argument;
             }
-            ++nb_line;
-            continue;
         }
         else if (word.starts_with("main_block_"))
         {
@@ -148,6 +145,7 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
         {
             goto unknown_keyword;
         }
+        ++nb_line;
     }
     return Parameters;
 unknown_keyword:

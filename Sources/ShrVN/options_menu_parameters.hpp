@@ -7,11 +7,15 @@
 struct OptionsMenuParameters
 {
     std::string m_background_image;
-
+    std::string m_sound_icon;
+    std::string m_video_icon;
+    std::string m_control_icon;
+    unsigned short m_btn_height;
+    unsigned short m_btn_length;
 };
 
-void InitOptionsMenu(const std::ofstream & file);
+std::ostream & operator<<(std::ostream & os, OptionsMenuParameters & omp);
 
-OptionsMenuParameters ReadOptionsMenuParametersFile(const std::ofstream & file);
+void InitOptionsMenu(std::ofstream & file);
 
 #endif // OPTIONS_MENU_PARAMETERS_H

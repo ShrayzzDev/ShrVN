@@ -44,8 +44,6 @@ SavesMenuParameters * SavesMenuParserer::ReadSavesMenuParametersFile(std::ifstre
                 throw invalid_argument("ERROR : line " + to_string(nb_line) + " : invalid path.");
             }
             m_interpretor->SetBackgroundImage(*Parameters,next_word);
-            ++nb_line;
-            continue;
         }
         else if (word.starts_with("nb_pages"))
         {
@@ -55,8 +53,6 @@ SavesMenuParameters * SavesMenuParserer::ReadSavesMenuParametersFile(std::ifstre
                 goto wrong_argument;
             }
             m_interpretor->SetNbPages(*Parameters,value);
-            ++nb_line;
-            continue;
         }
         else if (word.starts_with("nb_saves"))
         {
@@ -66,13 +62,12 @@ SavesMenuParameters * SavesMenuParserer::ReadSavesMenuParametersFile(std::ifstre
                 goto wrong_argument;
             }
             m_interpretor->SetNbSavesPerPages(*Parameters,value);
-            ++nb_line;
-            continue;
         }
         else
         {
             goto unknown_keyword;
         }
+        ++nb_line;
     }
     return Parameters;
 unknown_keyword:

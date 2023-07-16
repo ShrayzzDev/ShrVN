@@ -1,0 +1,22 @@
+// Path (relative to the images/ folder) for the image used for the background
+
+background_img_path = Jean435/Akane.png
+
+// Path (relative to the images/ folder) for the image used as the sound icon 
+
+sound_icon = Jean435/Akane.png
+
+// Path (relative to the images/ folder) for the image used as the control icon 
+
+control_icon = Jean435/Akane.png
+
+// Path (relative to the images/ folder) for the image used as the video icon 
+
+video_icon = Jean435/Akane.png
+
+// Height for each button (NOTE : every buttons on this menu have the sames height)
+
+btn_height = 50
+
+// Length for each button (NOTE : every buttons on this menu have the sames length)
+btn_length = 50

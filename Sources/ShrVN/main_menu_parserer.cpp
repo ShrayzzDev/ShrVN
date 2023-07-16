@@ -2,7 +2,6 @@
 #include "parserer_utils.h"
 
 #include <filesystem>
-#include <iostream>
 
 using namespace std;
 
@@ -39,14 +38,11 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
         {
             ReadStringVarAssignation(file,word,next_word);
             string full_path = current_path + "/images/" + next_word;
-            cout << full_path << endl;
             if( !filesystem::exists(full_path))
             {
                 goto wrong_argument;
             }
             m_interpretor->SetBackgroundImage(*Parameters,next_word);
-            ++nb_line;
-            continue;
         }
         else if (word.starts_with("logo"))
         {
@@ -54,14 +50,11 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
             {
                 ReadStringVarAssignation(file,word,next_word);
                 string full_path = current_path + "/images/" + next_word;
-                cout << full_path << endl;
                 if( !filesystem::exists(full_path))
                 {
                     goto wrong_argument;
                 }
                 m_interpretor->SetLogoImg(*Parameters,next_word);
-                ++nb_line;
-                continue;
             }
             else if(word.starts_with("logo_xpos"))
             {
@@ -71,8 +64,6 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
                     goto wrong_argument;
                 }
                 m_interpretor->SetLogoXPos(*Parameters,value);
-                ++nb_line;
-                continue;
             }
             else if(word.starts_with("logo_ypos"))
             {
@@ -82,8 +73,6 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
                     goto wrong_argument;
                 }
                 m_interpretor->SetLogoYPos(*Parameters,value);
-                ++nb_line;
-                continue;
             }
             else
             {
@@ -111,8 +100,6 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
                     goto wrong_argument;
                 }
                 m_interpretor->SetNewGameYPos(*Parameters,value);
-                ++nb_line;
-                continue;
             }
             else
             {
@@ -129,8 +116,6 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
                     goto wrong_argument;
                 }
                 m_interpretor->SetCreditXPos(*Parameters,value);
-                ++nb_line;
-                continue;
             }
             else if (word.starts_with("credit_btn_ypos"))
             {
@@ -140,8 +125,6 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
                     goto wrong_argument;
                 }
                 m_interpretor->SetCreditYPos(*Parameters,value);
-                ++nb_line;
-                continue;
             }
             else
             {
@@ -181,6 +164,7 @@ MainMenuParameters *MainMenuParserer::ReadMainMenuParametersFile(std::ifstream &
         {
             goto unknown_keyword;
         }
+        ++nb_line;
     }
     return Parameters;
 unknown_keyword:

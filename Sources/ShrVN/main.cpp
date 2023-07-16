@@ -16,6 +16,13 @@
 #include "main_menu_parameters.hpp"
 #include "main_menu_interpretor.hpp"
 #include "main_menu_parserer.hpp"
+#include "in_game_menu_parserer.hpp"
+#include "in_game_menu_parameters.hpp"
+#include "in_game_menu_interpretor.hpp"
+#include "options_menu_interpretor.h"
+#include "options_menu_parserer.hpp"
+#include "options_menu_parameters.hpp"
+#include "init.h"
 
 using namespace std;
 
@@ -150,7 +157,7 @@ void TestCharParserer()
 
 void TestFileInit()
 {
-    filesystem::current_path("../Scripts/ScriptTest/init");
+    filesystem::current_path("init/");
     ofstream file;
     file.open("InGameOverlay.shrvn");
     InitInGameOverlay(file);
@@ -158,15 +165,21 @@ void TestFileInit()
     file.open("SavesMenu.shrvn");
     InitSavesMenu(file);
     file.close();
-    cout << filesystem::current_path() << endl;
     file.open("MainMenu.shrvn");
     InitMenu(file);
-    filesystem::current_path("../../");
+    file.close();
+    file.open("InGameMenu.shrvn");
+    InitInGameMenu(file);
+    file.close();
+    file.open("OptionsMenu.shrvn");
+    InitOptionsMenu(file);
+    file.close();
+    filesystem::current_path("../ ");
 }
 
 void TestReadInitFiles()
 {
-    filesystem::current_path("../Scripts/ScriptTest/init");
+    filesystem::current_path("init/");
     ifstream file;
     file.open("InGameOverlay.shrvn");
     InGameOverlayInterpretor igo_interpretor;
@@ -184,14 +197,27 @@ void TestReadInitFiles()
     MainMenuInterpretor mmi_interpretor;
     MainMenuParserer mmi_parse(&mmi_interpretor);
     MainMenuParameters * mmi_Parameters = mmi_parse.ReadMainMenuParametersFile(file);
-    cout << mmi_Parameters->m_background_image << endl;
     cout << *mmi_Parameters << endl;
+    file.close();
+    file.open("InGameMenu.shrvn");
+    InGameMenuInterpretor igmi_interpretor;
+    InGameMenuParserer igmi_parse(&igmi_interpretor);
+    InGameMenuParameters * igmi_Parameters = igmi_parse.ReadInGameMenuParametersFile(file);
+    cout << *igmi_Parameters << endl;
+    file.close();
+    file.open("OptionsMenu.shrvn");
+    OptionsMenuInterpretor omi_interpretor;
+    OptionsMenuParserer omi_parse(&omi_interpretor);
+    OptionsMenuParameters * omi_Parameters = omi_parse.ReadOptionMenuParametersFile(file);
+    cout << *omi_Parameters << endl;
     file.close();
 }
 
 int main()
 {
-    //TestFileInit();
-    TestReadInitFiles();
+    // filesystem::current_path("../Scripts/ScriptTest/")
+    CreateEmptyProject("../Scripts/","new_project");
+    // TestFileInit();
+    // TestReadInitFiles();
     return 0;
 }
