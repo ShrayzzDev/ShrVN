@@ -64,3 +64,6 @@ HEADERS += \
     saves_menu_parserer.hpp \
     text_block_shape.h \
     text_mode.h
+
+DISTFILES += \
+    include.pri
