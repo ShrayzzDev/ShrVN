@@ -1,0 +1,39 @@
+// relative path (from the image folder) to the image in the background
+
+background_image = a
+
+// relative path (from the image folder) to the image used for the logo of the game
+
+logo_image = a
+
+// x pos of the logo image (bottom left of the image)
+
+logo_xpos = 500
+
+// y pos of the logo image (bottom left of the image)
+
+logo_ypos = 700
+
+// x pos of the new game button (bottom left of the image)
+
+ng_btn_xpos = 600
+
+// y pos of the new game button (bottom left of the image)
+
+ng_btn_ypos = 800
+
+// x pos of the credit button (bottom left of the image)
+
+credit_btn_xpos = 500
+
+// y pos of the credit button (bottom left of the image)
+
+credit_btn_ypos = 500
+
+// x pos of the load save button (bottom left of the image)
+
+load_save_xpos = 500
+
+// y pos of the load save button (bottom left of the image)
+
+load_save_ypos = 500

@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <iostream>
 
 #include "character_instantiator.hpp"
 
@@ -19,6 +18,5 @@ void CharacterInstantiator::AddImage(std::map<std::string, Characters> &Characte
 {
     string file_name = filesystem::path(img_path).filename().generic_string();
     string path_to_file = filesystem::path(img_path).parent_path().generic_string();
-    cout << "inst_name : " << inst_name << endl;
     Characters_map.at(char_inst_name).AddImage(inst_name,file_name,path_to_file);
 }
