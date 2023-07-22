@@ -18,6 +18,8 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../3rdparty/SDL2/bin/ -
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../3rdparty/SDL2/bin/ -lSDL2
 else:unix: LIBS += -L$$PWD/../../3rdparty/SDL2/bin/ -libSDL2
 
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../3rdparty/SDL2/bin/ -lSDL2_image
+
 INCLUDEPATH += $$PWD/../../3rdparty/SDL2/includes
 DEPENDPATH += $$PWD/../../3rdparty/SDL2/includes
 

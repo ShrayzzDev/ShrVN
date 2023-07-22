@@ -49,8 +49,10 @@ int main()
     CharacterInstantiator test;
     CharacterParserer parserer(&test);
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
-    Window fen("jeu",700,800);
+    Window fen("jeu");
     fen.Init();
+    fen.SetBackgroundImg("test.png");
+    fen.RenderImage();
     while (fen.IsOpen())
     {
         fen.ReactEvent();

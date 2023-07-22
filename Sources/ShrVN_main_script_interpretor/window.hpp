@@ -12,7 +12,7 @@ class Window
     unsigned short m_height;
     unsigned short m_length;
     bool m_open;
-    std::string m_background_img;
+    SDL_Texture * m_background_img;
     SDL_Window* m_window = nullptr;
     SDL_Renderer* m_renderer = nullptr;
 public:
@@ -22,8 +22,10 @@ public:
     unsigned short GetHeight() const;
     unsigned short GetLength() const;
     SDL_Renderer * GetRenderer() const;
+    void SetBackgroundImg(const std::string & bg_img);
     void ReactEvent();
     bool IsOpen();
+    void RenderImage();
     ~Window();
 };
 
