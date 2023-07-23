@@ -16,7 +16,7 @@ struct InGameOverlayParameters
     unsigned short m_text_block_height = 250;
     unsigned short m_text_block_lenght = 750;
     unsigned short m_text_block_opacity = 80;
-    Point m_text_block_position;
+    Point m_text_block_position = {20,165};
     unsigned short m_font_size = 17;
 };
 

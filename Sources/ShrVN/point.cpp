@@ -5,7 +5,7 @@ std::ostream & operator<<(std::ostream & os, Point Pt)
     return os << "X: " << Pt.m_x << " Y: " << Pt.m_y;
 }
 
-std::ostream & operator<<(std::ostream & os, std::vector<Point> Pts)
+std::ostream & operator<<(std::ostream & os, std::list<Point> Pts)
 {
     for (Point Pt : Pts)
     {

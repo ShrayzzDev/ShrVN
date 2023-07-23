@@ -2,7 +2,7 @@
 #define POINT_HPP
 
 #include <ostream>
-#include <vector>
+#include <list>
 
 // A point is only defined by it's X and Y coordinate.
 // WARNING : the coordinates are int for operations to be faster
@@ -22,7 +22,7 @@ Point MultiplyCoefPoint(float Coef, Point Pt);
 std::ostream & operator<<(std::ostream & os, Point Pt);
 
 // Overload to create a stream with a vector of point.
-std::ostream & operator<<(std::ostream & os, std::vector<Point> Pts);
+std::ostream & operator<<(std::ostream & os, std::list<Point> Pts);
 
 // Overloads of the operator * for it to work in both ways
 Point operator*(float Coef, Point Pt);

@@ -12,6 +12,7 @@ INCLUDEPATH += $$PROJECT_DIR
 SOURCES += \
         initialisation_error.cpp \
         main.cpp \
+        sprite.cpp \
         window.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../3rdparty/SDL2/bin/ -lSDL2
@@ -25,4 +26,5 @@ DEPENDPATH += $$PWD/../../3rdparty/SDL2/includes
 
 HEADERS += \
     initialisation_error.hpp \
+    sprite.hpp \
     window.hpp

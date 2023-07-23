@@ -1,5 +1,7 @@
 #include <iostream>
 #include <filesystem>
+#include <thread>
+#include <vector>
 
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
@@ -24,6 +26,7 @@
 // #include "options_menu_interpretor.h"
 // #include "options_menu_parserer.hpp"
 // #include "options_menu_parameters.hpp"
+#include "bezier.h"
 
 using namespace std;
 
@@ -37,6 +40,7 @@ void SDLInit()
 
 int main()
 {
+    SDLInit();
     filesystem::current_path("../Scripts/ScriptTest");
     filesystem::current_path("init/");
     ifstream file;
@@ -50,12 +54,21 @@ int main()
     CharacterParserer parserer(&test);
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
     Window fen("jeu");
+    fen.SetInGameOverlayParameters(ig_Parameters);
     fen.Init();
     fen.SetBackgroundImg("test.png");
-    fen.RenderImage();
+    fen.AddOnScreenSprite(Characters_map.at("Jean").GetImage("akane"));
+    Point p1(200,400), p2(300,500), p3(440,500), p4(500,300);
+    vector<Point> ControlPoints = {p1,p2,p3,p4};
+    list<Point> effect = CalculateAllBezierPoint(ControlPoints,200);
+    Sprite * CurrentEffect = fen.GetSprite(Characters_map.at("Jean").GetImage("akane"));
+    CurrentEffect->SetMovement(effect);
     while (fen.IsOpen())
     {
         fen.ReactEvent();
+        fen.RenderImage();
+        std::this_thread::sleep_for(5ms);
     }
+    free(ig_Parameters);
     return 0;
 }
