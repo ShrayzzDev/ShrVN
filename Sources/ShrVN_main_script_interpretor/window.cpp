@@ -6,6 +6,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 Window::Window(const std::string & name, unsigned short height, unsigned short length, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp)
     : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_igop{igop}, m_omp{omp}, m_igmp{igmp}, m_smp{smp}, m_mmp{mmp}, m_onscreen_sprites{}
@@ -33,6 +34,18 @@ void Window::Init()
         std::string error = "ERROR : Couldn't create a window renderer: " + (std::string)SDL_GetError();
         throw Initialisation_Error(error.c_str());
     }
+    if (TTF_Init() != 0)
+    {
+        std::string error = "ERROR : Couldn't initialize the text component: " + (std::string)SDL_GetError();
+        throw Initialisation_Error(error.c_str());
+    }
+    SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
+    m_font = TTF_OpenFont("Laziness.ttf",m_igop->m_font_size);
+    if (m_font == NULL)
+    {
+        std::cout << "je marche pas : " << SDL_GetError() << std::endl;
+    }
+    m_text_color = {0,0,0,255};
 }
 
 const std::string & Window::GetName() const
@@ -53,6 +66,11 @@ unsigned short Window::GetLength() const
 SDL_Renderer * Window::GetRenderer() const
 {
     return m_renderer;
+}
+
+TTF_Font *Window::GetFont() const
+{
+    return m_font;
 }
 
 Sprite *Window::GetSprite(const std::string &img_path)
@@ -99,6 +117,16 @@ void Window::SetMainMenuParameters(MainMenuParameters * mmp)
     m_mmp = mmp;
 }
 
+void Window::SetCurrentScreen(CurrentScreen current)
+{
+    m_current = current;
+}
+
+void Window::SetTextMode(text_mode txtmd)
+{
+    m_igop->m_text_mode = txtmd;
+}
+
 void Window::AddOnScreenSprite(const std::string &image_path, Point coord, SDL_Texture *texture)
 {
     SDL_Rect rect;
@@ -124,6 +152,25 @@ void Window::AddOnScreenSprite(const std::string &image_path, Point coord, SDL_T
     SDL_QueryTexture(texture,NULL,NULL,&rect.w,&rect.h);
     Sprite current_sprite = {rect,texture};
     m_onscreen_sprites.insert(std::pair(image_path,current_sprite));
+}
+
+void Window::AddCurrentDialogue(Dialogue &dial)
+{
+    if (m_igop->m_text_mode == ADV)
+    {
+        m_current_dialogue.pop_front();
+    }
+    m_current_dialogue.push_front(dial);
+    m_previous_dialogue.push_front(dial);
+    if (m_previous_dialogue.size() >= 100)
+    {
+        m_previous_dialogue.pop_back();
+    }
+}
+
+void Window::CleanCurrentMessages()
+{
+    m_current_dialogue.clear();
 }
 
 void Window::ReactEvent()
@@ -160,31 +207,114 @@ Window::~Window()
     {
         SDL_DestroyTexture(sprite.second.GetTexture());
     }
+    for (auto & dial : m_previous_dialogue)
+    {
+        SDL_DestroyTexture(dial.m_text);
+    }
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
 }
 
-bool Window::IsOpen()
+bool Window::IsOpen() const
 {
     return m_open;
 }
 
 void Window::RenderImage()
 {
-    int i = 1;
     SDL_RenderClear(m_renderer);
     SDL_RenderCopy(m_renderer,m_background_img,NULL,NULL);
-    for (auto & sprite : m_onscreen_sprites)
+    switch (m_current) {
+    case InGame:
     {
-        if (sprite.second.RenderSprite(m_renderer))
+        for (auto & sprite : m_onscreen_sprites)
         {
-            std::cerr << "Error while rendering image : " << SDL_GetError() << std::endl;
+            if (sprite.second.RenderSprite(m_renderer))
+            {
+                std::cerr << "Error while rendering image : " << SDL_GetError() << std::endl;
+            }
         }
+        switch(m_igop->m_text_mode) {
+        case ADV:
+        {
+            if (m_current_dialogue.empty())
+            {
+                break;
+            }
+            switch (m_igop->m_block_shape) {
+            case base_rectangle:
+            {
+                SDL_SetRenderDrawColor(m_renderer,255,128,0,200);
+                SDL_Rect main_text_block = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y, m_igop->m_text_block_lenght, m_igop->m_text_block_height};
+                SDL_RenderFillRect(m_renderer,&main_text_block);
+                break;
+            }
+            case fading_rectangle:
+            {
+                break;
+            }
+            }
+            int w,h;
+            SDL_QueryTexture(m_current_dialogue.front().m_text,NULL,NULL,&w,&h);
+            SDL_Rect rect = {m_igop->m_text_block_position.m_x + 10, m_igop->m_text_block_position.m_y + 10, w, h};
+            m_current_dialogue.front().m_rect = rect;
+            SDL_RenderCopy(m_renderer,m_current_dialogue.front().m_text,NULL,&m_current_dialogue.front().m_rect);
+            SDL_Surface * char_name_surface;
+            char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.front().m_talking->GetName().c_str(),m_text_color);
+            SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(m_renderer,char_name_surface);
+            SDL_QueryTexture(char_name_text,NULL,NULL,&w,&h);
+            SDL_Rect char_name_rect = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y - (h+20),w + 20,h + 20};
+            SDL_RenderFillRect(m_renderer,&char_name_rect);
+            SDL_Rect rect_char = char_name_rect;
+            rect_char.x += 5;
+            rect_char.y += 5;
+            rect_char.w -= 10;
+            rect_char.h -= 10;
+            SDL_RenderCopy(m_renderer,char_name_text,NULL,&rect_char);
+            break;
+        }
+        case NVL:
+        {
+            SDL_SetRenderDrawColor(m_renderer,0,0,0,190);
+            SDL_Rect rect = {0,0,m_length,m_height};
+            SDL_RenderFillRect(m_renderer,&rect);
+            unsigned short y_coord = 100;
+            int w,h;
+            m_current_dialogue.reverse();
+            for (auto & dial : m_current_dialogue)
+            {
+                SDL_Surface * name_surface;
+                name_surface = TTF_RenderText_Solid_Wrapped(m_font,dial.m_talking->GetName().c_str(),m_text_color,300);
+                SDL_Texture * name = SDL_CreateTextureFromSurface(m_renderer,name_surface);
+                SDL_QueryTexture(name,NULL,NULL,&w,&h);
+                SDL_Rect rect_char_name = {(300-w)/3,y_coord,w,h};
+                SDL_RenderCopy(m_renderer,name,NULL,&rect_char_name);
+                SDL_QueryTexture(dial.m_text,NULL,NULL,&w,&h);
+                SDL_Rect rect = {220, y_coord, w, h};
+                dial.m_rect = rect;
+                SDL_RenderCopy(m_renderer,dial.m_text,NULL,&dial.m_rect);
+                y_coord += h + 20;
+            }
+            m_current_dialogue.reverse();
+            break;
+        }
+        }
+        break;
+    }
     }
     SDL_RenderPresent(m_renderer);
 }
 
+void Window::TestAddText(std::map<std::string, Characters> & chars, const std::string & mess)
+{
+    SDL_Surface * text_surface;
+    text_surface = TTF_RenderText_Solid_Wrapped(m_font,mess.c_str(),m_text_color,m_igop->m_text_block_lenght);
+    SDL_Texture * text = SDL_CreateTextureFromSurface(m_renderer,text_surface);
+    Dialogue dial = {text,&chars.at("Jean")};
+    m_previous_dialogue.push_front(dial);
+    m_current_dialogue.push_front(dial);
+}
 
 std::ostream & operator<<(std::ostream & os, Window win)
 {

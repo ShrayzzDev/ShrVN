@@ -56,18 +56,22 @@ int main()
     Window fen("jeu");
     fen.SetInGameOverlayParameters(ig_Parameters);
     fen.Init();
+    fen.SetCurrentScreen(InGame);
+    // fen.SetTextMode(NVL);
     fen.SetBackgroundImg("test.png");
     fen.AddOnScreenSprite(Characters_map.at("Jean").GetImage("akane"));
     Point p1(200,400), p2(300,500), p3(440,500), p4(500,300);
     vector<Point> ControlPoints = {p1,p2,p3,p4};
-    list<Point> effect = CalculateAllBezierPoint(ControlPoints,200);
+    list<Point> effect = CalculateAllBezierPoint(ControlPoints,50);
     Sprite * CurrentEffect = fen.GetSprite(Characters_map.at("Jean").GetImage("akane"));
+    fen.TestAddText(Characters_map,"je suis un testje suis un testje suis un testje suis un testje suis un testje suis un testje suis un testje suis un testje suis un test" );
+    fen.TestAddText(Characters_map,"je suis un autre test");
     CurrentEffect->SetMovement(effect);
     while (fen.IsOpen())
     {
         fen.ReactEvent();
         fen.RenderImage();
-        std::this_thread::sleep_for(5ms);
+        std::this_thread::sleep_for(33ms);
     }
     free(ig_Parameters);
     return 0;
