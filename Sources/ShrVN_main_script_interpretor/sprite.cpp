@@ -33,3 +33,20 @@ SDL_Texture *Sprite::GetTexture() const
 {
     return m_texture;
 }
+
+bool Sprite::IsMovementEmpty()
+{
+    return m_movement->empty();
+}
+
+void Sprite::SetPosToLastMovement()
+{
+    m_position.x = m_movement->back().m_x;
+    m_position.y = m_movement->back().m_y;
+}
+
+void Sprite::ClearMovement()
+{
+    m_movement->clear();
+}
+

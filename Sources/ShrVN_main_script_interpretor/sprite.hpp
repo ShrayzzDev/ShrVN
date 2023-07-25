@@ -20,6 +20,9 @@ public:
     void SetMovement(std::list<Point> & pts);
     const SDL_Rect & GetPos() const;
     SDL_Texture * GetTexture() const;
+    bool IsMovementEmpty();
+    void SetPosToLastMovement();
+    void ClearMovement();
 };
 
 std::ostream & operator<<(std::ostream & os, Sprite & spr);

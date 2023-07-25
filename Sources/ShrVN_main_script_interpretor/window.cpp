@@ -9,7 +9,7 @@
 #include <SDL_ttf.h>
 
 Window::Window(const std::string & name, unsigned short height, unsigned short length, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp)
-    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_igop{igop}, m_omp{omp}, m_igmp{igmp}, m_smp{smp}, m_mmp{mmp}, m_onscreen_sprites{}
+    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_igop{igop}, m_omp{omp}, m_igmp{igmp}, m_smp{smp}, m_mmp{mmp}, m_onscreen_sprites{}, IsClicked{false}
 {
 
 }
@@ -85,6 +85,10 @@ void Window::SetBackgroundImg(const std::string &bg_img)
     {
         throw std::invalid_argument("ERROR : Couldn't find the " + bg_img);
     }
+    if (m_background_img != nullptr)
+    {
+        SDL_DestroyTexture(m_background_img);
+    }
     m_background_img = IMG_LoadTexture(m_renderer,full_path.generic_string().c_str());
     if (m_background_img == nullptr)
     {
@@ -122,9 +126,17 @@ void Window::SetCurrentScreen(CurrentScreen current)
     m_current = current;
 }
 
-void Window::SetTextMode(text_mode txtmd)
+void Window::SwitchTextMode()
 {
-    m_igop->m_text_mode = txtmd;
+    switch(m_igop->m_text_mode) {
+    case ADV:
+        m_igop->m_text_mode = NVL;
+        break;
+
+    case NVL:
+        m_igop->m_text_mode = ADV;
+        break;
+    }
 }
 
 void Window::AddOnScreenSprite(const std::string &image_path, Point coord, SDL_Texture *texture)
@@ -156,15 +168,16 @@ void Window::AddOnScreenSprite(const std::string &image_path, Point coord, SDL_T
 
 void Window::AddCurrentDialogue(Dialogue &dial)
 {
-    if (m_igop->m_text_mode == ADV)
+    if (m_igop->m_text_mode == ADV && !m_current_dialogue.empty())
     {
-        m_current_dialogue.pop_front();
+        m_current_dialogue.pop_back();
     }
-    m_current_dialogue.push_front(dial);
-    m_previous_dialogue.push_front(dial);
-    if (m_previous_dialogue.size() >= 100)
+    m_current_dialogue.push_back(dial);
+    m_previous_dialogue.push_back(dial);
+    if (m_previous_dialogue.size() >= 10)
     {
-        m_previous_dialogue.pop_back();
+        SDL_DestroyTexture(m_previous_dialogue.front().m_text);
+        m_previous_dialogue.pop_front();
     }
 }
 
@@ -176,26 +189,37 @@ void Window::CleanCurrentMessages()
 void Window::ReactEvent()
 {
     SDL_Event event;
-    if (SDL_PollEvent(&event)) {
-        switch (event.type)
-        {
-            case SDL_WINDOWEVENT:
-                switch (event.window.event)
+    if (SDL_PollEvent(&event))
+    {
+        switch (event.type) {
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) {
+            case SDL_WINDOWEVENT_MAXIMIZED:
+                m_length = 1920;
+                m_height = 1080;
+                break;
+
+            case SDL_WINDOWEVENT_CLOSE:
+                m_open = false;
+                this->~Window();
+                break;
+
+            }
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            switch (event.button.clicks) {
+            case SDL_BUTTON_LEFT:
+                IsClicked = true;
+                for (auto & sprt : m_onscreen_sprites)
                 {
-                    case SDL_WINDOWEVENT_MAXIMIZED:
+                    if (!sprt.second.IsMovementEmpty())
                     {
-                        m_length = 1920;
-                        m_height = 1080;
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_CLOSE:
-                    {
-                        m_open = false;
-                        this->~Window();
-                        break;
+                        sprt.second.SetPosToLastMovement();
+                        sprt.second.ClearMovement();
                     }
                 }
                 break;
+            }
         }
     }
 }
@@ -256,12 +280,12 @@ void Window::RenderImage()
             }
             }
             int w,h;
-            SDL_QueryTexture(m_current_dialogue.front().m_text,NULL,NULL,&w,&h);
+            SDL_QueryTexture(m_current_dialogue.back().m_text,NULL,NULL,&w,&h);
             SDL_Rect rect = {m_igop->m_text_block_position.m_x + 10, m_igop->m_text_block_position.m_y + 10, w, h};
-            m_current_dialogue.front().m_rect = rect;
-            SDL_RenderCopy(m_renderer,m_current_dialogue.front().m_text,NULL,&m_current_dialogue.front().m_rect);
+            m_current_dialogue.back().m_rect = rect;
+            SDL_RenderCopy(m_renderer,m_current_dialogue.back().m_text,NULL,&m_current_dialogue.back().m_rect);
             SDL_Surface * char_name_surface;
-            char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.front().m_talking->GetName().c_str(),m_text_color);
+            char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
             SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(m_renderer,char_name_surface);
             SDL_QueryTexture(char_name_text,NULL,NULL,&w,&h);
             SDL_Rect char_name_rect = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y - (h+20),w + 20,h + 20};
@@ -272,6 +296,8 @@ void Window::RenderImage()
             rect_char.w -= 10;
             rect_char.h -= 10;
             SDL_RenderCopy(m_renderer,char_name_text,NULL,&rect_char);
+            SDL_DestroyTexture(char_name_text);
+            SDL_FreeSurface(char_name_surface);
             break;
         }
         case NVL:
@@ -281,7 +307,6 @@ void Window::RenderImage()
             SDL_RenderFillRect(m_renderer,&rect);
             unsigned short y_coord = 100;
             int w,h;
-            m_current_dialogue.reverse();
             for (auto & dial : m_current_dialogue)
             {
                 SDL_Surface * name_surface;
@@ -295,8 +320,9 @@ void Window::RenderImage()
                 dial.m_rect = rect;
                 SDL_RenderCopy(m_renderer,dial.m_text,NULL,&dial.m_rect);
                 y_coord += h + 20;
+                SDL_DestroyTexture(name);
+                SDL_FreeSurface(name_surface);
             }
-            m_current_dialogue.reverse();
             break;
         }
         }
@@ -306,14 +332,12 @@ void Window::RenderImage()
     SDL_RenderPresent(m_renderer);
 }
 
-void Window::TestAddText(std::map<std::string, Characters> & chars, const std::string & mess)
+Dialogue Window::CreateDialogue(const std::string &text, Characters &chr)
 {
     SDL_Surface * text_surface;
-    text_surface = TTF_RenderText_Solid_Wrapped(m_font,mess.c_str(),m_text_color,m_igop->m_text_block_lenght);
-    SDL_Texture * text = SDL_CreateTextureFromSurface(m_renderer,text_surface);
-    Dialogue dial = {text,&chars.at("Jean")};
-    m_previous_dialogue.push_front(dial);
-    m_current_dialogue.push_front(dial);
+    text_surface = TTF_RenderText_Solid_Wrapped(m_font,text.c_str(),m_text_color,m_igop->m_text_block_lenght);
+    SDL_Texture * text_texture = SDL_CreateTextureFromSurface(m_renderer,text_surface);
+    return {text_texture,&chr};
 }
 
 std::ostream & operator<<(std::ostream & os, Window win)
