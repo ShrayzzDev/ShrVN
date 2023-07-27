@@ -63,18 +63,17 @@ int main()
     fen.SetCurrentScreen(InGame);
     // fen.SwitchTextMode();
     fen.SetBackgroundImg("test.png");
-    fen.AddOnScreenSprite(Characters_map.at("Jean").GetImage("akane"));
-    Point p1(200,400), p2(300,500), p3(440,500), p4(500,300);
-    vector<Point> ControlPoints = {p1,p2,p3,p4};
-    list<Point> effect = CalculateAllBezierPoint(ControlPoints,50);
-    Sprite * CurrentEffect = fen.GetSprite(Characters_map.at("Jean").GetImage("akane"));
-    // Dialogue temp2 = fen.CreateDialogue("je suis un testje suis un testje suis un testje suis un testje suis un testje suis un testje suis un testje suis un testje suis un test",Characters_map.at("Jean"));
-    // fen.AddCurrentDialogue(temp2);
-    // temp2 = fen.CreateDialogue("je suis un autre test",Characters_map.at("Jean"));
-    CurrentEffect->SetMovement(effect);
+    // fen.AddOnScreenSprite(Characters_map.at("Jean").GetImage("akane"));
+    // Point p1(200,400), p2(300,500), p3(440,500), p4(500,300);
+    // vector<Point> ControlPoints = {p1,p2,p3,p4};
+    // list<Point> effect = CalculateAllBezierPoint(ControlPoints,50);
+    // Sprite * CurrentEffect = fen.GetSprite(Characters_map.at("Jean").GetImage("akane"));
+    // CurrentEffect->SetMovement(effect);
     int nb_line = 1;
     bool dbpt, text;
-    std::string word, message, temp;
+    unsigned short x_value, y_value;
+    std::string word, message, temp, char_name, next_word, img, img_path, value, line;
+    Characters *current_char;
     Dialogue new_dialogue;
     while (fen.IsOpen() && !main_script.eof())
     {
@@ -93,9 +92,43 @@ int main()
                 ++nb_line;
                 continue;
             }
-            if (word.starts_with("From"))
+            if (word == "From")
             {
-                cout << "not implemented" << endl;
+                getline(main_script,char_name,' ');
+                if (!Characters_map.contains(char_name))
+                {
+                    word = char_name;
+                    goto wrong_argument;
+                }
+                current_char = &Characters_map.at(char_name);
+                getline(main_script,next_word,' ');
+                if (next_word == "Show")
+                {
+                    getline(main_script,img,' ');
+                    img_path = current_char->GetImage(img);
+                    if (img_path == Characters::image_not_found)
+                    {
+                        word = img;
+                        goto wrong_argument;
+                    }
+                    getline(main_script,next_word,' ');
+                    if (next_word != "At")
+                    {
+                        word = next_word;
+                        goto unknown_keyword;
+                    }
+                    getline(main_script,value,',');
+                    x_value = stof(value);
+                    getline(main_script,value,'\n');
+                    y_value = stof(value);
+                    Point pt = {x_value,y_value};
+                    fen.AddOnScreenSprite(img_path,pt);
+                }
+                else
+                {
+                    word = next_word;
+                    goto unknown_keyword;
+                }
             }
             else
             {
@@ -104,26 +137,24 @@ int main()
                     word.pop_back();
                     dbpt = true;
                 }
-                if (Characters_map.contains(word))
-                {
-                    if (dbpt)
-                    {
-                        getline(main_script,temp,'"');
-                        getline(main_script,message,'"');
-                    }
-                    else
-                    {
-                        getline(main_script,temp,':');
-                        getline(main_script,temp,'"');
-                        getline(main_script,message,'"');
-                    }
-                    getline(main_script,temp,'\n');
-                    text = true;
-                }
-                else
+                if (!Characters_map.contains(word))
                 {
                     goto unknown_keyword;
                 }
+                if (dbpt)
+                {
+                    getline(main_script,temp,'"');
+                    getline(main_script,message,'"');
+                }
+                else
+                {
+                    getline(main_script,temp,':');
+                    getline(main_script,temp,'"');
+                    getline(main_script,message,'"');
+                }
+                getline(main_script,temp,'\n');
+                text = true;
+                ++nb_line;
             }
         }
         new_dialogue = fen.CreateDialogue(message,Characters_map.at(word));
@@ -135,8 +166,6 @@ int main()
             std::this_thread::sleep_for(33ms);
         }
         fen.IsClicked = false;
-        // temp2 = fen.CreateDialogue("je suis un autre test",Characters_map.at("Jean"));
-        // fen.AddCurrentDialogue(temp2);
     }
     free(ig_Parameters);
     return 0;

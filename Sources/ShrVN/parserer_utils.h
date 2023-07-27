@@ -12,4 +12,6 @@ bool CheckEmptyLine(std::ifstream & file);
 
 bool CheckComment(std::ifstream & file, const std::string & word);
 
+bool IsOnlyWhiteSpaces(const std::string & word);
+
 #endif // PARSERER_UTILS_H

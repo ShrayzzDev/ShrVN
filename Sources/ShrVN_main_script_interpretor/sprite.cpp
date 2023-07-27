@@ -36,6 +36,10 @@ SDL_Texture *Sprite::GetTexture() const
 
 bool Sprite::IsMovementEmpty()
 {
+    if (m_movement == nullptr)
+    {
+        return true;
+    }
     return m_movement->empty();
 }
 

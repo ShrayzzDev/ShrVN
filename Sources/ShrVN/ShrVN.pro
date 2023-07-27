@@ -23,6 +23,9 @@ SOURCES += \
         main_menu_interpretor.cpp \
         main_menu_parameters.cpp \
         main_menu_parserer.cpp \
+        movement.cpp \
+        movement_file_parserer.cpp \
+        movement_interpretor.cpp \
         options_menu_interpretor.cpp \
         options_menu_parameters.cpp \
         options_menu_parserer.cpp \
@@ -37,6 +40,7 @@ HEADERS += \
     IInGameMenuInterpretor.h \
     IInGameOverlayInterpretor.h \
     IMainMenuInterpretor.h \
+    IMovementFileInterpretor.hpp \
     IOptionMenuInterpretor.h \
     bezier.h \
     character_instantiator.hpp \
@@ -54,6 +58,9 @@ HEADERS += \
     main_menu_interpretor.hpp \
     main_menu_parameters.hpp \
     main_menu_parserer.hpp \
+    movement.h \
+    movement_file_parserer.h \
+    movement_interpretor.h \
     options_menu_interpretor.h \
     options_menu_parameters.hpp \
     options_menu_parserer.hpp \
