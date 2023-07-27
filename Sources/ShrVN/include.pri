@@ -20,7 +20,10 @@ SOURCES += \
     $$PWD/point.cpp \
     $$PWD/saves_menu_interpertor.cpp \
     $$PWD/saves_menu_parameters.cpp \
-    $$PWD/saves_menu_parserer.cpp
+    $$PWD/saves_menu_parserer.cpp \
+    $$PWD/movement.cpp \
+    $$PWD/movement_file_parserer.cpp \
+    $$PWD/movement_interpretor.cpp \
 
 HEADERS += \
     $$PWD/ICharacter_Interpreter.hpp \
@@ -53,4 +56,8 @@ HEADERS += \
     $$PWD/saves_menu_parameters.hpp \
     $$PWD/saves_menu_parserer.hpp \
     $$PWD/text_block_shape.h \
-    $$PWD/text_mode.h
+    $$PWD/text_mode.h \
+    $$PWD/movement.h \
+    $$PWD/movement_file_parserer.h \
+    $$PWD/movement_interpretor.h \
+    $$PWD/IMovementFileInterpretor.hpp

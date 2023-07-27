@@ -3,7 +3,7 @@
 
 #include <ostream>
 #include <list>
-
+#include <vector>
 // A point is only defined by it's X and Y coordinate.
 // WARNING : the coordinates are int for operations to be faster
 // WARNING : and so, point WON'T store floats, as their main use
@@ -21,8 +21,11 @@ Point MultiplyCoefPoint(float Coef, Point Pt);
 // Overload to create a stream with one point
 std::ostream & operator<<(std::ostream & os, Point Pt);
 
-// Overload to create a stream with a vector of point.
+// Overload to create a stream with a list of point.
 std::ostream & operator<<(std::ostream & os, std::list<Point> Pts);
+
+// Overload to create a stream with a vector of point.
+std::ostream & operator<<(std::ostream & os, std::vector<Point> Pts);
 
 // Overloads of the operator * for it to work in both ways
 Point operator*(float Coef, Point Pt);

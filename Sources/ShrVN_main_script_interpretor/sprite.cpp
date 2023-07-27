@@ -1,4 +1,5 @@
 #include "sprite.hpp"
+#include "bezier.h"
 
 #include <iostream>
 
@@ -19,9 +20,14 @@ int Sprite::RenderSprite(SDL_Renderer *rend)
     return SDL_RenderCopy(rend,m_texture,NULL,&m_position);
 }
 
-void Sprite::SetMovement(std::list<Point> &pts)
+void Sprite::SetMovement(Movement & mv, unsigned int nb_pts)
 {
-    m_movement = &pts;
+    if (m_movement != nullptr)
+    {
+        free(m_movement);
+    }
+    std::list<Point> * pts = new std::list<Point>(CalculateAllBezierPoint(mv.control_points,nb_pts));
+    m_movement = pts;
 }
 
 const SDL_Rect & Sprite::GetPos() const
@@ -51,6 +57,6 @@ void Sprite::SetPosToLastMovement()
 
 void Sprite::ClearMovement()
 {
-    m_movement->clear();
+    free(m_movement);
+    m_movement = nullptr;
 }
-

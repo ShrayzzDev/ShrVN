@@ -162,8 +162,29 @@ void Window::AddOnScreenSprite(const std::string &image_path, Point coord, SDL_T
         return;
     }
     SDL_QueryTexture(texture,NULL,NULL,&rect.w,&rect.h);
-    Sprite current_sprite = {rect,texture};
+    Sprite current_sprite = Sprite(rect,texture);
+    std::cout << "'" << image_path << "'" << std::endl;
     m_onscreen_sprites.insert(std::pair(image_path,current_sprite));
+}
+
+void Window::AddMovementToSprite(const std::string &image_path, Movement &mvt)
+{
+    if (!m_onscreen_sprites.contains(image_path))
+    {
+        throw std::invalid_argument("ERROR : image located at " + image_path + " isn't curretly used as an on screen sprite.");
+    }
+    m_onscreen_sprites.at(image_path).SetMovement(mvt,100);
+}
+
+void Window::RemoveOnScreenSprite(const std::string &image_path)
+{
+    if (!m_onscreen_sprites.contains(image_path))
+    {
+        throw std::invalid_argument("ERROR : image located at " + image_path + " isn't curretly used as an on screen sprite.");
+    }
+    Sprite current = m_onscreen_sprites.at(image_path);
+    current.ClearMovement();
+    SDL_DestroyTexture(current.GetTexture());
 }
 
 void Window::AddCurrentDialogue(Dialogue &dial)

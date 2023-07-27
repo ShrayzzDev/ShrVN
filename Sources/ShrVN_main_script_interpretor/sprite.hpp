@@ -8,6 +8,7 @@
 #include <ios>
 
 #include "point.hpp"
+#include "movement.h"
 
 class Sprite
 {
@@ -17,7 +18,7 @@ class Sprite
 public:
     Sprite(SDL_Rect pos, SDL_Texture * texture);
     int RenderSprite(SDL_Renderer * rend);
-    void SetMovement(std::list<Point> & pts);
+    void SetMovement(Movement & mv, unsigned int nb_pts);
     const SDL_Rect & GetPos() const;
     SDL_Texture * GetTexture() const;
     bool IsMovementEmpty();

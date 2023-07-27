@@ -16,14 +16,14 @@ MovementFileParserer::MovementFileParserer(IMovementFileInterpretor *interpretor
 
 }
 
-map<string,Movement> *MovementFileParserer::FileParserer(ifstream & file)
+map<string,Movement> * MovementFileParserer::FileParserer(ifstream & file)
 {
     map<string,Movement> * map = new ::map<string,Movement>();
     string mvt_name, value, unread_mvt;
     unsigned short x_value, y_value;
     while (!file.eof())
     {
-        list<Point> new_mvt;
+        vector<Point> new_mvt;
         if (CheckEmptyLine(file))
         {
             continue;

@@ -19,6 +19,7 @@
 #include "point.hpp"
 #include "sprite.hpp"
 #include "dialogue.h"
+#include "movement.h"
 
 class Window
 {
@@ -58,6 +59,8 @@ public:
     void SetCurrentScreen(CurrentScreen current);
     void SwitchTextMode();
     void AddOnScreenSprite(const std::string & image_path, Point coord = {0,0}, SDL_Texture * texture = nullptr);
+    void AddMovementToSprite(const std::string & image_path, Movement & mvt);
+    void RemoveOnScreenSprite(const std::string & image_path);
     void AddCurrentDialogue(Dialogue & dial);
     void CleanCurrentMessages();
     void ReactEvent();

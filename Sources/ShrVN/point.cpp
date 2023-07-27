@@ -14,6 +14,15 @@ std::ostream & operator<<(std::ostream & os, std::list<Point> Pts)
     return os;
 }
 
+std::ostream & operator<<(std::ostream & os, std::vector<Point> Pts)
+{
+    for (Point pt : Pts)
+    {
+        os << pt << std::endl;
+    }
+    return os;
+}
+
 Point MultiplyCoefPoint(float Coef, Point Pt)
 {
     Point temp;

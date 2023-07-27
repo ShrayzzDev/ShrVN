@@ -29,6 +29,9 @@
 #include "bezier.h"
 #include "dialogue.h"
 #include "parserer_utils.h"
+#include "movement.h"
+#include "movement_interpretor.h"
+#include "movement_file_parserer.h"
 
 using namespace std;
 
@@ -52,6 +55,7 @@ int main()
     InGameOverlayInterpretor igo_interpretor;
     InGameOverlayParserer igo_parse(&igo_interpretor);
     InGameOverlayParameters * ig_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
+    file.close();
     // cout << *ig_Parameters << endl;
     filesystem::current_path("../");
     CharacterInstantiator test;
@@ -69,6 +73,11 @@ int main()
     // list<Point> effect = CalculateAllBezierPoint(ControlPoints,50);
     // Sprite * CurrentEffect = fen.GetSprite(Characters_map.at("Jean").GetImage("akane"));
     // CurrentEffect->SetMovement(effect);
+    MovementInterpretor mvt_interpretor;
+    MovementFileParserer mvt_parse(&mvt_interpretor);
+    file.open("Movement.shrvn");
+    map<string,Movement> * Movement_Map = mvt_parse.FileParserer(file);
+    cout << *Movement_Map << endl;
     int nb_line = 1;
     bool dbpt, text;
     unsigned short x_value, y_value;
@@ -83,13 +92,11 @@ int main()
             dbpt = false;
             if (CheckEmptyLine(main_script))
             {
-                ++nb_line;
                 continue;
             }
             getline(main_script,word,' ');
             if (CheckComment(main_script,word))
             {
-                ++nb_line;
                 continue;
             }
             if (word == "From")
@@ -112,17 +119,33 @@ int main()
                         goto wrong_argument;
                     }
                     getline(main_script,next_word,' ');
-                    if (next_word != "At")
+                    if (next_word == "At")
+                    {
+                        getline(main_script,value,',');
+                        x_value = stof(value);
+                        getline(main_script,value,'\n');
+                        y_value = stof(value);
+                        Point pt = {x_value,y_value};
+                        fen.AddOnScreenSprite(img_path,pt);
+                    }
+                    else if (next_word == "With")
+                    {
+                        getline(main_script,next_word,'\n');
+                        // cout << "'" << next_word << "'" << endl;
+                        if (!Movement_Map->contains(next_word))
+                        {
+                            word = next_word;
+                            goto wrong_argument;
+                        }
+                        Movement & mvt = Movement_Map->at(next_word);
+                        fen.AddOnScreenSprite(img_path,mvt.control_points.front());
+                        fen.AddMovementToSprite(img_path,mvt);
+                    }
+                    else
                     {
                         word = next_word;
                         goto unknown_keyword;
                     }
-                    getline(main_script,value,',');
-                    x_value = stof(value);
-                    getline(main_script,value,'\n');
-                    y_value = stof(value);
-                    Point pt = {x_value,y_value};
-                    fen.AddOnScreenSprite(img_path,pt);
                 }
                 else
                 {

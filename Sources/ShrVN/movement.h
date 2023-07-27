@@ -1,7 +1,7 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-#include <list>
+#include <vector>
 #include <map>
 #include <string>
 
@@ -9,7 +9,7 @@
 
 struct Movement
 {
-    std::list<Point> control_points;
+    std::vector<Point> control_points;
     long long duration;
 };
 

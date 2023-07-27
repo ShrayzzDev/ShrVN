@@ -13,4 +13,5 @@ std::ostream & operator<<(std::ostream & os, std::map<std::string,Movement> & ma
         os << "Mvt name: " << mvt.first << std::endl
            << mvt.second << std::endl;
     }
+    return os;
 }
