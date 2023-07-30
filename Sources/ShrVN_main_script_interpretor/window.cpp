@@ -1,5 +1,7 @@
 #include <filesystem>
 #include <iostream>
+#include <cstdlib>
+#include <cstring>
 
 #include "window.hpp"
 #include "initialisation_error.hpp"
@@ -36,15 +38,10 @@ void Window::Init()
     }
     if (TTF_Init() != 0)
     {
-        std::string error = "ERROR : Couldn't initialize the text component: " + (std::string)SDL_GetError();
+        std::string error = "ERROR : Couldn't initialize the font component: " + (std::string)SDL_GetError();
         throw Initialisation_Error(error.c_str());
     }
     SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
-    m_font = TTF_OpenFont("Laziness.ttf",m_igop->m_font_size);
-    if (m_font == NULL)
-    {
-        std::cout << "je marche pas : " << SDL_GetError() << std::endl;
-    }
     m_text_color = {0,0,0,255};
 }
 
@@ -126,6 +123,41 @@ void Window::SetCurrentScreen(CurrentScreen current)
     m_current = current;
 }
 
+void Window::SetFont()
+{
+    std::list<std::string> folders_to_check;
+    if (std::filesystem::exists("fonts/"))
+    {
+        folders_to_check.push_back("fonts/");
+    }
+#ifdef _WIN64
+    folders_to_check.push_back("C:/Windows/Fonts");
+    char * user_fonts = getenv("appdata");
+    std::strcat(user_fonts,"/../Local/Microsoft/Windows/Fonts");
+    folders_to_check.push_back(user_fonts);
+#endif
+    for (auto const& font_folder : folders_to_check)
+    {
+        for (auto const& dir_entry : std::filesystem::recursive_directory_iterator{font_folder})
+        {
+            const std::filesystem::path & current_font = dir_entry.path();
+            if (current_font.filename().stem().generic_string() == m_igop->m_font_type)
+            {
+                if (!current_font.filename().generic_string().ends_with(".ttf"))
+                {
+                    throw std::invalid_argument("ERROR : Could'nt open the defined font because of wrong format (should be .ttf");
+                }
+                m_font = TTF_OpenFont(current_font.generic_string().c_str(),m_igop->m_font_size);
+                if (m_font == NULL)
+                {
+                    std::cout << SDL_GetError() << std::endl;
+                }
+                return;
+            }
+        }
+    }
+}
+
 void Window::SwitchTextMode()
 {
     switch(m_igop->m_text_mode) {
@@ -185,6 +217,7 @@ void Window::RemoveOnScreenSprite(const std::string &image_path)
     Sprite current = m_onscreen_sprites.at(image_path);
     current.ClearMovement();
     SDL_DestroyTexture(current.GetTexture());
+    m_onscreen_sprites.erase(image_path);
 }
 
 void Window::AddCurrentDialogue(Dialogue &dial)
@@ -224,23 +257,22 @@ void Window::ReactEvent()
                 m_open = false;
                 this->~Window();
                 break;
-
             }
             break;
         case SDL_MOUSEBUTTONDOWN:
             switch (event.button.clicks) {
             case SDL_BUTTON_LEFT:
-                IsClicked = true;
-                for (auto & sprt : m_onscreen_sprites)
-                {
-                    if (!sprt.second.IsMovementEmpty())
-                    {
-                        sprt.second.SetPosToLastMovement();
-                        sprt.second.ClearMovement();
-                    }
-                }
+                Click();
                 break;
             }
+            break;
+        case SDL_KEYDOWN:
+            switch(event.key.keysym.sym) {
+            case SDLK_RETURN:
+                Click();
+                break;
+            }
+            break;
         }
     }
 }
@@ -351,6 +383,19 @@ void Window::RenderImage()
     }
     }
     SDL_RenderPresent(m_renderer);
+}
+
+void Window::Click()
+{
+    IsClicked = true;
+    for (auto & sprt : m_onscreen_sprites)
+    {
+        if (!sprt.second.IsMovementEmpty())
+        {
+            sprt.second.SetPosToLastMovement();
+            sprt.second.ClearMovement();
+        }
+    }
 }
 
 Dialogue Window::CreateDialogue(const std::string &text, Characters &chr)

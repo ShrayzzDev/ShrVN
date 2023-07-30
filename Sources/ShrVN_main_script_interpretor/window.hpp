@@ -57,6 +57,7 @@ public:
     void SetSavesMenuParameters(SavesMenuParameters * smp);
     void SetMainMenuParameters(MainMenuParameters * mmp);
     void SetCurrentScreen(CurrentScreen current);
+    void SetFont();
     void SwitchTextMode();
     void AddOnScreenSprite(const std::string & image_path, Point coord = {0,0}, SDL_Texture * texture = nullptr);
     void AddMovementToSprite(const std::string & image_path, Movement & mvt);
@@ -67,6 +68,7 @@ public:
     bool IsOpen() const;
     bool IsClicked;
     void RenderImage();
+    void Click();
     Dialogue CreateDialogue(const std::string & text, Characters & chr);
     void TestAddText(std::map<std::string, Characters> & chars, const std::string & mess);
     ~Window();

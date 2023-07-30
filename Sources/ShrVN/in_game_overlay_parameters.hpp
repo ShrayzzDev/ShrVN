@@ -19,6 +19,7 @@ struct InGameOverlayParameters
     unsigned short m_text_block_opacity = 80;
     Point m_text_block_position = {20,165};
     unsigned short m_font_size = 17;
+    std::string m_font_type = "calibri";
     std::string m_texture_path = "none";
 };
 

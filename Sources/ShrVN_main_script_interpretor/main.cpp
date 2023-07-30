@@ -26,12 +26,13 @@
 // #include "options_menu_interpretor.h"
 // #include "options_menu_parserer.hpp"
 // #include "options_menu_parameters.hpp"
-#include "bezier.h"
+// #include "bezier.h"
 #include "dialogue.h"
 #include "parserer_utils.h"
 #include "movement.h"
 #include "movement_interpretor.h"
 #include "movement_file_parserer.h"
+#include "init.h"
 
 using namespace std;
 
@@ -43,10 +44,49 @@ void SDLInit()
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     SDLInit();
-    filesystem::current_path("../Scripts/ScriptTest");
+    if (argc <= 1)
+    {
+        cerr << "ERROR : You need to provide arguments." << endl
+             << " -i or --interpret path_to_project to launch the interpretor" << endl
+             << " -c or --compile path_to_project to compile a project" << endl
+             << " --init path new_project_name to create a new empty project." << endl;
+        return -1;
+    }
+    if (!strcmp(argv[1],"--compile") || !strcmp(argv[1],"-c"))
+    {
+        throw invalid_argument("The compile feature isn't implemented yet.");
+    }
+    else if (!strcmp(argv[1],"--interpret") || !strcmp(argv[1],"-i"))
+    {
+        if (! filesystem::exists(argv[2]))
+        {
+            cerr << "ERROR : You need to provide an existing path";
+            return -2;
+        }
+    }
+    else if (!strcmp(argv[1],"--init"))
+    {
+        if (! filesystem::exists(argv[2]))
+        {
+            cerr << "ERROR : You need to provide an existing path";
+            return -2;
+        }
+        filesystem::current_path(argv[2]);
+        if (argc < 4)
+        {
+            cerr << "ERROR : You need to provide a project name";
+            return -3;
+        }
+        CreateEmptyProject(".",argv[3]);
+        return 0;
+    }
+    filesystem::current_path(argv[2]);
+    // filesystem::current_path("../Scripts/ScriptTest");
+    std::string full_path = filesystem::current_path().generic_string();
+    std::string project_name = full_path.substr(full_path.find_last_of("/") + 1);
     ifstream main_script;
     main_script.open("main.shrvn");
     filesystem::current_path("init/");
@@ -56,28 +96,21 @@ int main()
     InGameOverlayParserer igo_parse(&igo_interpretor);
     InGameOverlayParameters * ig_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
     file.close();
-    // cout << *ig_Parameters << endl;
     filesystem::current_path("../");
     CharacterInstantiator test;
     CharacterParserer parserer(&test);
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
-    Window fen("jeu");
-    fen.SetInGameOverlayParameters(ig_Parameters);
+    Window fen(project_name);
     fen.Init();
+    fen.SetInGameOverlayParameters(ig_Parameters);
+    fen.SetFont();
     fen.SetCurrentScreen(InGame);
     // fen.SwitchTextMode();
-    fen.SetBackgroundImg("test.png");
-    // fen.AddOnScreenSprite(Characters_map.at("Jean").GetImage("akane"));
-    // Point p1(200,400), p2(300,500), p3(440,500), p4(500,300);
-    // vector<Point> ControlPoints = {p1,p2,p3,p4};
-    // list<Point> effect = CalculateAllBezierPoint(ControlPoints,50);
-    // Sprite * CurrentEffect = fen.GetSprite(Characters_map.at("Jean").GetImage("akane"));
-    // CurrentEffect->SetMovement(effect);
     MovementInterpretor mvt_interpretor;
     MovementFileParserer mvt_parse(&mvt_interpretor);
     file.open("Movement.shrvn");
     map<string,Movement> * Movement_Map = mvt_parse.FileParserer(file);
-    cout << *Movement_Map << endl;
+    file.close();
     int nb_line = 1;
     bool dbpt, text;
     unsigned short x_value, y_value;
@@ -131,7 +164,6 @@ int main()
                     else if (next_word == "With")
                     {
                         getline(main_script,next_word,'\n');
-                        // cout << "'" << next_word << "'" << endl;
                         if (!Movement_Map->contains(next_word))
                         {
                             word = next_word;
@@ -147,11 +179,60 @@ int main()
                         goto unknown_keyword;
                     }
                 }
+                else if (next_word == "Hide")
+                {
+                    getline(main_script,img,'\n');
+                    img_path = current_char->GetImage(img);
+                    if (img_path == Characters::image_not_found)
+                    {
+                        word = img;
+                        goto wrong_argument;
+                    }
+                    fen.RemoveOnScreenSprite(img_path);
+                }
                 else
                 {
                     word = next_word;
                     goto unknown_keyword;
                 }
+            }
+            else if (word == "Set")
+            {
+                getline(main_script,next_word,' ');
+                if (next_word != "Background")
+                {
+                    word = next_word;
+                    goto unknown_keyword;
+                }
+                getline(main_script,next_word,' ');
+                if (next_word != "As")
+                {
+                    word = next_word;
+                    goto unknown_keyword;
+                }
+                getline(main_script,img_path,'\n');
+                fen.SetBackgroundImg(img_path);
+            }
+            else if (word == "Switch")
+            {
+                getline(main_script,next_word,'\n');
+                if (next_word != "Mode")
+                {
+                    word = next_word;
+                    goto unknown_keyword;
+                }
+                fen.CleanCurrentMessages();
+                fen.SwitchTextMode();
+            }
+            else if (word == "Clear")
+            {
+                getline(main_script,next_word,'\n');
+                if (next_word != "Messages")
+                {
+                    word = next_word;
+                    goto unknown_keyword;
+                }
+                fen.CleanCurrentMessages();
             }
             else
             {
@@ -191,6 +272,7 @@ int main()
         fen.IsClicked = false;
     }
     free(ig_Parameters);
+    free(Movement_Map);
     return 0;
 unknown_keyword:
     throw invalid_argument("ERROR : line " + to_string(nb_line) + " : unknown key word ' " + word + " ' in this context");

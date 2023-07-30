@@ -1,10 +1,8 @@
 #include "sprite.hpp"
 #include "bezier.h"
 
-#include <iostream>
-
 Sprite::Sprite(SDL_Rect pos, SDL_Texture * texture)
-    :m_position{pos}, m_texture{texture}, m_movement{nullptr}
+    : m_position{pos}, m_texture{texture}, m_movement{nullptr}
 {
 
 }

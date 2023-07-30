@@ -122,6 +122,10 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
                 }
                 m_interpretor->SetTextBlockYPosition(*Parameters,value);
             }
+            else
+            {
+                goto unknown_keyword;
+            }
         }
         else if (word.starts_with("opacity"))
         {
@@ -132,14 +136,26 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
             }
             m_interpretor->SetTextBlockOpacity(*Parameters,value);
         }
-        else if (word.starts_with("font_size"))
+        else if (word.starts_with("font"))
         {
-            ReadIntVarAssignation(file,word,value);
-            if (value > 100 || value <= 0)
+            if (word.starts_with("font_size"))
             {
-                goto wrong_argument;
+                ReadIntVarAssignation(file,word,value);
+                if (value > 100 || value <= 0)
+                {
+                    goto wrong_argument;
+                }
+                m_interpretor->SetFontSize(*Parameters,value);
             }
-            m_interpretor->SetFontSize(*Parameters,value);
+            else if (word.starts_with("font_type"))
+            {
+                ReadStringVarAssignation(file,word,next_word);
+                m_interpretor->SetFontType(*Parameters,next_word);
+            }
+            else
+            {
+                goto unknown_keyword;
+            }
         }
         else
         {
