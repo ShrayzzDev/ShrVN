@@ -1,0 +1,31 @@
+Set Background As test.png
+
+Jean : "Je parle let's goooooooooo"
+
+From Jean Show akane With Test2
+
+Jean : "eh regarde je dit autre chose"
+// checking it ingores comments
+Jean: "comment je suis trop heureux ça marche wsh"
+
+From Jean Hide akane
+
+Switch Mode
+
+Jean : "Eh masterclass"
+
+Jean : "it works let's fucking go"
+
+Jean : "j'ajoute du texte pour test le clear"
+
+From Jean Show akane At 0,0
+
+Jean : "Encore un"
+
+Clear Messages
+
+Jean : "et normalement ça a clear"
+
+Switch Mode
+
+Jean : "Eeeeeeeeeh"

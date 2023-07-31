@@ -44,3 +44,15 @@ bool CheckComment(std::ifstream & file, const std::string & word)
     }
     return false;
 }
+
+bool IsOnlyWhiteSpaces(const string & word)
+{
+    for (auto chr : word)
+    {
+        if (!isspace(chr))
+        {
+            return false;
+        }
+    }
+    return true;
+}

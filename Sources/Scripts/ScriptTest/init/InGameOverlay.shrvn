@@ -32,7 +32,7 @@ main_block_height = 250
 // Lenght of the main text block
 // NOTE : Used only in ADV mode and with base_rectangle main block shape.
 
-main_block_lenght = 750
+main_block_lenght = 1600
 
 // Opacity of the main text block.
 // 100 = completely opaque
@@ -43,9 +43,11 @@ opacity = 80
 // coordinates of the main text block (corresponds to the bottom right of the block)
 // NOTE : Used only in ADV mode.
 
-main_block_x_coord = 20
-main_block_y_coord = 165 (used only in base_rectangle shape)
+main_block_x_coord = 160
+main_block_y_coord = 800 (used only in base_rectangle shape)
 
 // Size of the text
 
-font_size = 17
+font_size = 35
+
+font_type = Laziness

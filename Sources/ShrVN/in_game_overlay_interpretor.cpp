@@ -49,3 +49,8 @@ void InGameOverlayInterpretor::SetFontSize(InGameOverlayParameters &igovparam, u
 {
     igovparam.m_font_size = f_size;
 }
+
+void InGameOverlayInterpretor::SetFontType(InGameOverlayParameters &igovparam, const std::string &f_type) const
+{
+    igovparam.m_font_type = f_type;
+}

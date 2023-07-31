@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include <cmath>
 
@@ -31,15 +30,14 @@ Point CalculateOneBezierPoint(float CurveRatio, const vector<Point> & ControlPoi
     return CurvePoint;
 }
 
-vector<Point> CalculateAllBezierPoint (const vector<Point> & ControlPoint, unsigned int NbPoint)
+list<Point> CalculateAllBezierPoint (const vector<Point> & ControlPoint, unsigned int NbPoint)
 {
-    vector<Point> CurvePoints;
+    list<Point> CurvePoints;
     CurvePoints.push_back(ControlPoint.front());
     float TempRatio = (1.0 / NbPoint);
     for (unsigned int rep = 1; rep <= NbPoint; ++rep)
     {
         float Ratio = rep * TempRatio;
-        cout << "Ratio : " << Ratio << endl;
         CurvePoints.push_back(CalculateOneBezierPoint(Ratio,ControlPoint));
     }
     return CurvePoints;

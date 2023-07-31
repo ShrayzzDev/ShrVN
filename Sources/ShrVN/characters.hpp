@@ -7,7 +7,6 @@
 class Characters
 {
     inline static std::string default_images_keywords[2] = {"default","not_found"};
-    inline static std::string image_not_found = "nothing";
     std::string m_name;
     std::map<std::string,std::string> m_char_pictures;
     std::string m_image_folder_name;
@@ -15,6 +14,7 @@ class Characters
     unsigned short m_name_color_green;
     unsigned short m_name_color_blue;
 public:
+    inline static std::string image_not_found = "nothing";
     Characters(const std::string & name, unsigned short name_red_value = 0, unsigned short name_green_value = 0, unsigned short name_blue_value = 0);
     unsigned short GetRedValue() const;
     unsigned short GetGreenValue() const;

@@ -18,6 +18,7 @@ public:
     virtual void SetTextBlockXPosition(InGameOverlayParameters & igovparam, int xpos) const = 0;
     virtual void SetTextBlockYPosition(InGameOverlayParameters & igovparam, int ypos) const = 0;
     virtual void SetFontSize(InGameOverlayParameters & igovparam, unsigned short f_size) const = 0;
+    virtual void SetFontType(InGameOverlayParameters & igovparam, const std::string & f_type) const = 0;
 };
 
 #endif // IINGAMEOVERLAYINTERPRETOR_

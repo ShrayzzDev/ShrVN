@@ -22,6 +22,9 @@
 #include "options_menu_interpretor.h"
 #include "options_menu_parserer.hpp"
 #include "options_menu_parameters.hpp"
+#include "movement_file_parserer.h"
+#include "movement.h"
+#include "movement_interpretor.h"
 #include "init.h"
 
 using namespace std;
@@ -213,11 +216,22 @@ void TestReadInitFiles()
     file.close();
 }
 
+void TestMovementParserer()
+{
+    ifstream file;
+    file.open("Movement.shrvn");
+    MovementInterpretor mvt_interpretor;
+    MovementFileParserer mvt_parse(&mvt_interpretor);
+    map<string,Movement> * map = mvt_parse.FileParserer(file);
+    cout << *map << endl;
+}
+
 int main()
 {
-    // filesystem::current_path("../Scripts/ScriptTest/")
-    CreateEmptyProject("../Scripts/","new_project");
+    filesystem::current_path("../Scripts/ScriptTest/");
+    // CreateEmptyProject("../Scripts/","new_project");
     // TestFileInit();
     // TestReadInitFiles();
+    TestMovementParserer();
     return 0;
 }

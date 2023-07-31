@@ -16,6 +16,7 @@ public:
     void SetTextBlockXPosition(InGameOverlayParameters &igovparam, int xpos) const override;
     void SetTextBlockYPosition(InGameOverlayParameters &igovparam, int ypos) const override;
     void SetFontSize(InGameOverlayParameters &igovparam, unsigned short f_size) const override;
+    void SetFontType(InGameOverlayParameters &igovparam, const std::string &f_type) const override;
 };
 
 #endif // INGAMEOVERLAYINTERPRETOR_HPP
