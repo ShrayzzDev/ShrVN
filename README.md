@@ -37,6 +37,8 @@ For now, there is no menu and only the in game. You can show text, switch betwee
 
 All the files needed for the initialisation of the menus are already here, but they are very likely to change when i'm gonna actually do them. (for the moment they're useless)
 
+If you wan't more details on what it can, check official documentation [here](http://shrayzz.fr)
+
 ------------------------------------
 
 ## Dependencies
