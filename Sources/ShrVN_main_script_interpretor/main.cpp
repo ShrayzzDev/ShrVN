@@ -32,7 +32,6 @@
 #include "movement.h"
 #include "movement_interpretor.h"
 #include "movement_file_parserer.h"
-#include "init.h"
 
 using namespace std;
 
@@ -47,44 +46,44 @@ void SDLInit()
 int main(int argc, char* argv[])
 {
     SDLInit();
-    if (argc <= 1)
-    {
-        cerr << "ERROR : You need to provide arguments." << endl
-             << " -i or --interpret path_to_project to launch the interpretor" << endl
-             << " -c or --compile path_to_project to compile a project" << endl
-             << " --init path new_project_name to create a new empty project." << endl;
-        return -1;
-    }
-    if (!strcmp(argv[1],"--compile") || !strcmp(argv[1],"-c"))
-    {
-        throw invalid_argument("The compile feature isn't implemented yet.");
-    }
-    else if (!strcmp(argv[1],"--interpret") || !strcmp(argv[1],"-i"))
-    {
-        if (! filesystem::exists(argv[2]))
-        {
-            cerr << "ERROR : You need to provide an existing path";
-            return -2;
-        }
-    }
-    else if (!strcmp(argv[1],"--init"))
-    {
-        if (! filesystem::exists(argv[2]))
-        {
-            cerr << "ERROR : You need to provide an existing path";
-            return -2;
-        }
-        filesystem::current_path(argv[2]);
-        if (argc < 4)
-        {
-            cerr << "ERROR : You need to provide a project name";
-            return -3;
-        }
-        CreateEmptyProject(".",argv[3]);
-        return 0;
-    }
-    filesystem::current_path(argv[2]);
-    // filesystem::current_path("../Scripts/ScriptTest");
+    // if (argc <= 1)
+    // {
+    //     cerr << "ERROR : You need to provide arguments." << endl
+    //          << " -i or --interpret path_to_project to launch the interpretor" << endl
+    //          << " -c or --compile path_to_project to compile a project" << endl
+    //          << " --init path new_project_name to create a new empty project." << endl;
+    //     return -1;
+    // }
+    // if (!strcmp(argv[1],"--compile") || !strcmp(argv[1],"-c"))
+    // {
+    //     throw invalid_argument("The compile feature isn't implemented yet.");
+    // }
+    // else if (!strcmp(argv[1],"--interpret") || !strcmp(argv[1],"-i"))
+    // {
+    //     if (! filesystem::exists(argv[2]))
+    //     {
+    //         cerr << "ERROR : You need to provide an existing path";
+    //         return -2;
+    //     }
+    // }
+    // else if (!strcmp(argv[1],"--init"))
+    // {
+    //     if (! filesystem::exists(argv[2]))
+    //     {
+    //         cerr << "ERROR : You need to provide an existing path";
+    //         return -2;
+    //     }
+    //     filesystem::current_path(argv[2]);
+    //     if (argc < 4)
+    //     {
+    //         cerr << "ERROR : You need to provide a project name";
+    //         return -3;
+    //     }
+    //     CreateEmptyProject(".",argv[3]);
+    //     return 0;
+    // }
+    // filesystem::current_path(argv[2]);
+    filesystem::current_path("../Scripts/ScriptTest");
     std::string full_path = filesystem::current_path().generic_string();
     std::string project_name = full_path.substr(full_path.find_last_of("/") + 1);
     ifstream main_script;
@@ -103,7 +102,7 @@ int main(int argc, char* argv[])
     Window fen(project_name);
     fen.Init();
     fen.SetInGameOverlayParameters(ig_Parameters);
-    fen.SetFont();
+    fen.InitFont();
     fen.SetCurrentScreen(InGame);
     // fen.SwitchTextMode();
     MovementInterpretor mvt_interpretor;
@@ -159,7 +158,7 @@ int main(int argc, char* argv[])
                         getline(main_script,value,'\n');
                         y_value = stof(value);
                         Point pt = {x_value,y_value};
-                        fen.AddOnScreenSprite(img_path,pt);
+                        fen.GetIgw().AddOnScreenSprite(img_path,pt,fen.GetRenderer());
                     }
                     else if (next_word == "With")
                     {
@@ -170,8 +169,8 @@ int main(int argc, char* argv[])
                             goto wrong_argument;
                         }
                         Movement & mvt = Movement_Map->at(next_word);
-                        fen.AddOnScreenSprite(img_path,mvt.control_points.front());
-                        fen.AddMovementToSprite(img_path,mvt);
+                        fen.GetIgw().AddOnScreenSprite(img_path,mvt.control_points.front(),fen.GetRenderer());
+                        fen.GetIgw().AddMovementToSprite(img_path,mvt);
                     }
                     else
                     {
@@ -188,7 +187,7 @@ int main(int argc, char* argv[])
                         word = img;
                         goto wrong_argument;
                     }
-                    fen.RemoveOnScreenSprite(img_path);
+                    fen.GetIgw().RemoveOnScreenSprite(img_path);
                 }
                 else
                 {
@@ -211,7 +210,7 @@ int main(int argc, char* argv[])
                     goto unknown_keyword;
                 }
                 getline(main_script,img_path,'\n');
-                fen.SetBackgroundImg(img_path);
+                fen.GetIgw().SetBackgroundImg(img_path,fen.GetRenderer());
             }
             else if (word == "Switch")
             {
@@ -221,8 +220,8 @@ int main(int argc, char* argv[])
                     word = next_word;
                     goto unknown_keyword;
                 }
-                fen.CleanCurrentMessages();
-                fen.SwitchTextMode();
+                fen.GetIgw().CleanCurrentMessages();
+                fen.GetIgw().SwitchTextMode();
             }
             else if (word == "Clear")
             {
@@ -232,7 +231,7 @@ int main(int argc, char* argv[])
                     word = next_word;
                     goto unknown_keyword;
                 }
-                fen.CleanCurrentMessages();
+                fen.GetIgw().CleanCurrentMessages();
             }
             else
             {
@@ -261,8 +260,8 @@ int main(int argc, char* argv[])
                 ++nb_line;
             }
         }
-        new_dialogue = fen.CreateDialogue(message,Characters_map.at(word));
-        fen.AddCurrentDialogue(new_dialogue);
+        new_dialogue = fen.GetIgw().CreateDialogue(message,Characters_map.at(word),fen.GetRenderer());
+        fen.GetIgw().AddCurrentDialogue(new_dialogue);
         while (!fen.IsClicked)
         {
             fen.ReactEvent();
