@@ -15,11 +15,7 @@
 #include "saves_menu_parameters.hpp"
 #include "main_menu_parameters.hpp"
 #include "CurrentScreen.h"
-#include "characters.hpp"
-#include "point.hpp"
 #include "sprite.hpp"
-#include "dialogue.h"
-#include "movement.h"
 #include "in_game_window.hpp"
 
 class Window
