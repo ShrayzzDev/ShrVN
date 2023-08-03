@@ -48,6 +48,4 @@ main_block_y_coord = 800 (used only in base_rectangle shape)
 
 // Size of the text
 
-font_size = 35
-
-font_type = Laziness
+font_size = 40

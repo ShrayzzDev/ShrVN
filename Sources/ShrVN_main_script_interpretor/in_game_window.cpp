@@ -48,7 +48,7 @@ void InGameWindow::SetFont()
     m_font = CreateFont(m_igop->m_font_type,m_igop->m_font_size);
     if (m_font == NULL)
     {
-        std::cerr << "Couldn't find the font for InGame" << std::endl;
+        std::cerr << "Couldn't find the font " << m_igop->m_font_type << " for InGame" << std::endl;
     }
 }
 

@@ -19,8 +19,13 @@ struct InGameOverlayParameters
     unsigned short m_text_block_opacity = 80;
     Point m_text_block_position = {20,165};
     unsigned short m_font_size = 17;
-    std::string m_font_type = "calibri";
     std::string m_texture_path = "none";
+#ifdef _WIN64
+    std::string m_font_type = "calibri";
+#elif __linux__
+    std::string m_font_type = "NotoSerif-CondensedLightItalic";
+
+#endif
 };
 
 // Use the file given in parameter and write base parameters.

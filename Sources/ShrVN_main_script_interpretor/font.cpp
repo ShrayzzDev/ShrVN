@@ -18,6 +18,13 @@ TTF_Font * CreateFont(const std::string & font_type, unsigned short font_size)
     char * user_fonts = getenv("appdata");
     std::strcat(user_fonts,"/../Local/Microsoft/Windows/Fonts");
     folders_to_check.push_back(user_fonts);
+#elif __linux__
+    folders_to_check.push_back("/usr/share/fonts");
+    folders_to_check.push_back("/usr/local/share/fonts");
+    if (std::filesystem::exists("~/.local/share/fonts"))
+    {
+        folders_to_check.push_back("~/.local/share/fonts");
+    }
 #endif
     for (auto const& font_folder : folders_to_check)
     {
@@ -28,7 +35,7 @@ TTF_Font * CreateFont(const std::string & font_type, unsigned short font_size)
             {
                 if (!current_font.filename().generic_string().ends_with(".ttf"))
                 {
-                    throw std::invalid_argument("ERROR : Could'nt open the defined font because of wrong format (should be .ttf");
+                    throw std::invalid_argument("ERROR : Couldn't open the defined font because of wrong format (should be .ttf");
                 }
                 TTF_Font * font;
                 font = TTF_OpenFont(current_font.generic_string().c_str(),font_size);
