@@ -23,7 +23,7 @@ Here we have created a empty project named test_project in the *Scripts/* folder
 
 NOTE : The path given must exists, as this program won't create it for you, but the project folder must NOT already exists.
 
-Now you have creared a small script follow the documentation, and you want to test it, then you run this command :
+Now you have created a small script following the documentation, and you want to test it, then you run this command :
 
 `ShrVN -i Scripts/test_project`
 
