@@ -24,7 +24,7 @@ class Window
     unsigned short m_height;
     unsigned short m_length;
     bool m_open;
-    CurrentScreen m_current = MainMenu;
+    CurrentScreen * m_current;
     InGameWindow m_igw;
     OptionsMenuParameters * m_omp;
     InGameMenuParameters * m_igmp;
@@ -47,9 +47,10 @@ public:
     void SetInGameMenuParameters(InGameMenuParameters * igmp);
     void SetSavesMenuParameters(SavesMenuParameters * smp);
     void SetMainMenuParameters(MainMenuParameters * mmp);
-    void SetCurrentScreen(CurrentScreen current);
-    void ReactEvent();
+    void SetCurrentScreen(CurrentScreen * current);
+    void Maximize();
     bool IsOpen() const;
+    void ReactEvent();
     bool IsClicked;
     void RenderImage();
     void Click();

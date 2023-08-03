@@ -3,9 +3,10 @@
 
 #include "in_game_window.hpp"
 #include "font.h"
+#include "window.hpp"
 
-InGameWindow::InGameWindow(InGameOverlayParameters *igop)
-    :m_igop{igop}
+InGameWindow::InGameWindow(InGameOverlayParameters * igop, InGameMenuParameters * igmp)
+    :m_igop{igop}, m_igmp{igmp}
 {
 
 }
@@ -100,6 +101,39 @@ void InGameWindow::CleanCurrentMessages()
     m_current_dialogue.clear();
 }
 
+void InGameWindow::ReactEvent(Window * win, SDL_Event & event)
+{
+    switch (event.type) {
+    case SDL_WINDOWEVENT:
+        switch (event.window.event) {
+        case SDL_WINDOWEVENT_MAXIMIZED:
+            win->Maximize();
+            break;
+
+        case SDL_WINDOWEVENT_CLOSE:
+            exit(0);
+            break;
+        }
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        switch (event.button.clicks) {
+        case SDL_BUTTON_LEFT:
+            win->IsClicked = true;
+            Click();
+            break;
+        }
+        break;
+    case SDL_KEYDOWN:
+        switch(event.key.keysym.sym) {
+        case SDLK_RETURN:
+            win->IsClicked = true;
+            Click();
+            break;
+        }
+        break;
+    }
+}
+
 void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length, unsigned short window_height)
 {
     SDL_RenderCopy(rend,m_background_img,NULL,NULL);
@@ -177,7 +211,7 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
         break;
     }
     break;
-}
+    }
 }
 
 Dialogue InGameWindow::CreateDialogue(const std::string &text, Characters &chr, SDL_Renderer * rend)

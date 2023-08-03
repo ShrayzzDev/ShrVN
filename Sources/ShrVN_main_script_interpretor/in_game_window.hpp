@@ -7,20 +7,25 @@
 #include <SDL_ttf.h>
 
 #include "in_game_overlay_parameters.hpp"
+#include "in_game_menu_parameters.hpp"
 #include "sprite.hpp"
 #include "dialogue.h"
+#include "CurrentScreen.h"
 
-class InGameWindow
+class InGameWindow : public CurrentScreen
 {
     SDL_Texture * m_background_img = nullptr;
     SDL_Color m_text_color;
     TTF_Font * m_font = nullptr;
+    CurrentScreen * m_current;
     InGameOverlayParameters * m_igop;
+    InGameMenuParameters * m_igmp;
+    bool IsMenuOpen = false;
     std::map<std::string,Sprite> m_onscreen_sprites;
     std::list<Dialogue> m_previous_dialogue;
     std::list<Dialogue> m_current_dialogue;
 public:
-    InGameWindow(InGameOverlayParameters * igop = nullptr);
+    InGameWindow(InGameOverlayParameters * igop = nullptr, InGameMenuParameters * igmp = nullptr);
     InGameOverlayParameters * GetIgop() const;
     SDL_Texture * GetBgImg() const;
     const Sprite * GetSprite(const std::string &img_path) const;
@@ -41,8 +46,9 @@ public:
     void DestroyOnScreenSprite();
     void DestroyDialogues();
     void CleanCurrentMessages();
+    void ReactEvent(Window * win, SDL_Event & event) override;
     void Click();
-    void RenderWindow(SDL_Renderer * rend, unsigned short window_length, unsigned short window_height);
+    void RenderWindow(SDL_Renderer * rend, unsigned short window_length, unsigned short window_height) override;
 };
 
 #endif // INGAMEWINDOW_HPP

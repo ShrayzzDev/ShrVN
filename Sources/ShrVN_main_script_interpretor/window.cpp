@@ -14,6 +14,7 @@ Window::Window(const std::string & name, unsigned short height, unsigned short l
     : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_omp{omp}, m_igmp{igmp}, m_smp{smp}, m_mmp{mmp}, IsClicked{false}
 {
     SetInGameOverlayParameters(igop);
+    m_current = &m_igw;
 }
 
 void Window::Init()
@@ -42,7 +43,6 @@ void Window::Init()
         throw Initialisation_Error(error.c_str());
     }
     SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
-    SDL_Color color = {0,0,0,255};
 
 }
 
@@ -101,46 +101,15 @@ void Window::SetMainMenuParameters(MainMenuParameters * mmp)
     m_mmp = mmp;
 }
 
-void Window::SetCurrentScreen(CurrentScreen current)
+void Window::SetCurrentScreen(CurrentScreen * current)
 {
     m_current = current;
 }
 
-void Window::ReactEvent()
+void Window::Maximize()
 {
-    SDL_Event event;
-    if (SDL_PollEvent(&event))
-    {
-        switch (event.type) {
-        case SDL_WINDOWEVENT:
-            switch (event.window.event) {
-            case SDL_WINDOWEVENT_MAXIMIZED:
-                m_length = 1920;
-                m_height = 1080;
-                break;
-
-            case SDL_WINDOWEVENT_CLOSE:
-                m_open = false;
-                this->~Window();
-                break;
-            }
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            switch (event.button.clicks) {
-            case SDL_BUTTON_LEFT:
-                Click();
-                break;
-            }
-            break;
-        case SDL_KEYDOWN:
-            switch(event.key.keysym.sym) {
-            case SDLK_RETURN:
-                Click();
-                break;
-            }
-            break;
-        }
-    }
+    m_length = 1920;
+    m_height = 1080;
 }
 
 Window::~Window()
@@ -161,21 +130,32 @@ bool Window::IsOpen() const
 void Window::RenderImage()
 {
     SDL_RenderClear(m_renderer);
-    switch (m_current) {
-    case InGame:
-    {
-        m_igw.RenderWindow(m_renderer,m_length,m_height);
-    }
-    }
+    m_current->RenderWindow(m_renderer,m_length,m_height);
     SDL_RenderPresent(m_renderer);
 }
 
-void Window::Click()
+void Window::ReactEvent()
 {
-    IsClicked = true;
-    switch (m_current) {
-    case InGame:
-        m_igw.Click();
+    SDL_Event event;
+    if (SDL_PollEvent(&event))
+    {
+        switch (event.type) {
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) {
+            case SDL_WINDOWEVENT_MAXIMIZED:
+                m_length = 1920;
+                m_height = 1080;
+                break;
+
+            case SDL_WINDOWEVENT_CLOSE:
+                m_open = false;
+                this->~Window();
+                break;
+            }
+        default:
+            m_current->ReactEvent(this,event);
+            break;
+        }
     }
 }
 
