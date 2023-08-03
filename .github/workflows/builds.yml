@@ -25,4 +25,6 @@ jobs:
 
         - run: qmake -makefile -o Makefile "TEMPLATE = app" Sources/ShrVN_main_script_interpretor/ShrVN_main_script_interpretor.pro
 
+        - run: sed 's/CXX           = g++/CXX           = g++ -std=c++20/g' -i Makefile
+
         - run: make
