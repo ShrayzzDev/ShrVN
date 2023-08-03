@@ -18,3 +18,11 @@ jobs:
         - run: sed 's/CXX           = g++/CXX           = g++ -std=c++20/g' -i Makefile
 
         - run: make
+
+        - run: sudo rm Makefile
+
+        - run: sudo apt install libsdl2-2.0-0 libsdl2-gfx-1.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-net-2.0-0 libsdl2-ttf-2.0-0
+
+        - run: qmake -makefile -o Makefile "TEMPLATE = app" Sources/ShrVN_main_script_interpretor/ShrVN_main_script_interpretor.pro
+
+        - run: make
