@@ -21,9 +21,9 @@
 // #include "main_menu_parameters.hpp"
 // #include "main_menu_interpretor.hpp"
 // #include "main_menu_parserer.hpp"
-// #include "in_game_menu_parserer.hpp"
-// #include "in_game_menu_parameters.hpp"
-// #include "in_game_menu_interpretor.hpp"
+#include "in_game_menu_parserer.hpp"
+#include "in_game_menu_parameters.hpp"
+#include "in_game_menu_interpretor.hpp"
 // #include "options_menu_interpretor.h"
 // #include "options_menu_parserer.hpp"
 // #include "options_menu_parameters.hpp"
@@ -95,15 +95,19 @@ int main(int argc, char* argv[])
     file.open("InGameOverlay.shrvn");
     InGameOverlayInterpretor igo_interpretor;
     InGameOverlayParserer igo_parse(&igo_interpretor);
-    InGameOverlayParameters * ig_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
+    InGameOverlayParameters * igo_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
+    file.close();
+    file.open("InGameMenu.shrvn");
+    InGameMenuInterpretor igm_interpretor;
+    InGameMenuParserer igm_parse(&igm_interpretor);
+    InGameMenuParameters * igm_Parameters = igm_parse.ReadInGameMenuParametersFile(file);
     file.close();
     filesystem::current_path("../");
     CharacterInstantiator test;
     CharacterParserer parserer(&test);
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
-    Window fen(project_name);
+    Window fen(project_name,1080,1920,igo_Parameters,nullptr,igm_Parameters,nullptr,nullptr);
     fen.Init();
-    fen.SetInGameOverlayParameters(ig_Parameters);
     fen.InitFont();
     // fen.SwitchTextMode();
     MovementInterpretor mvt_interpretor;
@@ -271,7 +275,8 @@ int main(int argc, char* argv[])
         }
         fen.IsClicked = false;
     }
-    free(ig_Parameters);
+    free(igo_Parameters);
+    free(igm_Parameters);
     free(Movement_Map);
     return 0;
 unknown_keyword:

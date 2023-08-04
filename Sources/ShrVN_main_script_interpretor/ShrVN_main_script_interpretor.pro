@@ -10,6 +10,7 @@ PROJECT_DIR = ../ShrVN
 INCLUDEPATH += $$PROJECT_DIR
 
 SOURCES += \
+        button.cpp \
         font.cpp \
         in_game_window.cpp \
         initialisation_error.cpp \
@@ -22,6 +23,7 @@ DEPENDPATH += $$PWD/../../3rdparty/SDL2/includes
 
 HEADERS += \
     CurrentScreen.h \
+    button.hpp \
     dialogue.h \
     font.h \
     in_game_window.hpp \

@@ -1,9 +1,14 @@
 #ifndef CURRENTSCREEN_H
 #define CURRENTSCREEN_H
 
+#include <list>
+#include <string>
+
 #include <SDL.h>
 
 class Window;
+
+class Button;
 
 class CurrentScreen
 {

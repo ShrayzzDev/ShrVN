@@ -8,24 +8,20 @@ background_img_opacity = 100
 
 // Path (relative to the images/ folder) for the image used as the save icon 
 
-save_icon = Jean435/Akane.png
-
-// Path (relative to the images/ folder) for the image used as the load icon 
-
-load_icon = Jean435/Akane.png
+save_icon = save.png
 
 // Path (relative to the images/ folder) for the image used as the option icon 
 
-option_icon = Jean435/Akane.png
+option_icon = settings.png
 
 // Path (relative to the images/ folder) for the image used as the title menu icon 
 
-title_menu_icon = Jean435/Akane.png
+title_menu_icon = tmi.png
 
 // Height for each button (NOTE : every buttons on this menu have the sames height)
 
-btn_height = 50
+btn_height = 200
 
 // Length for each button (NOTE : every buttons on this menu have the sames length)
 
-btn_length = 50
+btn_length = 200

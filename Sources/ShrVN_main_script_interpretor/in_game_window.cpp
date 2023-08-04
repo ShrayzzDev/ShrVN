@@ -4,6 +4,7 @@
 #include "in_game_window.hpp"
 #include "font.h"
 #include "window.hpp"
+#include "button.hpp"
 
 InGameWindow::InGameWindow(InGameOverlayParameters * igop, InGameMenuParameters * igmp)
     :m_igop{igop}, m_igmp{igmp}
@@ -104,30 +105,31 @@ void InGameWindow::CleanCurrentMessages()
 void InGameWindow::ReactEvent(Window * win, SDL_Event & event)
 {
     switch (event.type) {
-    case SDL_WINDOWEVENT:
-        switch (event.window.event) {
-        case SDL_WINDOWEVENT_MAXIMIZED:
-            win->Maximize();
-            break;
-
-        case SDL_WINDOWEVENT_CLOSE:
-            exit(0);
-            break;
-        }
-        break;
     case SDL_MOUSEBUTTONDOWN:
         switch (event.button.clicks) {
         case SDL_BUTTON_LEFT:
-            win->IsClicked = true;
-            Click();
+            Click(win);
             break;
         }
         break;
     case SDL_KEYDOWN:
         switch(event.key.keysym.sym) {
         case SDLK_RETURN:
-            win->IsClicked = true;
-            Click();
+            Click(win);
+            break;
+        case SDLK_ESCAPE:
+            if (!IsMenuOpen)
+            {
+                IsTextShown = false;
+            }
+            else
+            {
+                IsTextShown = true;
+            }
+            IsMenuOpen = !IsMenuOpen;
+            break;
+        case SDLK_F1:
+            IsTextShown = !IsTextShown;
             break;
         }
         break;
@@ -147,66 +149,99 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
     switch(m_igop->m_text_mode) {
     case ADV:
     {
-        if (m_current_dialogue.empty())
+        if (!IsMenuOpen)
         {
-            break;
+            if (IsTextShown)
+            {
+                if (m_current_dialogue.empty())
+                {
+                    break;
+                }
+                switch (m_igop->m_block_shape) {
+                case base_rectangle:
+                {
+                    SDL_SetRenderDrawColor(rend,255,128,0,200);
+                    SDL_Rect main_text_block = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y, m_igop->m_text_block_lenght, m_igop->m_text_block_height};
+                    SDL_RenderFillRect(rend,&main_text_block);
+                    break;
+                }
+                case fading_rectangle:
+                {
+                    break;
+                }
+                }
+                int w,h;
+                SDL_QueryTexture(m_current_dialogue.back().m_text,NULL,NULL,&w,&h);
+                SDL_Rect rect = {m_igop->m_text_block_position.m_x + 10, m_igop->m_text_block_position.m_y + 10, w, h};
+                m_current_dialogue.back().m_rect = rect;
+                SDL_RenderCopy(rend,m_current_dialogue.back().m_text,NULL,&m_current_dialogue.back().m_rect);
+                SDL_Surface * char_name_surface;
+                char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
+                SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(rend,char_name_surface);
+                SDL_QueryTexture(char_name_text,NULL,NULL,&w,&h);
+                SDL_Rect char_name_rect = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y - (h+20),w + 20,h + 20};
+                SDL_RenderFillRect(rend,&char_name_rect);
+                SDL_Rect rect_char = char_name_rect;
+                rect_char.x += 5;
+                rect_char.y += 5;
+                rect_char.w -= 10;
+                rect_char.h -= 10;
+                SDL_RenderCopy(rend,char_name_text,NULL,&rect_char);
+                SDL_DestroyTexture(char_name_text);
+                SDL_FreeSurface(char_name_surface);
+            }
         }
-        switch (m_igop->m_block_shape) {
-        case base_rectangle:
+        else
         {
-            SDL_SetRenderDrawColor(rend,255,128,0,200);
-            SDL_Rect main_text_block = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y, m_igop->m_text_block_lenght, m_igop->m_text_block_height};
-            SDL_RenderFillRect(rend,&main_text_block);
-            break;
+            SDL_SetRenderDrawColor(rend,0,0,0,190);
+            SDL_Rect rect = {0,0,window_length,window_height};
+            SDL_RenderFillRect(rend,&rect);
+            for (auto btn : m_buttons)
+            {
+                int x,y;
+                SDL_GetMouseState(&x,&y);
+                btn.RenderButton(rend,x,y);
+            }
         }
-        case fading_rectangle:
-        {
-            break;
-        }
-        }
-        int w,h;
-        SDL_QueryTexture(m_current_dialogue.back().m_text,NULL,NULL,&w,&h);
-        SDL_Rect rect = {m_igop->m_text_block_position.m_x + 10, m_igop->m_text_block_position.m_y + 10, w, h};
-        m_current_dialogue.back().m_rect = rect;
-        SDL_RenderCopy(rend,m_current_dialogue.back().m_text,NULL,&m_current_dialogue.back().m_rect);
-        SDL_Surface * char_name_surface;
-        char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
-        SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(rend,char_name_surface);
-        SDL_QueryTexture(char_name_text,NULL,NULL,&w,&h);
-        SDL_Rect char_name_rect = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y - (h+20),w + 20,h + 20};
-        SDL_RenderFillRect(rend,&char_name_rect);
-        SDL_Rect rect_char = char_name_rect;
-        rect_char.x += 5;
-        rect_char.y += 5;
-        rect_char.w -= 10;
-        rect_char.h -= 10;
-        SDL_RenderCopy(rend,char_name_text,NULL,&rect_char);
-        SDL_DestroyTexture(char_name_text);
-        SDL_FreeSurface(char_name_surface);
         break;
     }
     case NVL:
     {
-        SDL_SetRenderDrawColor(rend,0,0,0,190);
-        SDL_Rect rect = {0,0,window_length,window_height};
-        SDL_RenderFillRect(rend,&rect);
-        unsigned short y_coord = 100;
-        int w,h;
-        for (auto & dial : m_current_dialogue)
+        if ((IsTextShown && !IsMenuOpen) || IsMenuOpen)
         {
-            SDL_Surface * name_surface;
-            name_surface = TTF_RenderText_Solid_Wrapped(m_font,dial.m_talking->GetName().c_str(),m_text_color,300);
-            SDL_Texture * name = SDL_CreateTextureFromSurface(rend,name_surface);
-            SDL_QueryTexture(name,NULL,NULL,&w,&h);
-            SDL_Rect rect_char_name = {(300-w)/3,y_coord,w,h};
-            SDL_RenderCopy(rend,name,NULL,&rect_char_name);
-            SDL_QueryTexture(dial.m_text,NULL,NULL,&w,&h);
-            SDL_Rect rect = {220, y_coord, w, h};
-            dial.m_rect = rect;
-            SDL_RenderCopy(rend,dial.m_text,NULL,&dial.m_rect);
-            y_coord += h + 20;
-            SDL_DestroyTexture(name);
-            SDL_FreeSurface(name_surface);
+            SDL_SetRenderDrawColor(rend,0,0,0,190);
+            SDL_Rect rect = {0,0,window_length,window_height};
+            SDL_RenderFillRect(rend,&rect);
+            if (IsMenuOpen)
+            {
+                int x,y;
+                SDL_GetMouseState(&x,&y);
+                for (auto btn : m_buttons)
+                {
+                    btn.RenderButton(rend,x,y);
+                }
+            }
+        }
+        if (!IsMenuOpen && IsTextShown)
+        {
+            unsigned short y_coord = 100;
+            int w,h;
+            for (auto & dial : m_current_dialogue)
+            {
+                SDL_Surface * name_surface;
+                name_surface = TTF_RenderText_Solid_Wrapped(m_font,dial.m_talking->GetName().c_str(),m_text_color,300);
+                SDL_Texture * name = SDL_CreateTextureFromSurface(rend,name_surface);
+                SDL_QueryTexture(name,NULL,NULL,&w,&h);
+                SDL_Rect rect_char_name = {(300-w)/3,y_coord,w,h};
+                SDL_RenderCopy(rend,name,NULL,&rect_char_name);
+                SDL_QueryTexture(dial.m_text,NULL,NULL,&w,&h);
+                SDL_Rect rect = {220, y_coord, w, h};
+                dial.m_rect = rect;
+                SDL_RenderCopy(rend,dial.m_text,NULL,&dial.m_rect);
+                y_coord += h + 20;
+                SDL_DestroyTexture(name);
+                SDL_FreeSurface(name_surface);
+            }
         }
         break;
     }
@@ -220,6 +255,18 @@ Dialogue InGameWindow::CreateDialogue(const std::string &text, Characters &chr, 
     text_surface = TTF_RenderText_Solid_Wrapped(m_font,text.c_str(),m_text_color,m_igop->m_text_block_lenght);
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(rend,text_surface);
     return {text_texture,&chr};
+}
+
+void InGameWindow::InitButtons(SDL_Renderer * rend)
+{
+    short base_x = 200, base_y = 300;
+    Button settings = {"Setting","settings.png",m_igmp->m_button_length,m_igmp->m_button_height,base_x,base_y,rend};
+    settings.m_WhenPressed = SettingButton;
+    m_buttons.push_back(settings);
+    base_x = base_x + m_igmp->m_button_length + 20;
+    Button save = {"save","save.png",m_igmp->m_button_length,m_igmp->m_button_height,base_x,base_y,rend};
+    save.m_WhenPressed = SaveButton;
+    m_buttons.push_back(save);
 }
 
 void InGameWindow::AddCurrentDialogue(Dialogue &dial)
@@ -293,8 +340,28 @@ void InGameWindow::AddOnScreenSprite(const std::string &image_path, Point coord,
     m_onscreen_sprites.insert(std::pair(image_path,current_sprite));
 }
 
-void InGameWindow::Click()
+void InGameWindow::Click(Window * win)
 {
+    if (!IsMenuOpen)
+    {
+        win->IsClicked = true;
+    }
+    else
+    {
+        int mouse_x, mouse_y;
+        SDL_GetMouseState(&mouse_x,&mouse_y);
+        for (auto btn : m_buttons)
+        {
+            if (btn.IsWithinBound(mouse_x,mouse_y))
+            {
+                btn.m_WhenPressed(win);
+            }
+        }
+    }
+    if (!IsTextShown)
+    {
+        IsTextShown = true;
+    }
     for (auto & sprt : m_onscreen_sprites)
     {
         if (!sprt.second.IsMovementEmpty())
@@ -312,4 +379,14 @@ void InGameWindow::AddMovementToSprite(const std::string &image_path, Movement &
         throw std::invalid_argument("ERROR : image located at " + image_path + " isn't curretly used as an on screen sprite.");
     }
     m_onscreen_sprites.at(image_path).SetMovement(mvt,100);
+}
+
+void SettingButton(Window * win)
+{
+    std::cout << "je suis les paramètres" << std::endl;
+}
+
+void SaveButton(Window * win)
+{
+    std::cout << "je suis la sauvegarde" << std::endl;
 }

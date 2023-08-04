@@ -16,11 +16,6 @@ void InGameMenuInterpretor::SetSaveIcon(InGameMenuParameters &igmp, const std::s
     igmp.m_save_icon = save_icon;
 }
 
-void InGameMenuInterpretor::SetLoadIcon(InGameMenuParameters &igmp, const std::string &load_icon) const
-{
-    igmp.m_load_icon = load_icon;
-}
-
 void InGameMenuInterpretor::SetOptionIcon(InGameMenuParameters &igmp, const std::string &option_icon) const
 {
     igmp.m_option_icon = option_icon;

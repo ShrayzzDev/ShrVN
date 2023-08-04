@@ -42,9 +42,8 @@ public:
     TTF_Font * GetFont() const;
     Sprite * GetSprite(const std::string & img_path);
     InGameWindow & GetIgw();
-    void SetInGameOverlayParameters(InGameOverlayParameters * igop);
+    void SetInGame(InGameOverlayParameters * igop, InGameMenuParameters * igmp);
     void SetOptionsMenuParameters(OptionsMenuParameters * omp);
-    void SetInGameMenuParameters(InGameMenuParameters * igmp);
     void SetSavesMenuParameters(SavesMenuParameters * smp);
     void SetMainMenuParameters(MainMenuParameters * mmp);
     void SetCurrentScreen(CurrentScreen * current);

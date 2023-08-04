@@ -49,7 +49,7 @@ InGameMenuParameters * InGameMenuParserer::ReadInGameMenuParametersFile(std::ifs
             else if (word.starts_with("background_img_opacity"))
             {
                 ReadIntVarAssignation(file,word,value);
-                if (value < 0 || value > 100)
+                if (value < 0 || value > 255)
                 {
                     goto wrong_argument;
                 }
@@ -69,16 +69,6 @@ InGameMenuParameters * InGameMenuParserer::ReadInGameMenuParametersFile(std::ifs
                 goto wrong_argument;
             }
             m_interpretor->SetSaveIcon(*Parameters,next_word);
-        }
-        else if (word.starts_with("load_icon"))
-        {
-            ReadStringVarAssignation(file,word,next_word);
-            string full_path = current_path + "/images/" + next_word;
-            if( !filesystem::exists(full_path))
-            {
-                goto wrong_argument;
-            }
-            m_interpretor->SetLoadIcon(*Parameters,next_word);
         }
         else if (word.starts_with("option_icon"))
         {
@@ -105,7 +95,7 @@ InGameMenuParameters * InGameMenuParserer::ReadInGameMenuParametersFile(std::ifs
             if (word.starts_with("btn_height"))
             {
                 ReadIntVarAssignation(file,word,value);
-                if (value < 0 || value > 100)
+                if (value < 0 || value > 1920)
                 {
                     goto wrong_argument;
                 }
@@ -114,7 +104,7 @@ InGameMenuParameters * InGameMenuParserer::ReadInGameMenuParametersFile(std::ifs
             else if (word.starts_with("btn_length"))
             {
                 ReadIntVarAssignation(file,word,value);
-                if (value < 0 || value > 100)
+                if (value < 0 || value > 1080)
                 {
                     goto wrong_argument;
                 }

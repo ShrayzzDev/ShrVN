@@ -13,7 +13,7 @@
 Window::Window(const std::string & name, unsigned short height, unsigned short length, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp)
     : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_omp{omp}, m_igmp{igmp}, m_smp{smp}, m_mmp{mmp}, IsClicked{false}
 {
-    SetInGameOverlayParameters(igop);
+    SetInGame(igop,igmp);
     m_current = &m_igw;
 }
 
@@ -43,7 +43,7 @@ void Window::Init()
         throw Initialisation_Error(error.c_str());
     }
     SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
-
+    m_igw.InitButtons(m_renderer);
 }
 
 const std::string & Window::GetName() const
@@ -71,24 +71,21 @@ InGameWindow & Window::GetIgw()
     return m_igw;
 }
 
-void Window::SetInGameOverlayParameters(InGameOverlayParameters * igop)
+void Window::SetInGame(InGameOverlayParameters * igop, InGameMenuParameters * igmp)
 {
     if (m_igw.GetIgop() != nullptr)
     {
         SDL_DestroyTexture(m_igw.GetBgImg());
     }
-    InGameWindow igw = {igop};
+    InGameWindow igw = {igop,igmp};
+    SDL_Color color = {0,0,0,0};
+    igw.SetTextColor(color);
     m_igw = igw;
 }
 
 void Window::SetOptionsMenuParameters(OptionsMenuParameters * omp)
 {
     m_omp = omp;
-}
-
-void Window::SetInGameMenuParameters(InGameMenuParameters * igmp)
-{
-    m_igmp = igmp;
 }
 
 void Window::SetSavesMenuParameters(SavesMenuParameters * smp)
@@ -143,13 +140,11 @@ void Window::ReactEvent()
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
             case SDL_WINDOWEVENT_MAXIMIZED:
-                m_length = 1920;
-                m_height = 1080;
+                Maximize();
                 break;
 
             case SDL_WINDOWEVENT_CLOSE:
-                m_open = false;
-                this->~Window();
+                exit(0);
                 break;
             }
         default:

@@ -11,6 +11,9 @@
 #include "sprite.hpp"
 #include "dialogue.h"
 #include "CurrentScreen.h"
+#include "button.hpp"
+
+class Window;
 
 class InGameWindow : public CurrentScreen
 {
@@ -21,9 +24,11 @@ class InGameWindow : public CurrentScreen
     InGameOverlayParameters * m_igop;
     InGameMenuParameters * m_igmp;
     bool IsMenuOpen = false;
+    bool IsTextShown = true;
     std::map<std::string,Sprite> m_onscreen_sprites;
     std::list<Dialogue> m_previous_dialogue;
     std::list<Dialogue> m_current_dialogue;
+    std::list<Button> m_buttons;
 public:
     InGameWindow(InGameOverlayParameters * igop = nullptr, InGameMenuParameters * igmp = nullptr);
     InGameOverlayParameters * GetIgop() const;
@@ -43,12 +48,17 @@ public:
     void AddMovementToSprite(const std::string &image_path, Movement &mvt);
     void RemoveOnScreenSprite(const std::string &image_path);
     Dialogue CreateDialogue(const std::string &text, Characters &chr, SDL_Renderer * rend);
+    void InitButtons(SDL_Renderer * rend);
     void DestroyOnScreenSprite();
     void DestroyDialogues();
     void CleanCurrentMessages();
     void ReactEvent(Window * win, SDL_Event & event) override;
-    void Click();
+    void Click(Window * win);
     void RenderWindow(SDL_Renderer * rend, unsigned short window_length, unsigned short window_height) override;
 };
+
+void SettingButton(Window * win);
+void SaveButton(Window * win);
+
 
 #endif // INGAMEWINDOW_HPP
