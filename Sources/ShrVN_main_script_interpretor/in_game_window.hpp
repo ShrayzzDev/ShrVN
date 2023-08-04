@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <SDL_ttf.h>
+#include <vector>
 
 #include "in_game_overlay_parameters.hpp"
 #include "in_game_menu_parameters.hpp"
@@ -28,7 +29,8 @@ class InGameWindow : public CurrentScreen
     std::map<std::string,Sprite> m_onscreen_sprites;
     std::list<Dialogue> m_previous_dialogue;
     std::list<Dialogue> m_current_dialogue;
-    std::list<Button> m_buttons;
+    std::vector<Button> m_buttons;
+    short m_btn_choice_count = -1;
 public:
     InGameWindow(InGameOverlayParameters * igop = nullptr, InGameMenuParameters * igmp = nullptr);
     InGameOverlayParameters * GetIgop() const;

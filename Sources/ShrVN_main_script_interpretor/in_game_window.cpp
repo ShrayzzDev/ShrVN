@@ -131,6 +131,35 @@ void InGameWindow::ReactEvent(Window * win, SDL_Event & event)
         case SDLK_F1:
             IsTextShown = !IsTextShown;
             break;
+        case SDLK_LEFT:
+            if (IsMenuOpen)
+            {
+                if (m_btn_choice_count == -1)
+                {
+                    m_btn_choice_count = 0;
+                }
+                else if (m_btn_choice_count > 0)
+                {
+                    m_btn_choice_count--;
+                }
+                Point pt = m_buttons[m_btn_choice_count].GetMiddle();
+                SDL_WarpMouseInWindow(NULL,pt.m_x,pt.m_y);
+            }
+            break;
+        case SDLK_RIGHT:
+            if (IsMenuOpen)
+            {
+                if (m_btn_choice_count == -1)
+                {
+                    m_btn_choice_count = 0;
+                }
+                else if (m_btn_choice_count < 1)
+                {
+                    m_btn_choice_count++;
+                }
+                Point pt = m_buttons[m_btn_choice_count].GetMiddle();
+                SDL_WarpMouseInWindow(NULL,pt.m_x,pt.m_y);
+            }
         }
         break;
     }

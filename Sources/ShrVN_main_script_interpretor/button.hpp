@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include <string>
 
+#include "point.hpp"
+
 class Window;
 
 class Button
@@ -17,6 +19,7 @@ public:
     void (*m_WhenPressed)(Window*) = nullptr;
     void RenderButton(SDL_Renderer * rend, short mouse_x, short mouse_y);
     bool IsWithinBound(short x, short y);
+    Point GetMiddle();
 };
 
 #endif // BUTTON_HPP

@@ -35,3 +35,11 @@ bool Button::IsWithinBound(short x, short y)
     }
     return true;
 }
+
+Point Button::GetMiddle()
+{
+    Point pt;
+    pt.m_x = m_rect.x + m_rect.w/2;
+    pt.m_y = m_rect.y + m_rect.h/2;
+    return pt;
+}
