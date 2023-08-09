@@ -6,8 +6,8 @@
 #include "window.hpp"
 #include "button.hpp"
 
-InGameWindow::InGameWindow(InGameOverlayParameters * igop, InGameMenuParameters * igmp)
-    :m_igop{igop}, m_igmp{igmp}
+InGameWindow::InGameWindow(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp)
+    :m_igop{igop}, m_igmp{igmp}, m_isl{isl}
 {
 
 }
@@ -200,10 +200,10 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
                 }
                 }
                 int w,h;
-                SDL_QueryTexture(m_current_dialogue.back().m_text,NULL,NULL,&w,&h);
+                SDL_QueryTexture(m_current_dialogue.back().m_texture,NULL,NULL,&w,&h);
                 SDL_Rect rect = {m_igop->m_text_block_position.m_x + 10, m_igop->m_text_block_position.m_y + 10, w, h};
                 m_current_dialogue.back().m_rect = rect;
-                SDL_RenderCopy(rend,m_current_dialogue.back().m_text,NULL,&m_current_dialogue.back().m_rect);
+                SDL_RenderCopy(rend,m_current_dialogue.back().m_texture,NULL,&m_current_dialogue.back().m_rect);
                 SDL_Surface * char_name_surface;
                 char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
                 SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(rend,char_name_surface);
@@ -225,11 +225,11 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
             SDL_SetRenderDrawColor(rend,0,0,0,190);
             SDL_Rect rect = {0,0,window_length,window_height};
             SDL_RenderFillRect(rend,&rect);
-            for (auto btn : m_buttons)
+            int x,y;
+            SDL_GetMouseState(&x,&y);
+            for (auto & btn : m_buttons)
             {
-                int x,y;
-                SDL_GetMouseState(&x,&y);
-                btn.RenderButton(rend,x,y);
+                btn.RenderButton(rend,x,y,true);
             }
         }
         break;
@@ -245,9 +245,9 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
             {
                 int x,y;
                 SDL_GetMouseState(&x,&y);
-                for (auto btn : m_buttons)
+                for (auto & btn : m_buttons)
                 {
-                    btn.RenderButton(rend,x,y);
+                    btn.RenderButton(rend,x,y,true);
                 }
             }
         }
@@ -263,10 +263,10 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
                 SDL_QueryTexture(name,NULL,NULL,&w,&h);
                 SDL_Rect rect_char_name = {(300-w)/3,y_coord,w,h};
                 SDL_RenderCopy(rend,name,NULL,&rect_char_name);
-                SDL_QueryTexture(dial.m_text,NULL,NULL,&w,&h);
+                SDL_QueryTexture(dial.m_texture,NULL,NULL,&w,&h);
                 SDL_Rect rect = {220, y_coord, w, h};
                 dial.m_rect = rect;
-                SDL_RenderCopy(rend,dial.m_text,NULL,&dial.m_rect);
+                SDL_RenderCopy(rend,dial.m_texture,NULL,&dial.m_rect);
                 y_coord += h + 20;
                 SDL_DestroyTexture(name);
                 SDL_FreeSurface(name_surface);
@@ -283,19 +283,26 @@ Dialogue InGameWindow::CreateDialogue(const std::string &text, Characters &chr, 
     SDL_Surface * text_surface;
     text_surface = TTF_RenderText_Solid_Wrapped(m_font,text.c_str(),m_text_color,m_igop->m_text_block_lenght);
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(rend,text_surface);
-    return {text_texture,&chr};
+    return {text_texture,text,&chr};
 }
 
 void InGameWindow::InitButtons(SDL_Renderer * rend)
 {
     short base_x = 200, base_y = 300;
-    Button settings = {"Setting","settings.png",m_igmp->m_button_length,m_igmp->m_button_height,base_x,base_y,rend};
+    SDL_Rect rect = {base_x,base_y,m_igmp->m_button_length,m_igmp->m_button_height};
+    Button settings = {"Setting","settings.png",rect,rend};
     settings.m_WhenPressed = SettingButton;
     m_buttons.push_back(settings);
-    base_x = base_x + m_igmp->m_button_length + 20;
-    Button save = {"save","save.png",m_igmp->m_button_length,m_igmp->m_button_height,base_x,base_y,rend};
+    base_x += m_igmp->m_button_length + 20;
+    rect = {base_x,base_y,m_igmp->m_button_length,m_igmp->m_button_height};
+    Button save = {"Save","save.png",rect,rend};
     save.m_WhenPressed = SaveButton;
     m_buttons.push_back(save);
+    base_x += m_igmp->m_button_length + 20;
+    rect = {base_x,base_y,m_igmp->m_button_length,m_igmp->m_button_height};
+    Button load = {"Load","save.png",rect,rend};
+    save.m_WhenPressed = LoadButton;
+    m_buttons.push_back(load);
 }
 
 void InGameWindow::AddCurrentDialogue(Dialogue &dial)
@@ -308,7 +315,7 @@ void InGameWindow::AddCurrentDialogue(Dialogue &dial)
     m_previous_dialogue.push_back(dial);
     if (m_previous_dialogue.size() >= 10)
     {
-        SDL_DestroyTexture(m_previous_dialogue.front().m_text);
+        SDL_DestroyTexture(m_previous_dialogue.front().m_texture);
         m_previous_dialogue.pop_front();
     }
 }
@@ -337,7 +344,7 @@ void InGameWindow::DestroyDialogues()
 {
     for (auto & dial : m_previous_dialogue)
     {
-        SDL_DestroyTexture(dial.m_text);
+        SDL_DestroyTexture(dial.m_texture);
     }
 }
 
@@ -383,7 +390,7 @@ void InGameWindow::Click(Window * win)
         {
             if (btn.IsWithinBound(mouse_x,mouse_y))
             {
-                btn.m_WhenPressed(win);
+                btn.m_WhenPressed(win,nullptr);
             }
         }
     }
@@ -410,12 +417,17 @@ void InGameWindow::AddMovementToSprite(const std::string &image_path, Movement &
     m_onscreen_sprites.at(image_path).SetMovement(mvt,100);
 }
 
-void SettingButton(Window * win)
+void SettingButton(Window * win, CurrentScreen * cs)
 {
     std::cout << "je suis les paramètres" << std::endl;
 }
 
-void SaveButton(Window * win)
+void SaveButton(Window * win, CurrentScreen * cs)
+{  
+    win->SetCurrentScreen(save);
+}
+
+void LoadButton(Window * win, CurrentScreen * cs)
 {
-    std::cout << "je suis la sauvegarde" << std::endl;
+    win->SetCurrentScreen(load);
 }

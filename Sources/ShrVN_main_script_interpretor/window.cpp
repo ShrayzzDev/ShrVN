@@ -10,10 +10,11 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-Window::Window(const std::string & name, unsigned short height, unsigned short length, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp)
-    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_omp{omp}, m_igmp{igmp}, m_smp{smp}, m_mmp{mmp}, IsClicked{false}
+Window::Window(const std::string & name, unsigned short height, unsigned short length, ISaveLoader * isl, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp)
+    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_omp{omp}, m_mmp{mmp}, IsClicked{false}
 {
-    SetInGame(igop,igmp);
+    SetInGame(isl,igop,igmp);
+    SetSaveScreen(smp);
     m_current = &m_igw;
 }
 
@@ -44,6 +45,7 @@ void Window::Init()
     }
     SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
     m_igw.InitButtons(m_renderer);
+    m_sw.InitScreen(m_renderer);
 }
 
 const std::string & Window::GetName() const
@@ -71,16 +73,26 @@ InGameWindow & Window::GetIgw()
     return m_igw;
 }
 
-void Window::SetInGame(InGameOverlayParameters * igop, InGameMenuParameters * igmp)
+void Window::SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp)
 {
     if (m_igw.GetIgop() != nullptr)
     {
         SDL_DestroyTexture(m_igw.GetBgImg());
     }
-    InGameWindow igw = {igop,igmp};
+    InGameWindow igw = {isl,igop,igmp};
     SDL_Color color = {0,0,0,0};
     igw.SetTextColor(color);
     m_igw = igw;
+}
+
+void Window::SetSaveScreen(SavesMenuParameters *smp)
+{
+    if (m_sw.GetSmp() != nullptr)
+    {
+        SDL_DestroyTexture(m_sw.GetBgImg());
+    }
+    SaveScreen sw = {smp};
+    m_sw = sw;
 }
 
 void Window::SetOptionsMenuParameters(OptionsMenuParameters * omp)
@@ -88,25 +100,43 @@ void Window::SetOptionsMenuParameters(OptionsMenuParameters * omp)
     m_omp = omp;
 }
 
-void Window::SetSavesMenuParameters(SavesMenuParameters * smp)
-{
-    m_smp = smp;
-}
-
 void Window::SetMainMenuParameters(MainMenuParameters * mmp)
 {
     m_mmp = mmp;
 }
 
-void Window::SetCurrentScreen(CurrentScreen * current)
+void Window::SetCurrentScreen(CurrentScreenEnum cs)
 {
-    m_current = current;
+    switch(cs){
+    case in_game:
+        m_current = &m_igw;
+        break;
+    case save:
+        m_sw.SetMenuState(Saving);
+        m_current = &m_sw;
+        break;
+    case load:
+        m_sw.SetMenuState(Loading);
+        m_current = &m_sw;
+        break;
+    }
+}
+
+void Window::AddSpriteToBuffer(const std::string &img_path, Point coord)
+{
+    m_sw.m_current_save.AddOnScreenToBuffer(img_path,coord);
 }
 
 void Window::Maximize()
 {
     m_length = 1920;
     m_height = 1080;
+}
+
+void Window::UpdateSave(int nb_line, const Dialogue &dial)
+{
+    m_sw.m_current_save.UpdateScriptPos(nb_line);
+    m_sw.m_current_save.AddDialogueToBuffer(dial);
 }
 
 Window::~Window()

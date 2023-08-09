@@ -8,8 +8,6 @@
 
 class Window;
 
-class Button;
-
 class CurrentScreen
 {
 public:

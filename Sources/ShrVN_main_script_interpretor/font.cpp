@@ -16,8 +16,9 @@ TTF_Font * CreateFont(const std::string & font_type, unsigned short font_size)
 #ifdef _WIN64
     folders_to_check.push_back("C:/Windows/Fonts");
     char * user_fonts = getenv("appdata");
-    std::strcat(user_fonts,"/../Local/Microsoft/Windows/Fonts");
-    folders_to_check.push_back(user_fonts);
+    std::string user_font = user_fonts;
+    user_font +=  + "/../Local/Microsoft/Windows/Fonts";
+    folders_to_check.push_back(user_font);
 #elif __linux__
     folders_to_check.push_back("/usr/share/fonts");
     folders_to_check.push_back("/usr/local/share/fonts");

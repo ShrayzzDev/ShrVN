@@ -15,9 +15,9 @@
 #include "in_game_overlay_parameters.hpp"
 #include "in_game_overlay_parserer.hpp"
 #include "in_game_overlay_interpretor.hpp"
-// #include "saves_menu_parameters.hpp"
-// #include "saves_menu_parserer.hpp"
-// #include "saves_menu_interpertor.h"
+#include "saves_menu_parameters.hpp"
+#include "saves_menu_parserer.hpp"
+#include "saves_menu_interpertor.h"
 // #include "main_menu_parameters.hpp"
 // #include "main_menu_interpretor.hpp"
 // #include "main_menu_parserer.hpp"
@@ -34,6 +34,7 @@
 #include "movement_interpretor.h"
 #include "movement_file_parserer.h"
 #include "init.h"
+#include "interpreted_save_loader.hpp"
 
 using namespace std;
 
@@ -102,11 +103,17 @@ int main(int argc, char* argv[])
     InGameMenuParserer igm_parse(&igm_interpretor);
     InGameMenuParameters * igm_Parameters = igm_parse.ReadInGameMenuParametersFile(file);
     file.close();
+    file.open("SavesMenu.shrvn");
+    SavesMenuInterpretor smi_interpretor;
+    SavesMenuParserer smi_parse(&smi_interpretor);
+    SavesMenuParameters * smi_Parameters = smi_parse.ReadSavesMenuParametersFile(file);
+    file.close();
     filesystem::current_path("../");
     CharacterInstantiator test;
     CharacterParserer parserer(&test);
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
-    Window fen(project_name,1080,1920,igo_Parameters,nullptr,igm_Parameters,nullptr,nullptr);
+    InterpretedSaveLoader isl;
+    Window fen(project_name,1080,1920,&isl,igo_Parameters,nullptr,igm_Parameters,smi_Parameters,nullptr);
     fen.Init();
     fen.InitFont();
     // fen.SwitchTextMode();
@@ -115,12 +122,14 @@ int main(int argc, char* argv[])
     file.open("Movement.shrvn");
     map<string,Movement> * Movement_Map = mvt_parse.FileParserer(file);
     file.close();
-    int nb_line = 1;
+    int nb_line = 1, relative_nb_line = 1;
     bool dbpt, text;
     unsigned short x_value, y_value;
     std::string word, message, temp, char_name, next_word, img, img_path, value, line;
     Characters *current_char;
     Dialogue new_dialogue;
+    std::string save_path = getenv("Appdata");
+    std::cout << save_path << std::endl;
     while (fen.IsOpen() && !main_script.eof())
     {
         text = false;
@@ -176,6 +185,7 @@ int main(int argc, char* argv[])
                         Movement & mvt = Movement_Map->at(next_word);
                         fen.GetIgw().AddOnScreenSprite(img_path,mvt.control_points.front(),fen.GetRenderer());
                         fen.GetIgw().AddMovementToSprite(img_path,mvt);
+                        fen.AddSpriteToBuffer(img_path,mvt.control_points.back());
                     }
                     else
                     {
@@ -262,17 +272,20 @@ int main(int argc, char* argv[])
                 }
                 getline(main_script,temp,'\n');
                 text = true;
-                ++nb_line;
             }
+            ++nb_line;
+            ++relative_nb_line;
         }
         new_dialogue = fen.GetIgw().CreateDialogue(message,Characters_map.at(word),fen.GetRenderer());
         fen.GetIgw().AddCurrentDialogue(new_dialogue);
+        fen.UpdateSave(relative_nb_line,new_dialogue);
         while (!fen.IsClicked)
         {
             fen.ReactEvent();
             fen.RenderImage();
             std::this_thread::sleep_for(33ms);
         }
+        relative_nb_line = 1;
         fen.IsClicked = false;
     }
     free(igo_Parameters);

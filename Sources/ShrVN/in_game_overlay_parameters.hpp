@@ -24,7 +24,6 @@ struct InGameOverlayParameters
     std::string m_font_type = "calibri";
 #elif __linux__
     std::string m_font_type = "NotoSerif-CondensedLightItalic";
-
 #endif
 };
 

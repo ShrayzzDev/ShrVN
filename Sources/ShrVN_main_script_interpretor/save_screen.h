@@ -1,0 +1,51 @@
+#ifndef SAVE_SCREEN_H
+#define SAVE_SCREEN_H
+
+#include <list>
+#include <vector>
+#include <map>
+
+#include <SDL.h>
+
+#include "saves_menu_parameters.hpp"
+#include "CurrentScreen.h"
+#include "SaveMenuState.h"
+#include "save_button.h"
+#include "button.hpp"
+#include "save.h"
+
+class SaveScreen : public CurrentScreen
+{
+    SDL_Texture * m_background_img;
+    SavesMenuParameters * m_smp;
+    std::list<Button> m_pages;
+    std::list<button::SaveButton> m_save_buttons;
+    std::map<unsigned short,std::vector<Save>> m_saves;
+    unsigned short m_current_page = 1;
+    SaveMenuState m_sms;
+public:
+    Save m_current_save;
+    SaveScreen(SavesMenuParameters * smp = nullptr);
+    SavesMenuParameters * GetSmp() const;
+    SDL_Texture * GetBgImg() const;
+    void InitScreen(SDL_Renderer * rend);
+    void InitBtn(SDL_Renderer * rend);
+    void WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot);
+    Save ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot);
+    void SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend);
+    void SetMenuState(SaveMenuState sms);
+    void SetCurrentPage(unsigned current_page_nb);
+    void SetCurrentSave(Save save);
+    unsigned short GetCurrentPage();
+    SaveMenuState GetSaveMenuState();
+    void ReactEvent(Window *win, SDL_Event &event) override;
+    void Click(Window * win);
+    unsigned short WhichSaveBtn(short mouse_x, short mouse_y);
+    unsigned short WhichPageBtn(short mouse_x, short mouse_y);
+    void RenderWindow(SDL_Renderer *rend, unsigned short window_length, unsigned short window_height) override;
+};
+
+void MenuPageButton(Window * win, CurrentScreen * cs);
+void SaveButtonClicked(Window * win, CurrentScreen * cs);
+
+#endif // SAVE_SCREEN_H

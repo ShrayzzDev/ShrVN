@@ -14,7 +14,11 @@ SOURCES += \
         font.cpp \
         in_game_window.cpp \
         initialisation_error.cpp \
+        interpreted_save_loader.cpp \
         main.cpp \
+        save.cpp \
+        save_button.cpp \
+        save_screen.cpp \
         sprite.cpp \
         window.cpp
 
@@ -22,12 +26,21 @@ INCLUDEPATH += $$PWD/../../3rdparty/SDL2/includes
 DEPENDPATH += $$PWD/../../3rdparty/SDL2/includes
 
 HEADERS += \
+    BufferData.h \
     CurrentScreen.h \
+    CurrentScreenEnum.h \
+    ISaveLoader.hpp \
+    SaveData.h \
+    SaveMenuState.h \
     button.hpp \
     dialogue.h \
     font.h \
     in_game_window.hpp \
     initialisation_error.hpp \
+    interpreted_save_loader.hpp \
+    save.h \
+    save_button.h \
+    save_screen.h \
     sprite.hpp \
     window.hpp
 

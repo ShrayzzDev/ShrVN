@@ -1,6 +1,6 @@
 // path to the image used for the background of the save page.
 
-background_image = Jean435/Akane.png
+background_image = test_img_2.png
 
 // number of pages for saves (max = 10)
 

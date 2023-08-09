@@ -9,9 +9,10 @@
 
 #include "in_game_overlay_parameters.hpp"
 #include "in_game_menu_parameters.hpp"
-#include "sprite.hpp"
-#include "dialogue.h"
+#include "interpreted_save_loader.hpp"
 #include "CurrentScreen.h"
+#include "dialogue.h"
+#include "sprite.hpp"
 #include "button.hpp"
 
 class Window;
@@ -32,7 +33,8 @@ class InGameWindow : public CurrentScreen
     std::vector<Button> m_buttons;
     short m_btn_choice_count = -1;
 public:
-    InGameWindow(InGameOverlayParameters * igop = nullptr, InGameMenuParameters * igmp = nullptr);
+    ISaveLoader * m_isl;
+    InGameWindow(ISaveLoader * isl = nullptr,InGameOverlayParameters * igop = nullptr, InGameMenuParameters * igmp = nullptr);
     InGameOverlayParameters * GetIgop() const;
     SDL_Texture * GetBgImg() const;
     const Sprite * GetSprite(const std::string &img_path) const;
@@ -59,8 +61,8 @@ public:
     void RenderWindow(SDL_Renderer * rend, unsigned short window_length, unsigned short window_height) override;
 };
 
-void SettingButton(Window * win);
-void SaveButton(Window * win);
-
+void SettingButton(Window * win, CurrentScreen * cs);
+void SaveButton(Window * win, CurrentScreen * cs);
+void LoadButton(Window * win, CurrentScreen * cs);
 
 #endif // INGAMEWINDOW_HPP

@@ -9,7 +9,8 @@
 
 struct Dialogue
 {
-    SDL_Texture * m_text;
+    SDL_Texture * m_texture;
+    std::string m_text;
     Characters * m_talking;
     SDL_Rect m_rect;
 };

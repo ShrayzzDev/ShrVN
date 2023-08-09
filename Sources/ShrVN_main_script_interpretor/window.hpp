@@ -14,9 +14,11 @@
 #include "in_game_menu_parameters.hpp"
 #include "saves_menu_parameters.hpp"
 #include "main_menu_parameters.hpp"
-#include "CurrentScreen.h"
-#include "sprite.hpp"
+#include "CurrentScreenEnum.h"
 #include "in_game_window.hpp"
+#include "CurrentScreen.h"
+#include "save_screen.h"
+#include "sprite.hpp"
 
 class Window
 {
@@ -26,14 +28,13 @@ class Window
     bool m_open;
     CurrentScreen * m_current;
     InGameWindow m_igw;
+    SaveScreen m_sw;
     OptionsMenuParameters * m_omp;
-    InGameMenuParameters * m_igmp;
-    SavesMenuParameters * m_smp;
     MainMenuParameters * m_mmp;
     SDL_Window* m_window = nullptr;
     SDL_Renderer* m_renderer = nullptr;
 public:
-    Window(const std::string & name, unsigned short height = 1080, unsigned short length = 1920, InGameOverlayParameters * igop = nullptr, OptionsMenuParameters * omp = nullptr, InGameMenuParameters * igmp = nullptr, SavesMenuParameters * smp = nullptr, MainMenuParameters * mmp = nullptr);
+    Window(const std::string & name, unsigned short height = 1080, unsigned short length = 1920, ISaveLoader * isl = nullptr, InGameOverlayParameters * igop = nullptr, OptionsMenuParameters * omp = nullptr, InGameMenuParameters * igmp = nullptr, SavesMenuParameters * smp = nullptr, MainMenuParameters * mmp = nullptr);
     void Init();
     const std::string & GetName() const;
     unsigned short GetHeight() const;
@@ -42,12 +43,14 @@ public:
     TTF_Font * GetFont() const;
     Sprite * GetSprite(const std::string & img_path);
     InGameWindow & GetIgw();
-    void SetInGame(InGameOverlayParameters * igop, InGameMenuParameters * igmp);
+    void SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp);
+    void SetSaveScreen(SavesMenuParameters * smp);
     void SetOptionsMenuParameters(OptionsMenuParameters * omp);
-    void SetSavesMenuParameters(SavesMenuParameters * smp);
     void SetMainMenuParameters(MainMenuParameters * mmp);
-    void SetCurrentScreen(CurrentScreen * current);
+    void SetCurrentScreen(CurrentScreenEnum cs);
+    void AddSpriteToBuffer(const std::string & img_path, Point coord);
     void Maximize();
+    void UpdateSave(int nb_line,const Dialogue & dial);
     bool IsOpen() const;
     void ReactEvent();
     bool IsClicked;
