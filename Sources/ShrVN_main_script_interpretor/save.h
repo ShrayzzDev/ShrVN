@@ -21,6 +21,15 @@ public:
     std::pair<std::string,std::string> & GetLastDialogue();
     void AddOnScreenToBuffer(const std::string & img_path, Point coord);
     void UpdateScriptPos(int nb_lines);
+    void ClearCurrentDial();
+    void SetTextMode(text_mode txt_mode);
+    text_mode GetTextMode();
+    long long GetScriptLine();
+    unsigned short GetNbCurrentDial();
+    std::list<std::pair<std::string,std::string>> & GetDialogues();
+    friend std::ostream & operator<<(std::ostream & os, Save & save);
 };
+
+std::ostream & operator<<(std::ostream & os, Save & save);
 
 #endif // SAVE_H

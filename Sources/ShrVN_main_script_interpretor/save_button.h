@@ -21,9 +21,9 @@ namespace button
         Save * m_save;
         TTF_Font * m_font;
     public:
-        SaveButton(SDL_Rect rect, Save * save = nullptr);
+        SaveButton(SDL_Rect rect);
         void (*m_WhenPressed)(Window*,CurrentScreen*) = nullptr;
-        void RenderBtn(SDL_Renderer * rend);
+        void RenderBtn(SDL_Renderer * rend, short mouse_x, short mouse_y);
         bool IsWithinBound(short mouse_x, short mouse_y);
         void SetSave(Save * save, SDL_Renderer * rend);
     };

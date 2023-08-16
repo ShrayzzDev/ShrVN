@@ -10,15 +10,15 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-Window::Window(const std::string & name, unsigned short height, unsigned short length, ISaveLoader * isl, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp)
-    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_omp{omp}, m_mmp{mmp}, IsClicked{false}
+Window::Window(const std::string & name, unsigned short height, unsigned short length, ISaveLoader * isl, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp, std::map<std::string,Characters> * char_map)
+    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_char_map{char_map}, m_omp{omp}, m_mmp{mmp}, IsClicked{false}
 {
     SetInGame(isl,igop,igmp);
     SetSaveScreen(smp);
     m_current = &m_igw;
 }
 
-void Window::Init()
+void Window::Init(std::ifstream & script)
 {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -45,7 +45,9 @@ void Window::Init()
     }
     SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
     m_igw.InitButtons(m_renderer);
-    m_sw.InitScreen(m_renderer);
+    m_igw.SetCurrentScript(&script);
+    m_sw.InitScreen(m_renderer,this);
+    m_sw.GetCurrentSave().SetTextMode(ADV);
 }
 
 const std::string & Window::GetName() const
@@ -68,9 +70,19 @@ SDL_Renderer * Window::GetRenderer() const
     return m_renderer;
 }
 
+std::map<std::string, Characters> *Window::GetCharMap()
+{
+    return m_char_map;
+}
+
 InGameWindow & Window::GetIgw()
 {
     return m_igw;
+}
+
+SaveScreen &Window::GetSc()
+{
+    return m_sw;
 }
 
 void Window::SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp)

@@ -24,9 +24,15 @@ SDL_Texture *SaveScreen::GetBgImg() const
     return m_background_img;
 }
 
-void SaveScreen::InitScreen(SDL_Renderer * rend)
+Save & SaveScreen::GetCurrentSave()
+{
+    return m_current_save;
+}
+
+void SaveScreen::InitScreen(SDL_Renderer * rend, Window * win)
 {
     SetBackgroundImg(m_smp->m_background_image,rend);
+    ReadAllSaveData(win->GetName());
     InitBtn(rend);
 }
 
@@ -58,10 +64,18 @@ void SaveScreen::SetCurrentPage(unsigned int current_page_nb)
     m_current_page = current_page_nb;
 }
 
-void SaveScreen::SetCurrentSave(Save save)
+bool SaveScreen::SetCurrentSave(unsigned short page, unsigned short index)
 {
-    std::cout << "GNEEEEEEEEEEEEEEEE" << std::endl;
-    m_current_save = save;
+    try
+    {
+        m_current_save = m_saves.at(page).at(index);
+        std::cout << "je crash pas" << std::endl;
+    }
+    catch (std::out_of_range & e)
+    {
+        return false;
+    }
+    return true;
 }
 
 unsigned short SaveScreen::GetCurrentPage()
@@ -91,16 +105,19 @@ void SaveScreen::InitBtn(SDL_Renderer *rend)
     for (int i = 0; i < m_smp->m_nb_saves_per_pages; ++i)
     {
         SDL_Rect rect = {x_coord,y_coord,500,155};
+        button::SaveButton sb = {rect};
+        sb.m_WhenPressed = SaveButtonClicked;
         try
         {
-            m_saves.at(m_current_page).at(i);
+            Save * save = new Save();
+            *save = m_saves.at(m_current_page).at(i+1);
+            sb.SetSave(save,rend);
         }
         catch (std::out_of_range & e)
         {
-            button::SaveButton sb = {rect,nullptr};
-            sb.m_WhenPressed = SaveButtonClicked;
-            m_save_buttons.push_back(sb);
+
         }
+        m_save_buttons.push_back(sb);
         if (i%2 == 1)
         {
             x_coord = 450;
@@ -137,6 +154,14 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
     else
     {
         std::filesystem::current_path(project_name);
+        if (!std::filesystem::exists("savedata/"))
+        {
+            std::filesystem::create_directory("savedata");
+        }
+        if (!std::filesystem::exists("buffer/"))
+        {
+            std::filesystem::create_directory("buffer");
+        }
         if (!std::filesystem::exists("savedata/"+std::to_string(page)))
         {
             std::filesystem::current_path("savedata");
@@ -152,18 +177,72 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
     m_current_save.SaveSaveData(save_file);
     save_file.close();
     std::filesystem::current_path("../../buffer/"+std::to_string(page));
-    std::cout << std::filesystem::current_path() << std::endl;
     save_file.open(std::to_string(slot));
     m_current_save.SaveBuffer(save_file);
     save_file.close();
     std::filesystem::current_path(old_path);
 }
 
-Save SaveScreen::ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot)
+bool SaveScreen::ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot, Save & save)
 {
-    std::cout << "je suis la" << std::endl;
-    Save temp;
-    return temp;
+    std::string old_path = std::filesystem::current_path().generic_string();
+#ifdef _WIN64
+    std::string save_path = getenv("appdata");
+    save_path += "/../Local/";
+    std::filesystem::current_path(save_path);
+    save_path += project_name;
+#endif
+    if (!std::filesystem::exists(save_path))
+    {
+        std::filesystem::current_path(old_path);
+        return false;
+    }
+    std::filesystem::current_path(save_path);
+    save_path += "/savedata/";
+    if (!std::filesystem::exists(save_path))
+    {
+        std::filesystem::current_path(old_path);
+        return false;
+    }
+    save_path += std::to_string(page) + '/';
+    if (!std::filesystem::exists(save_path))
+    {
+        std::filesystem::current_path(old_path);
+        return false;
+    }
+    std::string full_save_path = save_path + std::to_string(slot);
+    if (!std::filesystem::exists(full_save_path))
+    {
+        std::filesystem::current_path(old_path);
+        return false;
+    }
+    std::ifstream file;
+    file.open(full_save_path);
+    save.ReadSaveFile(file);
+    file.close();
+    full_save_path = save_path + "../../buffer/" + std::to_string(page) + "/" + std::to_string(slot);
+    file.open(full_save_path);
+    save.ReadBufferFile(file);
+    file.close();
+    std::filesystem::current_path(old_path);
+    return true;
+}
+
+void SaveScreen::ReadAllSaveData(const std::string &project_name)
+{
+    for (int i = 1; i <= m_smp->m_nb_pages; ++i)
+    {
+        std::map<unsigned short,Save> map_save;
+        m_saves.emplace(std::pair<unsigned short,std::map<unsigned short,Save>>(i,map_save));
+        for (int k = 1; k <= m_smp->m_nb_saves_per_pages; ++k)
+        {
+            Save save;
+            if (ReadSaveData(project_name,i,k,save))
+            {
+                m_saves.at(i)[k] = save;
+            }
+        }
+    }
 }
 
 void SaveScreen::ReactEvent(Window *win, SDL_Event &event)
@@ -209,9 +288,9 @@ void SaveScreen::Click(Window * win)
     }
 }
 
-unsigned short SaveScreen::WhichSaveBtn(short mouse_x, short mouse_y)
+short SaveScreen::WhichSaveBtn(short mouse_x, short mouse_y)
 {
-    int i = 1;
+    int i = 0;
     for (auto & btn : m_save_buttons)
     {
         if (btn.IsWithinBound(mouse_x,mouse_y))
@@ -220,12 +299,12 @@ unsigned short SaveScreen::WhichSaveBtn(short mouse_x, short mouse_y)
         }
         ++i;
     }
-    return 0;
+    return -1;
 }
 
-unsigned short SaveScreen::WhichPageBtn(short mouse_x, short mouse_y)
+short SaveScreen::WhichPageBtn(short mouse_x, short mouse_y)
 {
-    int i = 1;
+    int i = 0;
     for (auto & btn : m_pages)
     {
         if (btn.IsWithinBound(mouse_x,mouse_y))
@@ -234,7 +313,7 @@ unsigned short SaveScreen::WhichPageBtn(short mouse_x, short mouse_y)
         }
         ++i;
     }
-    return 0;
+    return -1;
 }
 
 void SaveScreen::RenderWindow(SDL_Renderer *rend, unsigned short window_length, unsigned short window_height)
@@ -248,7 +327,7 @@ void SaveScreen::RenderWindow(SDL_Renderer *rend, unsigned short window_length, 
     }
     for (auto & btn : m_save_buttons)
     {
-        btn.RenderBtn(rend);
+        btn.RenderBtn(rend,x,y);
     }
 }
 
@@ -261,13 +340,12 @@ void MenuPageButton(Window *win, CurrentScreen *cs)
     }
     int x,y;
     SDL_GetMouseState(&x,&y);
-    unsigned int pagenb = sc->WhichPageBtn(x,y);
-    if (!pagenb)
+    short pagenb = sc->WhichPageBtn(x,y);
+    if (pagenb == -1)
     {
         return;
     }
     sc->SetCurrentPage(pagenb);
-    std::cout << pagenb << std::endl;
 }
 
 void SaveButtonClicked(Window * win, CurrentScreen * cs)
@@ -279,8 +357,8 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
     }
     int x,y;
     SDL_GetMouseState(&x,&y);
-    unsigned int savenb = sc->WhichSaveBtn(x,y);
-    if (!savenb)
+    short savenb = sc->WhichSaveBtn(x,y);
+    if (savenb == -1)
     {
         return;
     }
@@ -288,11 +366,14 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
     unsigned short nb_page = sc->GetCurrentPage();
     switch (sc->GetSaveMenuState()) {
     case Saving:
-        sc->WriteSaveData(prj_name,nb_page,savenb);
+        sc->WriteSaveData(prj_name,nb_page,savenb+1);
         break;
     case Loading:
-        Save save = sc->ReadSaveData(prj_name,nb_page,savenb);
-        sc->SetCurrentSave(save);
+        if (sc->SetCurrentSave(nb_page,savenb+1))
+        {
+            InGameWindow & igw = win->GetIgw();
+            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),*win->GetCharMap(),win->GetRenderer());
+        }
         break;
     }
 }

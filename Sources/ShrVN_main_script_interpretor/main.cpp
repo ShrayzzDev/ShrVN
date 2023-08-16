@@ -113,8 +113,8 @@ int main(int argc, char* argv[])
     CharacterParserer parserer(&test);
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
     InterpretedSaveLoader isl;
-    Window fen(project_name,1080,1920,&isl,igo_Parameters,nullptr,igm_Parameters,smi_Parameters,nullptr);
-    fen.Init();
+    Window fen(project_name,1080,1920,&isl,igo_Parameters,nullptr,igm_Parameters,smi_Parameters,nullptr, &Characters_map);
+    fen.Init(main_script);
     fen.InitFont();
     // fen.SwitchTextMode();
     MovementInterpretor mvt_interpretor;
@@ -128,8 +128,6 @@ int main(int argc, char* argv[])
     std::string word, message, temp, char_name, next_word, img, img_path, value, line;
     Characters *current_char;
     Dialogue new_dialogue;
-    std::string save_path = getenv("Appdata");
-    std::cout << save_path << std::endl;
     while (fen.IsOpen() && !main_script.eof())
     {
         text = false;
@@ -237,6 +235,7 @@ int main(int argc, char* argv[])
                 }
                 fen.GetIgw().CleanCurrentMessages();
                 fen.GetIgw().SwitchTextMode();
+                fen.GetSc().GetCurrentSave().SetTextMode(fen.GetIgw().GetTextMode());
             }
             else if (word == "Clear")
             {
@@ -247,6 +246,7 @@ int main(int argc, char* argv[])
                     goto unknown_keyword;
                 }
                 fen.GetIgw().CleanCurrentMessages();
+                fen.GetSc().GetCurrentSave().ClearCurrentDial();
             }
             else
             {
@@ -271,6 +271,11 @@ int main(int argc, char* argv[])
                     getline(main_script,message,'"');
                 }
                 getline(main_script,temp,'\n');
+                if (fen.GetIgw().GetTextMode() == ADV)
+                {
+                    std::cout << "je passe la" << std::endl;
+                    fen.GetSc().GetCurrentSave().ClearCurrentDial();
+                }
                 text = true;
             }
             ++nb_line;
@@ -278,6 +283,7 @@ int main(int argc, char* argv[])
         }
         new_dialogue = fen.GetIgw().CreateDialogue(message,Characters_map.at(word),fen.GetRenderer());
         fen.GetIgw().AddCurrentDialogue(new_dialogue);
+        fen.GetIgw().AddPreviousDialogue(new_dialogue);
         fen.UpdateSave(relative_nb_line,new_dialogue);
         while (!fen.IsClicked)
         {

@@ -20,7 +20,7 @@ class SaveScreen : public CurrentScreen
     SavesMenuParameters * m_smp;
     std::list<Button> m_pages;
     std::list<button::SaveButton> m_save_buttons;
-    std::map<unsigned short,std::vector<Save>> m_saves;
+    std::map<unsigned short,std::map<unsigned short,Save>> m_saves;
     unsigned short m_current_page = 1;
     SaveMenuState m_sms;
 public:
@@ -28,20 +28,22 @@ public:
     SaveScreen(SavesMenuParameters * smp = nullptr);
     SavesMenuParameters * GetSmp() const;
     SDL_Texture * GetBgImg() const;
-    void InitScreen(SDL_Renderer * rend);
+    Save & GetCurrentSave();
+    void InitScreen(SDL_Renderer * rend, Window * win);
     void InitBtn(SDL_Renderer * rend);
     void WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot);
-    Save ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot);
+    bool ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot, Save & save);
+    void ReadAllSaveData(const std::string & project_name);
     void SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend);
     void SetMenuState(SaveMenuState sms);
     void SetCurrentPage(unsigned current_page_nb);
-    void SetCurrentSave(Save save);
+    bool SetCurrentSave(unsigned short page, unsigned short index);
     unsigned short GetCurrentPage();
     SaveMenuState GetSaveMenuState();
     void ReactEvent(Window *win, SDL_Event &event) override;
     void Click(Window * win);
-    unsigned short WhichSaveBtn(short mouse_x, short mouse_y);
-    unsigned short WhichPageBtn(short mouse_x, short mouse_y);
+    short WhichSaveBtn(short mouse_x, short mouse_y);
+    short WhichPageBtn(short mouse_x, short mouse_y);
     void RenderWindow(SDL_Renderer *rend, unsigned short window_length, unsigned short window_height) override;
 };
 

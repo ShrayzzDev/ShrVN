@@ -1,12 +1,18 @@
 #ifndef INTERPRETEDSAVELOADER_HPP
 #define INTERPRETEDSAVELOADER_HPP
 
+#include <map>
+#include <string>
+
+#include <SDL.h>
+
 #include "ISaveLoader.hpp"
+#include "characters.hpp"
 
 class InterpretedSaveLoader : public ISaveLoader
 {
 public:
-    void LoadSave(InGameWindow *igw, Save save) const override;
+    void LoadSave(std::ifstream & file, InGameWindow * igw, Save save, std::map<std::string,Characters> char_map, SDL_Renderer * rend) const override;
 };
 
 #endif // INTERPRETEDSAVELOADER_HPP

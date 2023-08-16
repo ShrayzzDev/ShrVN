@@ -7,7 +7,7 @@
 #include "button.hpp"
 
 InGameWindow::InGameWindow(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp)
-    :m_igop{igop}, m_igmp{igmp}, m_isl{isl}
+    :m_igop{igop}, m_igmp{igmp}, m_sl{isl}
 {
 
 }
@@ -54,6 +54,11 @@ void InGameWindow::SetFont()
     }
 }
 
+void InGameWindow::SetCurrentScript(std::ifstream * file)
+{
+    m_script = file;
+}
+
 void InGameWindow::SetTextMode(text_mode txt_mode)
 {
     m_igop->m_text_mode = txt_mode;
@@ -95,6 +100,16 @@ text_mode InGameWindow::GetTextMode() const
 TTF_Font * InGameWindow::GetFont() const
 {
     return m_font;
+}
+
+std::ifstream * InGameWindow::GetCurrentScript()
+{
+    return m_script;
+}
+
+const std::list<Dialogue> & InGameWindow::GetPreviousDialogue() const
+{
+    return m_previous_dialogue;
 }
 
 void InGameWindow::CleanCurrentMessages()
@@ -301,19 +316,23 @@ void InGameWindow::InitButtons(SDL_Renderer * rend)
     base_x += m_igmp->m_button_length + 20;
     rect = {base_x,base_y,m_igmp->m_button_length,m_igmp->m_button_height};
     Button load = {"Load","save.png",rect,rend};
-    save.m_WhenPressed = LoadButton;
+    load.m_WhenPressed = LoadButton;
     m_buttons.push_back(load);
 }
 
-void InGameWindow::AddCurrentDialogue(Dialogue &dial)
+void InGameWindow::AddCurrentDialogue(const Dialogue & dial)
 {
     if (m_igop->m_text_mode == ADV && !m_current_dialogue.empty())
     {
         m_current_dialogue.pop_back();
     }
     m_current_dialogue.push_back(dial);
+}
+
+void InGameWindow::AddPreviousDialogue(const Dialogue & dial)
+{
     m_previous_dialogue.push_back(dial);
-    if (m_previous_dialogue.size() >= 10)
+    if (m_previous_dialogue.size() >= 100)
     {
         SDL_DestroyTexture(m_previous_dialogue.front().m_texture);
         m_previous_dialogue.pop_front();
@@ -390,7 +409,7 @@ void InGameWindow::Click(Window * win)
         {
             if (btn.IsWithinBound(mouse_x,mouse_y))
             {
-                btn.m_WhenPressed(win,nullptr);
+                btn.m_WhenPressed(win,this);
             }
         }
     }

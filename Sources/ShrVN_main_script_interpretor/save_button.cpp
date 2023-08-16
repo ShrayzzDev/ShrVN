@@ -5,21 +5,26 @@
 
 using namespace button;
 
-SaveButton::SaveButton(SDL_Rect rect, Save * save)
-    :m_preview{nullptr}, m_last_char_name{nullptr}, m_last_dialogue{nullptr}, m_rect{rect}, m_save{save}, m_font{nullptr}
+std::ostream & operator<<(std::ostream & os, SDL_Rect rect)
 {
-#ifdef _WIN64
-    m_font = CreateFont("calibri",400);
-#elif __linux__
-    m_font = CreateFont("NotoSerif-CondensedLightItalic",400);
-#endif
-    if (save == nullptr)
-    {
-        return;
-    }
+    os << "x:" << rect.x << std::endl
+       << "y:" << rect.y << std::endl
+       << "w:" << rect.w << std::endl
+       << "h:" << rect.h << std::endl;
+    return os;
 }
 
-void SaveButton::RenderBtn(SDL_Renderer *rend)
+SaveButton::SaveButton(SDL_Rect rect)
+    :m_preview{nullptr}, m_last_char_name{nullptr}, m_last_dialogue{nullptr}, m_rect{rect}, m_save{nullptr}, m_font{nullptr}
+{
+#ifdef _WIN64
+    m_font = CreateFont("calibri",70);
+#elif __linux__
+    m_font = CreateFont("NotoSerif-CondensedLightItalic",70);
+#endif
+}
+
+void SaveButton::RenderBtn(SDL_Renderer *rend, short mouse_x, short mouse_y)
 {
     if (m_last_dialogue != nullptr)
     {
@@ -40,6 +45,17 @@ void SaveButton::RenderBtn(SDL_Renderer *rend)
     {
         SDL_Rect rect;
         rect = {m_rect.x + m_rect.w/2 + 5,m_rect.y + 3, m_rect.w/2 - 5, m_rect.h/4};
+        SDL_RenderCopy(rend,m_last_char_name,NULL,&rect);
+        rect.y += rect.h;
+        rect.h = m_rect.h - rect.h;
+        SDL_RenderCopy(rend,m_last_dialogue,NULL,&rect);
+    }
+    if (IsWithinBound(mouse_x,mouse_y))
+    {
+        SDL_Rect rect;
+        rect = {m_rect.x - 20, m_rect.y - 20, m_rect.w + 40, m_rect.h + 40};
+        SDL_SetRenderDrawColor(rend,255,255,255,100);
+        SDL_RenderFillRect(rend,&rect);
     }
 }
 
