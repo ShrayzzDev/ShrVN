@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
     file.open("Movement.shrvn");
     map<string,Movement> * Movement_Map = mvt_parse.FileParserer(file);
     file.close();
-    int nb_line = 1, relative_nb_line = 1;
+    int nb_line = 0, relative_nb_line = 0;
     bool dbpt, text;
     unsigned short x_value, y_value;
     std::string word, message, temp, char_name, next_word, img, img_path, value, line;
@@ -136,11 +136,15 @@ int main(int argc, char* argv[])
             dbpt = false;
             if (CheckEmptyLine(main_script))
             {
+                ++nb_line;
+                ++relative_nb_line;
                 continue;
             }
             getline(main_script,word,' ');
             if (CheckComment(main_script,word))
             {
+                ++nb_line;
+                ++relative_nb_line;
                 continue;
             }
             if (word == "From")
@@ -291,7 +295,7 @@ int main(int argc, char* argv[])
             fen.RenderImage();
             std::this_thread::sleep_for(33ms);
         }
-        relative_nb_line = 1;
+        relative_nb_line = 0;
         fen.IsClicked = false;
     }
     free(igo_Parameters);

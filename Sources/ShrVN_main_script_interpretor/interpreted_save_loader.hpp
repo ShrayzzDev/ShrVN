@@ -12,7 +12,7 @@
 class InterpretedSaveLoader : public ISaveLoader
 {
 public:
-    void LoadSave(std::ifstream & file, InGameWindow * igw, Save save, std::map<std::string,Characters> char_map, SDL_Renderer * rend) const override;
+    void LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> char_map, SDL_Renderer * rend) const override;
 };
 
 #endif // INTERPRETEDSAVELOADER_HPP

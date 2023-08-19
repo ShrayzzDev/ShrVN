@@ -103,7 +103,7 @@ void Save::AddDialogueToBuffer(const Dialogue &dial)
 
 std::pair<std::string, std::string> & Save::GetLastDialogue()
 {
-    return m_buffer.m_previous_dialogue.front();
+    return m_buffer.m_previous_dialogue.back();
 }
 
 void Save::AddOnScreenToBuffer(const std::string & img_path, Point coord)
@@ -116,6 +116,7 @@ void Save::UpdateScriptPos(int nb_lines)
     m_user_data.nb_dial++;
     m_user_data.script_line += nb_lines;
     m_buffer.nb_current_dial++;
+    std::cout << m_user_data.script_line << std::endl;
 }
 
 void Save::ClearCurrentDial()

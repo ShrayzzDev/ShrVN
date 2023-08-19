@@ -1,13 +1,13 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
-#include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL.h>
 
-#include <string>
 #include <ostream>
-#include <map>
+#include <string>
 #include <list>
+#include <map>
 
 #include "in_game_overlay_parameters.hpp"
 #include "options_menu_parameters.hpp"

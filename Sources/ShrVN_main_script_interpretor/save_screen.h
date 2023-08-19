@@ -19,7 +19,7 @@ class SaveScreen : public CurrentScreen
     SDL_Texture * m_background_img;
     SavesMenuParameters * m_smp;
     std::list<Button> m_pages;
-    std::list<button::SaveButton> m_save_buttons;
+    std::vector<button::SaveButton> m_save_buttons;
     std::map<unsigned short,std::map<unsigned short,Save>> m_saves;
     unsigned short m_current_page = 1;
     SaveMenuState m_sms;
@@ -31,6 +31,7 @@ public:
     Save & GetCurrentSave();
     void InitScreen(SDL_Renderer * rend, Window * win);
     void InitBtn(SDL_Renderer * rend);
+    void UpdateButton(unsigned short slot_nb, SDL_Renderer * rend);
     void WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot);
     bool ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot, Save & save);
     void ReadAllSaveData(const std::string & project_name);

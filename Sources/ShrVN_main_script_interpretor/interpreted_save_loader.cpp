@@ -5,10 +5,10 @@
 #include "in_game_window.hpp"
 #include "save.h"
 
-void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, std::map<std::string,Characters> char_map, SDL_Renderer * rend) const
+void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> char_map, SDL_Renderer * rend) const
 {
     std::string temp;
-    for (int i = 0; i < save.GetScriptLine(); ++i)
+    for (int i = 0; i < save.GetScriptLine() - current_line; ++i)
     {
         std::getline(file,temp);
     }

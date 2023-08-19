@@ -130,6 +130,11 @@ void SaveScreen::InitBtn(SDL_Renderer *rend)
     }
 }
 
+void SaveScreen::UpdateButton(unsigned short slot_nb, SDL_Renderer * rend)
+{
+    m_save_buttons[slot_nb].SetSave(&m_saves[m_current_page][slot_nb],rend);
+}
+
 void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot)
 {
     std::string old_path = std::filesystem::current_path().generic_string();
@@ -180,6 +185,7 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
     save_file.open(std::to_string(slot));
     m_current_save.SaveBuffer(save_file);
     save_file.close();
+    m_saves[m_current_page][slot] = m_current_save;
     std::filesystem::current_path(old_path);
 }
 
@@ -234,7 +240,7 @@ void SaveScreen::ReadAllSaveData(const std::string &project_name)
     {
         std::map<unsigned short,Save> map_save;
         m_saves.emplace(std::pair<unsigned short,std::map<unsigned short,Save>>(i,map_save));
-        for (int k = 1; k <= m_smp->m_nb_saves_per_pages; ++k)
+        for (int k = 0; k <= m_smp->m_nb_saves_per_pages; ++k)
         {
             Save save;
             if (ReadSaveData(project_name,i,k,save))
@@ -367,12 +373,14 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
     switch (sc->GetSaveMenuState()) {
     case Saving:
         sc->WriteSaveData(prj_name,nb_page,savenb+1);
+        sc->UpdateButton(savenb,win->GetRenderer());
         break;
     case Loading:
+        unsigned short old_save_line = sc->GetCurrentSave().GetNbCurrentDial();
         if (sc->SetCurrentSave(nb_page,savenb+1))
         {
             InGameWindow & igw = win->GetIgw();
-            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),*win->GetCharMap(),win->GetRenderer());
+            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),old_save_line,*win->GetCharMap(),win->GetRenderer());
         }
         break;
     }

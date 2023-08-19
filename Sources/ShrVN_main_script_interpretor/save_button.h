@@ -19,7 +19,9 @@ namespace button
         SDL_Texture * m_last_dialogue;
         SDL_Rect m_rect;
         Save * m_save;
-        TTF_Font * m_font;
+        TTF_Font * m_no_save_font;
+        TTF_Font * m_char_name_font;
+        TTF_Font * m_dial_font;
     public:
         SaveButton(SDL_Rect rect);
         void (*m_WhenPressed)(Window*,CurrentScreen*) = nullptr;

@@ -15,12 +15,16 @@ std::ostream & operator<<(std::ostream & os, SDL_Rect rect)
 }
 
 SaveButton::SaveButton(SDL_Rect rect)
-    :m_preview{nullptr}, m_last_char_name{nullptr}, m_last_dialogue{nullptr}, m_rect{rect}, m_save{nullptr}, m_font{nullptr}
+    :m_preview{nullptr}, m_last_char_name{nullptr}, m_last_dialogue{nullptr}, m_rect{rect}, m_save{nullptr}, m_no_save_font{nullptr}, m_char_name_font{nullptr}, m_dial_font{nullptr}
 {
 #ifdef _WIN64
-    m_font = CreateFont("calibri",70);
+    m_no_save_font = CreateFont("calibri",70);
+    m_char_name_font = CreateFont("calibri",30);
+    m_dial_font = CreateFont("calibri",20);
 #elif __linux__
-    m_font = CreateFont("NotoSerif-CondensedLightItalic",70);
+    m_no_save_font = CreateFont("NotoSerif-CondensedLightItalic",70);
+    m_char_name_font = CreateFont("NotoSerif-CondensedLightItalic",30);
+    m_dial_font = CreateFont("NotoSerif-CondensedLightItalic",20);
 #endif
 }
 
@@ -36,7 +40,7 @@ void SaveButton::RenderBtn(SDL_Renderer *rend, short mouse_x, short mouse_y)
     {
         SDL_Color color = {255,255,255,255};
         SDL_Surface * surf;
-        surf = TTF_RenderText_Solid(m_font,"No Save",color);
+        surf = TTF_RenderText_Solid(m_no_save_font,"No Save",color);
         m_last_dialogue = SDL_CreateTextureFromSurface(rend,surf);
         SDL_RenderCopy(rend,m_last_dialogue,NULL,&m_rect);
         SDL_FreeSurface(surf);
@@ -48,7 +52,13 @@ void SaveButton::RenderBtn(SDL_Renderer *rend, short mouse_x, short mouse_y)
         SDL_RenderCopy(rend,m_last_char_name,NULL,&rect);
         rect.y += rect.h;
         rect.h = m_rect.h - rect.h;
+        SDL_Color color = {0,0,0,255};
+        SDL_Surface * surf = TTF_RenderText_Solid_Wrapped(m_dial_font,m_save->GetLastDialogue().second.c_str(),color,rect.w);
+        m_last_dialogue = SDL_CreateTextureFromSurface(rend,surf);
+        SDL_QueryTexture(m_last_dialogue,NULL,NULL,NULL,&rect.h);
         SDL_RenderCopy(rend,m_last_dialogue,NULL,&rect);
+        SDL_FreeSurface(surf);
+        SDL_DestroyTexture(m_last_dialogue);
     }
     if (IsWithinBound(mouse_x,mouse_y))
     {
@@ -77,17 +87,13 @@ void SaveButton::SetSave(Save * save, SDL_Renderer * rend)
     if (m_save != nullptr)
     {
         SDL_DestroyTexture(m_last_char_name);
-        SDL_DestroyTexture(m_last_dialogue);
         SDL_DestroyTexture(m_preview);
     }
     m_save = save;
     std::pair<std::string,std::string> last_dial = m_save->GetLastDialogue();
     SDL_Color color = {0,0,0,255};
     SDL_Surface * surf;
-    surf = TTF_RenderText_Solid(m_font,last_dial.first.c_str(),color);
+    surf = TTF_RenderText_Solid(m_char_name_font,last_dial.first.c_str(),color);
     m_last_char_name = SDL_CreateTextureFromSurface(rend,surf);
-    SDL_FreeSurface(surf);
-    surf = TTF_RenderText_Solid(m_font,last_dial.second.c_str(),color);
-    m_last_dialogue = SDL_CreateTextureFromSurface(rend,surf);
     SDL_FreeSurface(surf);
 }
