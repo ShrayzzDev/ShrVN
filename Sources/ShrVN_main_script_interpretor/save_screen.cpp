@@ -33,7 +33,7 @@ void SaveScreen::InitScreen(SDL_Renderer * rend, Window * win)
 {
     SetBackgroundImg(m_smp->m_background_image,rend);
     ReadAllSaveData(win->GetName());
-    InitBtn(rend);
+    InitBtn(win);
 }
 
 void SaveScreen::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend)
@@ -69,7 +69,6 @@ bool SaveScreen::SetCurrentSave(unsigned short page, unsigned short index)
     try
     {
         m_current_save = m_saves.at(page).at(index);
-        std::cout << "je crash pas" << std::endl;
     }
     catch (std::out_of_range & e)
     {
@@ -88,14 +87,14 @@ SaveMenuState SaveScreen::GetSaveMenuState()
     return m_sms;
 }
 
-void SaveScreen::InitBtn(SDL_Renderer *rend)
+void SaveScreen::InitBtn(Window * win)
 {
     int x_coord = 450, y_coord = 150;
     for (int i = 0; i < m_smp->m_nb_pages; ++i)
     {
         SDL_Rect rect = {x_coord,y_coord,40,40};
         SDL_Color col = {255,255,255,255};
-        Button btn = {"btn_pg" + std::to_string(i+1),std::to_string(i+1),col,rect,rend};
+        Button btn = {"btn_pg" + std::to_string(i+1),std::to_string(i+1),col,rect,win->GetRenderer()};
         btn.m_WhenPressed = MenuPageButton;
         m_pages.push_back(btn);
         x_coord += 75;
@@ -109,9 +108,8 @@ void SaveScreen::InitBtn(SDL_Renderer *rend)
         sb.m_WhenPressed = SaveButtonClicked;
         try
         {
-            Save * save = new Save();
-            *save = m_saves.at(m_current_page).at(i+1);
-            sb.SetSave(save,rend);
+            sb.SetSave(&m_saves.at(m_current_page).at(i+1),win->GetRenderer());
+            sb.LoadImage(i,m_current_page,win);
         }
         catch (std::out_of_range & e)
         {
@@ -130,9 +128,11 @@ void SaveScreen::InitBtn(SDL_Renderer *rend)
     }
 }
 
-void SaveScreen::UpdateButton(unsigned short slot_nb, SDL_Renderer * rend)
+void SaveScreen::UpdateButton(unsigned short slot_nb, SDL_Renderer * rend, Window * win)
 {
-    m_save_buttons[slot_nb].SetSave(&m_saves[m_current_page][slot_nb],rend);
+    button::SaveButton & sb = m_save_buttons[slot_nb];
+    sb.SetSave(&m_saves[m_current_page][slot_nb+1],rend);
+    sb.LoadImage(slot_nb,m_current_page,win);
 }
 
 void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot)
@@ -370,10 +370,14 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
     }
     std::string prj_name = win->GetName();
     unsigned short nb_page = sc->GetCurrentPage();
+    std::string save_folder;
     switch (sc->GetSaveMenuState()) {
     case Saving:
         sc->WriteSaveData(prj_name,nb_page,savenb+1);
-        sc->UpdateButton(savenb,win->GetRenderer());
+        save_folder = std::getenv("appdata");
+        save_folder += "/../Local/" + win->GetName() + "/savedata/" + std::to_string(sc->GetCurrentPage());
+        win->SaveScreenShot(std::to_string(savenb),save_folder);
+        sc->UpdateButton(savenb,win->GetRenderer(),win);
         break;
     case Loading:
         unsigned short old_save_line = sc->GetCurrentSave().GetNbCurrentDial();

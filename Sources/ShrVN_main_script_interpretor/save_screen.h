@@ -30,8 +30,8 @@ public:
     SDL_Texture * GetBgImg() const;
     Save & GetCurrentSave();
     void InitScreen(SDL_Renderer * rend, Window * win);
-    void InitBtn(SDL_Renderer * rend);
-    void UpdateButton(unsigned short slot_nb, SDL_Renderer * rend);
+    void InitBtn(Window * win);
+    void UpdateButton(unsigned short slot_nb, SDL_Renderer * rend, Window * win);
     void WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot);
     bool ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot, Save & save);
     void ReadAllSaveData(const std::string & project_name);

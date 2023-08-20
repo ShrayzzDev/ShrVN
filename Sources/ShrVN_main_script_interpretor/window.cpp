@@ -11,7 +11,7 @@
 #include <SDL_ttf.h>
 
 Window::Window(const std::string & name, unsigned short height, unsigned short length, ISaveLoader * isl, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp, std::map<std::string,Characters> * char_map)
-    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_char_map{char_map}, m_omp{omp}, m_mmp{mmp}, IsClicked{false}
+    : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_char_map{char_map}, m_omp{omp}, m_mmp{mmp}, m_screenshot{nullptr}, IsClicked{false}
 {
     SetInGame(isl,igop,igmp);
     SetSaveScreen(smp);
@@ -83,6 +83,25 @@ InGameWindow & Window::GetIgw()
 SaveScreen &Window::GetSc()
 {
     return m_sw;
+}
+
+void Window::TakeScreenShot()
+{
+    const int format = SDL_PIXELFORMAT_ARGB8888;
+    if (m_screenshot != nullptr)
+    {
+        SDL_FreeSurface(m_screenshot);
+    }
+    m_screenshot = SDL_CreateRGBSurfaceWithFormat(0, m_length, m_height, 32, format);
+    SDL_RenderReadPixels(m_renderer, NULL, format, m_screenshot->pixels, m_screenshot->pitch);
+}
+
+void Window::SaveScreenShot(const std::string &file_name, const std::string &file_path)
+{
+    std::filesystem::path old_path = std::filesystem::current_path();
+    std::filesystem::current_path(file_path);
+    SDL_SaveBMP(m_screenshot,(file_name + ".bmp").c_str());
+    std::filesystem::current_path(old_path);
 }
 
 void Window::SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp)

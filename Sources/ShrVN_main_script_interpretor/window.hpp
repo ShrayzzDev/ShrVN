@@ -32,6 +32,7 @@ class Window
     SaveScreen m_sw;
     OptionsMenuParameters * m_omp;
     MainMenuParameters * m_mmp;
+    SDL_Surface * m_screenshot;
     SDL_Window* m_window = nullptr;
     SDL_Renderer* m_renderer = nullptr;
 public:
@@ -46,6 +47,8 @@ public:
     std::map<std::string,Characters> * GetCharMap();
     InGameWindow & GetIgw();
     SaveScreen & GetSc();
+    void TakeScreenShot();
+    void SaveScreenShot(const std::string & file_name, const std::string & file_path);
     void SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp);
     void SetSaveScreen(SavesMenuParameters * smp);
     void SetOptionsMenuParameters(OptionsMenuParameters * omp);

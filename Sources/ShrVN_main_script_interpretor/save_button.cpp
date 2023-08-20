@@ -1,7 +1,9 @@
+#include <iostream>
+
 #include "save_button.h"
+#include "window.hpp"
 #include "font.h"
 #include "save.h"
-#include <iostream>
 
 using namespace button;
 
@@ -54,11 +56,19 @@ void SaveButton::RenderBtn(SDL_Renderer *rend, short mouse_x, short mouse_y)
         rect.h = m_rect.h - rect.h;
         SDL_Color color = {0,0,0,255};
         SDL_Surface * surf = TTF_RenderText_Solid_Wrapped(m_dial_font,m_save->GetLastDialogue().second.c_str(),color,rect.w);
+        if (m_last_dialogue != nullptr)
+        {
+            SDL_DestroyTexture(m_last_dialogue);
+        }
         m_last_dialogue = SDL_CreateTextureFromSurface(rend,surf);
         SDL_QueryTexture(m_last_dialogue,NULL,NULL,NULL,&rect.h);
         SDL_RenderCopy(rend,m_last_dialogue,NULL,&rect);
         SDL_FreeSurface(surf);
-        SDL_DestroyTexture(m_last_dialogue);
+    }
+    if (m_preview != nullptr)
+    {
+        SDL_Rect rect = {m_rect.x + 3,m_rect.y + 3, m_rect.w/2 - 6, m_rect.h - 6};
+        SDL_RenderCopy(rend,m_preview,NULL,&rect);
     }
     if (IsWithinBound(mouse_x,mouse_y))
     {
@@ -96,4 +106,14 @@ void SaveButton::SetSave(Save * save, SDL_Renderer * rend)
     surf = TTF_RenderText_Solid(m_char_name_font,last_dial.first.c_str(),color);
     m_last_char_name = SDL_CreateTextureFromSurface(rend,surf);
     SDL_FreeSurface(surf);
+}
+
+void SaveButton::LoadImage(unsigned short save_slot, unsigned short save_page, Window * win)
+{
+    SDL_Surface * surf;
+    std::string save_folder;
+    save_folder = std::getenv("appdata");
+    save_folder += "/../Local/" + win->GetName() + "/savedata/" + std::to_string(save_page) + "/" + std::to_string(save_slot) + ".bmp";
+    surf = SDL_LoadBMP(save_folder.c_str());
+    m_preview = SDL_CreateTextureFromSurface(win->GetRenderer(),surf);
 }

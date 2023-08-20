@@ -133,6 +133,7 @@ void InGameWindow::ReactEvent(Window * win, SDL_Event & event)
             Click(win);
             break;
         case SDLK_ESCAPE:
+            win->TakeScreenShot();
             if (!IsMenuOpen)
             {
                 IsTextShown = false;
