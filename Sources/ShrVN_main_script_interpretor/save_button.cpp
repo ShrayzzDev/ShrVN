@@ -90,14 +90,14 @@ bool SaveButton::IsWithinBound(short x, short y)
 
 void SaveButton::SetSave(Save * save, SDL_Renderer * rend)
 {
-    if (save == nullptr)
-    {
-        return;
-    }
     if (m_save != nullptr)
     {
         SDL_DestroyTexture(m_last_char_name);
-        SDL_DestroyTexture(m_preview);
+        SDL_DestroyTexture(m_last_dialogue);
+    }
+    if (save == nullptr)
+    {
+        return;
     }
     m_save = save;
     std::pair<std::string,std::string> last_dial = m_save->GetLastDialogue();
@@ -108,12 +108,22 @@ void SaveButton::SetSave(Save * save, SDL_Renderer * rend)
     SDL_FreeSurface(surf);
 }
 
-void SaveButton::LoadImage(unsigned short save_slot, unsigned short save_page, Window * win)
+void SaveButton::LoadImage(short save_slot, short save_page, Window * win)
 {
+    if (m_preview != nullptr)
+    {
+        SDL_DestroyTexture(m_preview);
+    }
+    if (save_slot == -1)
+    {
+        m_save = nullptr;
+        return;
+    }
     SDL_Surface * surf;
     std::string save_folder;
     save_folder = std::getenv("appdata");
     save_folder += "/../Local/" + win->GetName() + "/savedata/" + std::to_string(save_page) + "/" + std::to_string(save_slot) + ".bmp";
     surf = SDL_LoadBMP(save_folder.c_str());
     m_preview = SDL_CreateTextureFromSurface(win->GetRenderer(),surf);
+    SDL_FreeSurface(surf);
 }

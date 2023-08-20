@@ -28,7 +28,7 @@ namespace button
         void RenderBtn(SDL_Renderer * rend, short mouse_x, short mouse_y);
         bool IsWithinBound(short mouse_x, short mouse_y);
         void SetSave(Save * save, SDL_Renderer * rend);
-        void LoadImage(unsigned short save_slot, unsigned short save_page, Window * win);
+        void LoadImage(short save_slot, short save_page, Window * win);
     };
 }
 

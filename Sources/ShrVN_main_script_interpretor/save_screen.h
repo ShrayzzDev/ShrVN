@@ -29,6 +29,8 @@ public:
     SavesMenuParameters * GetSmp() const;
     SDL_Texture * GetBgImg() const;
     Save & GetCurrentSave();
+    Save & GetSave(unsigned short slot, unsigned short page);
+    std::vector<button::SaveButton> & GetMenuButtons();
     void InitScreen(SDL_Renderer * rend, Window * win);
     void InitBtn(Window * win);
     void UpdateButton(unsigned short slot_nb, SDL_Renderer * rend, Window * win);

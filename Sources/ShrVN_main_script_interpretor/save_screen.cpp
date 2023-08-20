@@ -29,6 +29,16 @@ Save & SaveScreen::GetCurrentSave()
     return m_current_save;
 }
 
+Save &SaveScreen::GetSave(unsigned short slot, unsigned short page)
+{
+    return m_saves.at(page).at(slot);
+}
+
+std::vector<button::SaveButton> &SaveScreen::GetMenuButtons()
+{
+    return m_save_buttons;
+}
+
 void SaveScreen::InitScreen(SDL_Renderer * rend, Window * win)
 {
     SetBackgroundImg(m_smp->m_background_image,rend);
@@ -352,6 +362,25 @@ void MenuPageButton(Window *win, CurrentScreen *cs)
         return;
     }
     sc->SetCurrentPage(pagenb);
+    int i = 0;
+    for (auto & sb : sc->GetMenuButtons())
+    {
+        std::cout << "je suis la" << std::endl;
+        try
+        {
+            Save * save = &sc->GetSave(i+1,pagenb+1);
+            std::cout << save << std::endl;
+            sb.SetSave(save,win->GetRenderer());
+            sb.LoadImage(i+1,pagenb,win);
+        }
+        catch (std::out_of_range & e)
+        {
+            sb.SetSave(nullptr,nullptr);
+            std::cout << "qzergsqedrfg" << std::endl;
+            sb.LoadImage(-1,pagenb,nullptr);
+        }
+        ++i;
+    }
 }
 
 void SaveButtonClicked(Window * win, CurrentScreen * cs)
