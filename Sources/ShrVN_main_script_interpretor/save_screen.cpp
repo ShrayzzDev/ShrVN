@@ -31,6 +31,7 @@ Save & SaveScreen::GetCurrentSave()
 
 Save &SaveScreen::GetSave(unsigned short slot, unsigned short page)
 {
+    std::cout << slot << std::endl;
     return m_saves.at(page).at(slot);
 }
 
@@ -119,7 +120,7 @@ void SaveScreen::InitBtn(Window * win)
         try
         {
             sb.SetSave(&m_saves.at(m_current_page).at(i+1),win->GetRenderer());
-            sb.LoadImage(i,m_current_page,win);
+            sb.LoadImage(i+1,m_current_page,win);
         }
         catch (std::out_of_range & e)
         {
@@ -142,7 +143,7 @@ void SaveScreen::UpdateButton(unsigned short slot_nb, SDL_Renderer * rend, Windo
 {
     button::SaveButton & sb = m_save_buttons[slot_nb];
     sb.SetSave(&m_saves[m_current_page][slot_nb+1],rend);
-    sb.LoadImage(slot_nb,m_current_page,win);
+    sb.LoadImage(slot_nb+1,m_current_page,win);
 }
 
 void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot)
@@ -292,7 +293,7 @@ void SaveScreen::Click(Window * win)
     {
         if (btn.IsWithinBound(x,y))
         {
-            btn.m_WhenPressed(nullptr,this);
+            btn.m_WhenPressed(win,this);
         }
     }
     for (auto & btn : m_save_buttons)
@@ -356,27 +357,23 @@ void MenuPageButton(Window *win, CurrentScreen *cs)
     }
     int x,y;
     SDL_GetMouseState(&x,&y);
-    short pagenb = sc->WhichPageBtn(x,y);
+    short pagenb = sc->WhichPageBtn(x,y) + 1;
     if (pagenb == -1)
     {
         return;
     }
     sc->SetCurrentPage(pagenb);
-    int i = 0;
+    int i = 1;
     for (auto & sb : sc->GetMenuButtons())
     {
-        std::cout << "je suis la" << std::endl;
         try
         {
-            Save * save = &sc->GetSave(i+1,pagenb+1);
-            std::cout << save << std::endl;
-            sb.SetSave(save,win->GetRenderer());
-            sb.LoadImage(i+1,pagenb,win);
+            sb.SetSave(&sc->GetSave(i,pagenb),win->GetRenderer());
+            sb.LoadImage(i,pagenb,win);
         }
         catch (std::out_of_range & e)
         {
             sb.SetSave(nullptr,nullptr);
-            std::cout << "qzergsqedrfg" << std::endl;
             sb.LoadImage(-1,pagenb,nullptr);
         }
         ++i;
@@ -405,7 +402,7 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
         sc->WriteSaveData(prj_name,nb_page,savenb+1);
         save_folder = std::getenv("appdata");
         save_folder += "/../Local/" + win->GetName() + "/savedata/" + std::to_string(sc->GetCurrentPage());
-        win->SaveScreenShot(std::to_string(savenb),save_folder);
+        win->SaveScreenShot(std::to_string(savenb+1),save_folder);
         sc->UpdateButton(savenb,win->GetRenderer(),win);
         break;
     case Loading:
@@ -414,6 +411,7 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
         {
             InGameWindow & igw = win->GetIgw();
             igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),old_save_line,*win->GetCharMap(),win->GetRenderer());
+            win->SetCurrentScreen(in_game);
         }
         break;
     }

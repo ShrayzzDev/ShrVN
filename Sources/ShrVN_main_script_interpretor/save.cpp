@@ -116,7 +116,6 @@ void Save::UpdateScriptPos(int nb_lines)
     m_user_data.nb_dial++;
     m_user_data.script_line += nb_lines;
     m_buffer.nb_current_dial++;
-    std::cout << m_user_data.script_line << std::endl;
 }
 
 void Save::ClearCurrentDial()
@@ -147,4 +146,9 @@ unsigned short Save::GetNbCurrentDial()
 std::list<std::pair<std::string, std::string>> & Save::GetDialogues()
 {
     return m_buffer.m_previous_dialogue;
+}
+
+std::map<std::string, Point> &Save::GetOnScreen()
+{
+    return m_buffer.m_on_screen;
 }

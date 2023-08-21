@@ -27,6 +27,7 @@ public:
     long long GetScriptLine();
     unsigned short GetNbCurrentDial();
     std::list<std::pair<std::string,std::string>> & GetDialogues();
+    std::map<std::string,Point> & GetOnScreen();
     friend std::ostream & operator<<(std::ostream & os, Save & save);
 };
 

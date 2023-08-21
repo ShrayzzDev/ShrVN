@@ -13,28 +13,34 @@ void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, S
         std::getline(file,temp);
     }
     igw->CleanCurrentMessages();
+    igw->CleanPreviousDialogue();
     igw->SetTextMode(save.GetTextMode());
-    for (auto & dia : save.GetDialogues())
+    auto & dials = save.GetDialogues();
+    for (auto it = dials.crbegin(); it != dials.crend(); ++it)
     {
         Dialogue dial;
         for (auto & character : char_map)
         {
-            if (character.second.GetName() == dia.first)
+            if (character.second.GetName() == it->first)
             {
-                dial = igw->CreateDialogue(dia.second,character.second,rend);
+                dial = igw->CreateDialogue(it->second,character.second,rend);
                 break;
             }
         }
         igw->AddPreviousDialogue(dial);
     }
-    int i = 0;
+    int i = 1;
     for (auto & dial : igw->GetPreviousDialogue())
     {
         if (i == save.GetNbCurrentDial())
         {
             break;
         }
-        igw->AddCurrentDialogue(dial);
+        igw->AddCurrentDialogueAtFront(dial);
         ++i;
+    }
+    for (auto & img : save.GetOnScreen())
+    {
+        igw->AddOnScreenSprite(img.first,img.second,rend,nullptr);
     }
 }

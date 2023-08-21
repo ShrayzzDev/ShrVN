@@ -277,7 +277,6 @@ int main(int argc, char* argv[])
                 getline(main_script,temp,'\n');
                 if (fen.GetIgw().GetTextMode() == ADV)
                 {
-                    std::cout << "je passe la" << std::endl;
                     fen.GetSc().GetCurrentSave().ClearCurrentDial();
                 }
                 text = true;

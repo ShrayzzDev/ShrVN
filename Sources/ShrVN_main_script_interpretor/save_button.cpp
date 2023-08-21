@@ -93,7 +93,9 @@ void SaveButton::SetSave(Save * save, SDL_Renderer * rend)
     if (m_save != nullptr)
     {
         SDL_DestroyTexture(m_last_char_name);
+        m_last_char_name = nullptr;
         SDL_DestroyTexture(m_last_dialogue);
+        m_last_dialogue = nullptr;
     }
     if (save == nullptr)
     {
@@ -113,6 +115,7 @@ void SaveButton::LoadImage(short save_slot, short save_page, Window * win)
     if (m_preview != nullptr)
     {
         SDL_DestroyTexture(m_preview);
+        m_preview = nullptr;
     }
     if (save_slot == -1)
     {

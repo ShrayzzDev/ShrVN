@@ -117,6 +117,11 @@ void InGameWindow::CleanCurrentMessages()
     m_current_dialogue.clear();
 }
 
+void InGameWindow::CleanPreviousDialogue()
+{
+    m_previous_dialogue.clear();
+}
+
 void InGameWindow::ReactEvent(Window * win, SDL_Event & event)
 {
     switch (event.type) {
@@ -299,7 +304,7 @@ Dialogue InGameWindow::CreateDialogue(const std::string &text, Characters &chr, 
     SDL_Surface * text_surface;
     text_surface = TTF_RenderText_Solid_Wrapped(m_font,text.c_str(),m_text_color,m_igop->m_text_block_lenght);
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(rend,text_surface);
-    return {text_texture,text,&chr};
+    return {text_texture,text,&chr,{0,0,0,0}};
 }
 
 void InGameWindow::InitButtons(SDL_Renderer * rend)
@@ -328,6 +333,15 @@ void InGameWindow::AddCurrentDialogue(const Dialogue & dial)
         m_current_dialogue.pop_back();
     }
     m_current_dialogue.push_back(dial);
+}
+
+void InGameWindow::AddCurrentDialogueAtFront(const Dialogue &dial)
+{
+    if (m_igop->m_text_mode == ADV && !m_current_dialogue.empty())
+    {
+        m_current_dialogue.pop_back();
+    }
+    m_current_dialogue.push_front(dial);
 }
 
 void InGameWindow::AddPreviousDialogue(const Dialogue & dial)

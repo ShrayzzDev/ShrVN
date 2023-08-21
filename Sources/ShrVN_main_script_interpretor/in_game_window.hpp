@@ -52,6 +52,7 @@ public:
     void SwitchTextMode();
     void AddPreviousDialogue(const Dialogue & dial);
     void AddCurrentDialogue(const Dialogue & dial);
+    void AddCurrentDialogueAtFront(const Dialogue & dial);
     void AddOnScreenSprite(const std::string &image_path, Point coord, SDL_Renderer * rend, SDL_Texture *texture = nullptr);
     void AddMovementToSprite(const std::string &image_path, Movement &mvt);
     void RemoveOnScreenSprite(const std::string &image_path);
@@ -60,6 +61,7 @@ public:
     void DestroyOnScreenSprite();
     void DestroyDialogues();
     void CleanCurrentMessages();
+    void CleanPreviousDialogue();
     void ReactEvent(Window * win, SDL_Event & event) override;
     void Click(Window * win);
     void RenderWindow(SDL_Renderer * rend, unsigned short window_length, unsigned short window_height) override;
