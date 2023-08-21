@@ -31,7 +31,6 @@ Save & SaveScreen::GetCurrentSave()
 
 Save &SaveScreen::GetSave(unsigned short slot, unsigned short page)
 {
-    std::cout << slot << std::endl;
     return m_saves.at(page).at(slot);
 }
 
