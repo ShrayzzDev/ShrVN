@@ -63,6 +63,9 @@ string GetSaveDataFolder(const std::string & project_name)
 #ifdef _WIN64
     save_folder = getenv("appdata");
     save_folder += "/../Local/" + project_name;
+#elif __linux__
+    save_folder = getenv("HOME");
+    save_folder += "/." + project_name;
 #endif
     return save_folder;
 }

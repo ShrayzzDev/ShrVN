@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "parserer_utils.h"
 #include "save_button.h"
 #include "window.hpp"
 #include "font.h"
@@ -124,8 +125,7 @@ void SaveButton::LoadImage(short save_slot, short save_page, Window * win)
     }
     SDL_Surface * surf;
     std::string save_folder;
-    save_folder = std::getenv("appdata");
-    save_folder += "/../Local/" + win->GetName() + "/savedata/" + std::to_string(save_page) + "/" + std::to_string(save_slot) + ".bmp";
+    save_folder += GetSaveDataFolder(win->GetName()) + "/savedata/" + std::to_string(save_page) + "/" + std::to_string(save_slot) + ".bmp";
     surf = SDL_LoadBMP(save_folder.c_str());
     m_preview = SDL_CreateTextureFromSurface(win->GetRenderer(),surf);
     SDL_FreeSurface(surf);

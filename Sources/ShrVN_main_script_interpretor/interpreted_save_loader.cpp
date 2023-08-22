@@ -6,7 +6,7 @@
 #include "window.hpp"
 #include "save.h"
 
-void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> char_map, Window * win) const
+void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> & char_map, Window * win) const
 {
     std::string temp;
     for (int i = 0; i < save.GetScriptLine() - current_line; ++i)

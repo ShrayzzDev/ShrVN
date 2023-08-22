@@ -49,44 +49,44 @@ void SDLInit()
 int main(int argc, char* argv[])
 {
     SDLInit();
-    if (argc <= 1)
-    {
-        cerr << "ERROR : You need to provide arguments." << endl
-             << " -i or --interpret path_to_project to launch the interpretor" << endl
-             << " -c or --compile path_to_project to compile a project" << endl
-             << " --init path new_project_name to create a new empty project." << endl;
-        return -1;
-    }
-    if (!strcmp(argv[1],"--compile") || !strcmp(argv[1],"-c"))
-    {
-        throw invalid_argument("The compile feature isn't implemented yet.");
-    }
-    else if (!strcmp(argv[1],"--interpret") || !strcmp(argv[1],"-i"))
-    {
-        if (! filesystem::exists(argv[2]))
-        {
-            cerr << "ERROR : You need to provide an existing path" << endl;
-            return -2;
-        }
-    }
-    else if (!strcmp(argv[1],"--init"))
-    {
-        if (! filesystem::exists(argv[2]))
-        {
-            cerr << "ERROR : You need to provide an existing path";
-            return -2;
-        }
-        filesystem::current_path(argv[2]);
-        if (argc < 4)
-        {
-            cerr << "ERROR : You need to provide a project name";
-            return -3;
-        }
-        CreateEmptyProject(".",argv[3]);
-        return 0;
-    }
-    filesystem::current_path(argv[2]);
-    // filesystem::current_path("../Scripts/ScriptTest");
+    // if (argc <= 1)
+    // {
+    //     cerr << "ERROR : You need to provide arguments." << endl
+    //          << " -i or --interpret path_to_project to launch the interpretor" << endl
+    //          << " -c or --compile path_to_project to compile a project" << endl
+    //          << " --init path new_project_name to create a new empty project." << endl;
+    //     return -1;
+    // }
+    // if (!strcmp(argv[1],"--compile") || !strcmp(argv[1],"-c"))
+    // {
+    //     throw invalid_argument("The compile feature isn't implemented yet.");
+    // }
+    // else if (!strcmp(argv[1],"--interpret") || !strcmp(argv[1],"-i"))
+    // {
+    //     if (! filesystem::exists(argv[2]))
+    //     {
+    //         cerr << "ERROR : You need to provide an existing path" << endl;
+    //         return -2;
+    //     }
+    // }
+    // else if (!strcmp(argv[1],"--init"))
+    // {
+    //     if (! filesystem::exists(argv[2]))
+    //     {
+    //         cerr << "ERROR : You need to provide an existing path";
+    //         return -2;
+    //     }
+    //     filesystem::current_path(argv[2]);
+    //     if (argc < 4)
+    //     {
+    //         cerr << "ERROR : You need to provide a project name";
+    //         return -3;
+    //     }
+    //     CreateEmptyProject(".",argv[3]);
+    //     return 0;
+    // }
+    // filesystem::current_path(argv[2]);
+    filesystem::current_path("../Scripts/ScriptTest");
     std::string full_path = filesystem::current_path().generic_string();
     std::string project_name = full_path.substr(full_path.find_last_of("/") + 1);
     ifstream main_script;
@@ -114,7 +114,9 @@ int main(int argc, char* argv[])
     map<string, Characters>& Characters_map =  *parserer.ParseCharacterFile();
     InterpretedSaveLoader isl;
     Window fen(project_name,1080,1920,&isl,igo_Parameters,nullptr,igm_Parameters,smi_Parameters,nullptr, &Characters_map);
+    std::cout << "je suis la" << std::endl;
     fen.Init(main_script);
+    std::cout << "je suis la2" << std::endl;
     fen.InitFont();
     // fen.SwitchTextMode();
     MovementInterpretor mvt_interpretor;

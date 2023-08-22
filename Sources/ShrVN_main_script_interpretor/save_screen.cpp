@@ -42,9 +42,13 @@ std::vector<button::SaveButton> &SaveScreen::GetMenuButtons()
 
 void SaveScreen::InitScreen(SDL_Renderer * rend, Window * win)
 {
+    std::cout << "ewaaaa" << std::endl;
     SetBackgroundImg(m_smp->m_background_image,rend);
+    std::cout << "ewaaaa" << std::endl;
     ReadAllSaveData(win->GetName());
+    std::cout << "ewaaaa" << std::endl;
     InitBtn(win);
+    std::cout << "ewaaaa" << std::endl;
 }
 
 void SaveScreen::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend)
@@ -148,17 +152,20 @@ void SaveScreen::UpdateButton(unsigned short slot_nb, SDL_Renderer * rend, Windo
 
 void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot)
 {
+    std::cout << "serfghsrth" << std::endl;
     std::string old_path = std::filesystem::current_path().generic_string();
+    std::string save_path = GetSaveDataFolder(project_name);
+    std::filesystem::current_path(std::filesystem::path(save_path).parent_path());
+    std::string project_path;
 #ifdef _WIN64
-    std::string save_path = getenv("appdata");
-    save_path += "/../Local/";
-    std::filesystem::current_path(save_path);
-    save_path += project_name;
+    project_path = project_name;
+#elif __linux__
+    project_path = "." + project_name;
 #endif
     if (!std::filesystem::exists(save_path))
     {
-        std::filesystem::create_directory(project_name);
-        std::filesystem::current_path(project_name);
+        std::filesystem::create_directory(project_path);
+        std::filesystem::current_path(project_path);
         std::filesystem::create_directory("buffer");
         std::filesystem::current_path("buffer");
         std::filesystem::create_directory(std::to_string(page));
@@ -169,15 +176,17 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
     }
     else
     {
-        std::filesystem::current_path(project_name);
+        std::filesystem::current_path(project_path);
         if (!std::filesystem::exists("savedata/"))
         {
             std::filesystem::create_directory("savedata");
         }
+        std::cout << "serfghsrth2" << std::endl;
         if (!std::filesystem::exists("buffer/"))
         {
             std::filesystem::create_directory("buffer");
         }
+        std::cout << "serfghsrth3" << std::endl;
         if (!std::filesystem::exists("savedata/"+std::to_string(page)))
         {
             std::filesystem::current_path("savedata");
@@ -186,7 +195,9 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
             std::filesystem::create_directory(std::to_string(page));
             std::filesystem::current_path("..");
         }
+        std::cout << "serfghsrth4" << std::endl;
     }
+    std::cout << std::filesystem::current_path() << std::endl;
     std::ofstream save_file;
     std::filesystem::current_path("savedata/"+std::to_string(page));
     save_file.open(std::to_string(slot));
@@ -203,12 +214,7 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
 bool SaveScreen::ReadSaveData(const std::string & project_name, unsigned short page, unsigned short slot, Save & save)
 {
     std::string old_path = std::filesystem::current_path().generic_string();
-#ifdef _WIN64
-    std::string save_path = getenv("appdata");
-    save_path += "/../Local/";
-    std::filesystem::current_path(save_path);
-    save_path += project_name;
-#endif
+    std::string save_path = GetSaveDataFolder(project_name);
     if (!std::filesystem::exists(save_path))
     {
         std::filesystem::current_path(old_path);

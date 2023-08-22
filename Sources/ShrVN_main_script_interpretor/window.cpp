@@ -44,10 +44,15 @@ void Window::Init(std::ifstream & script)
         throw Initialisation_Error(error.c_str());
     }
     SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
+    std::cout << "je suis arrivé la" << std::endl;
     m_igw.InitButtons(m_renderer);
+    std::cout << "je suis arrivé la" << std::endl;
     m_igw.SetCurrentScript(&script);
+    std::cout << "je suis arrivé la" << std::endl;
     m_sw.InitScreen(m_renderer,this);
+    std::cout << "je suis arrivé la" << std::endl;
     m_sw.GetCurrentSave().SetTextMode(ADV);
+    std::cout << "je suis arrivé la" << std::endl;
 }
 
 const std::string & Window::GetName() const
@@ -201,7 +206,7 @@ void Window::RenderImage()
 void Window::ReactEvent()
 {
     SDL_Event event;
-    if (SDL_PollEvent(&event))
+    while (SDL_PollEvent(&event))
     {
         switch (event.type) {
         case SDL_WINDOWEVENT:
