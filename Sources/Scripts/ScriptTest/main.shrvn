@@ -18,7 +18,11 @@ Jean : "it works let's fucking go"
 
 Jean : "j'ajoute du texte pour test le clear"
 
-Jean : "long text pour tester l'affichage dans la sauvegarde aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+Set Background As test_img_2.png
+
+Jean : "Et là je change le backgroung pour vérifier la sauvegarde"
+
+Jean : "long text pour tester l'affichage dans la sauvegarde aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 From Jean Show akane At 1000,500
 

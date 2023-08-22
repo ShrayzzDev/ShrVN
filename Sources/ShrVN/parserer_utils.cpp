@@ -56,3 +56,13 @@ bool IsOnlyWhiteSpaces(const string & word)
     }
     return true;
 }
+
+string GetSaveDataFolder(const std::string & project_name)
+{
+    std::string save_folder;
+#ifdef _WIN64
+    save_folder = getenv("appdata");
+    save_folder += "/../Local/" + project_name;
+#endif
+    return save_folder;
+}

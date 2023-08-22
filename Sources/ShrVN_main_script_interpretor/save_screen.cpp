@@ -4,6 +4,7 @@
 
 #include <SDL_image.h>
 
+#include "parserer_utils.h"
 #include "SaveMenuState.h"
 #include "save_screen.h"
 #include "window.hpp"
@@ -395,12 +396,10 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
     }
     std::string prj_name = win->GetName();
     unsigned short nb_page = sc->GetCurrentPage();
-    std::string save_folder;
+    std::string save_folder = GetSaveDataFolder(win->GetName()) + "/savedata/" + std::to_string(sc->GetCurrentPage());
     switch (sc->GetSaveMenuState()) {
     case Saving:
         sc->WriteSaveData(prj_name,nb_page,savenb+1);
-        save_folder = std::getenv("appdata");
-        save_folder += "/../Local/" + win->GetName() + "/savedata/" + std::to_string(sc->GetCurrentPage());
         win->SaveScreenShot(std::to_string(savenb+1),save_folder);
         sc->UpdateButton(savenb,win->GetRenderer(),win);
         break;
@@ -409,7 +408,7 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
         if (sc->SetCurrentSave(nb_page,savenb+1))
         {
             InGameWindow & igw = win->GetIgw();
-            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),old_save_line,*win->GetCharMap(),win->GetRenderer());
+            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),old_save_line,*win->GetCharMap(),win);
             win->SetCurrentScreen(in_game);
         }
         break;

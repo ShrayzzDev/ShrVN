@@ -57,6 +57,7 @@ public:
     void AddSpriteToBuffer(const std::string & img_path, Point coord);
     void Maximize();
     void UpdateSave(int nb_line,const Dialogue & dial);
+    void UpdateBackground(const std::string & img_path);
     bool IsOpen() const;
     void ReactEvent();
     bool IsClicked;

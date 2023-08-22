@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
                     goto unknown_keyword;
                 }
                 getline(main_script,img_path,'\n');
-                fen.GetIgw().SetBackgroundImg(img_path,fen.GetRenderer());
+                fen.UpdateBackground(img_path);
             }
             else if (word == "Switch")
             {

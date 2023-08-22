@@ -170,6 +170,12 @@ void Window::UpdateSave(int nb_line, const Dialogue &dial)
     m_sw.m_current_save.AddDialogueToBuffer(dial);
 }
 
+void Window::UpdateBackground(const std::string &img_path)
+{
+    m_igw.SetBackgroundImg(img_path,m_renderer);
+    m_sw.GetCurrentSave().UpdateBackground(img_path);
+}
+
 Window::~Window()
 {
     SDL_DestroyTexture(m_igw.GetBgImg());

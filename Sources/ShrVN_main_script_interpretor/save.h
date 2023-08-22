@@ -21,10 +21,12 @@ public:
     std::pair<std::string,std::string> & GetLastDialogue();
     void AddOnScreenToBuffer(const std::string & img_path, Point coord);
     void UpdateScriptPos(int nb_lines);
+    void UpdateBackground(const std::string & bg_path);
     void ClearCurrentDial();
     void SetTextMode(text_mode txt_mode);
     text_mode GetTextMode();
     long long GetScriptLine();
+    const std::string & GetBgPath();
     unsigned short GetNbCurrentDial();
     std::list<std::pair<std::string,std::string>> & GetDialogues();
     std::map<std::string,Point> & GetOnScreen();

@@ -60,6 +60,9 @@ void Save::ReadBufferFile(std::ifstream &file)
     default:
         throw std::invalid_argument("ERROR : Wrong current_screen in the buffer file");
     }
+    std::string bg_img;
+    std::getline(file,bg_img,'\n');
+    m_buffer.m_bg_img = bg_img;
 }
 
 void Save::ReadSaveFile(std::ifstream &file)
@@ -85,8 +88,8 @@ void Save::SaveBuffer(std::ofstream &file) const
              << dial.second << '\n';
     }
     file << m_buffer.nb_current_dial << '\n';
-    // file << m_buffer.m_bg_img << '\n';
     file << m_buffer.tm << '\n';
+    file << m_buffer.m_bg_img << '\n';
 }
 
 void Save::SaveSaveData(std::ofstream &file) const
@@ -118,6 +121,11 @@ void Save::UpdateScriptPos(int nb_lines)
     m_buffer.nb_current_dial++;
 }
 
+void Save::UpdateBackground(const std::string &bg_path)
+{
+    m_buffer.m_bg_img = bg_path;
+}
+
 void Save::ClearCurrentDial()
 {
     m_buffer.nb_current_dial = 0;
@@ -136,6 +144,11 @@ text_mode Save::GetTextMode()
 long long Save::GetScriptLine()
 {
     return m_user_data.script_line;
+}
+
+const std::string &Save::GetBgPath()
+{
+    return m_buffer.m_bg_img;
 }
 
 unsigned short Save::GetNbCurrentDial()

@@ -3,9 +3,10 @@
 
 #include "interpreted_save_loader.hpp"
 #include "in_game_window.hpp"
+#include "window.hpp"
 #include "save.h"
 
-void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> char_map, SDL_Renderer * rend) const
+void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> char_map, Window * win) const
 {
     std::string temp;
     for (int i = 0; i < save.GetScriptLine() - current_line; ++i)
@@ -23,7 +24,7 @@ void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, S
         {
             if (character.second.GetName() == it->first)
             {
-                dial = igw->CreateDialogue(it->second,character.second,rend);
+                dial = igw->CreateDialogue(it->second,character.second,win->GetRenderer());
                 break;
             }
         }
@@ -41,6 +42,7 @@ void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, S
     }
     for (auto & img : save.GetOnScreen())
     {
-        igw->AddOnScreenSprite(img.first,img.second,rend,nullptr);
+        igw->AddOnScreenSprite(img.first,img.second,win->GetRenderer(),nullptr);
     }
+    win->UpdateBackground(save.GetBgPath());
 }
