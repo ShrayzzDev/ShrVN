@@ -42,13 +42,9 @@ std::vector<button::SaveButton> &SaveScreen::GetMenuButtons()
 
 void SaveScreen::InitScreen(SDL_Renderer * rend, Window * win)
 {
-    std::cout << "ewaaaa" << std::endl;
     SetBackgroundImg(m_smp->m_background_image,rend);
-    std::cout << "ewaaaa" << std::endl;
     ReadAllSaveData(win->GetName());
-    std::cout << "ewaaaa" << std::endl;
     InitBtn(win);
-    std::cout << "ewaaaa" << std::endl;
 }
 
 void SaveScreen::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend)
