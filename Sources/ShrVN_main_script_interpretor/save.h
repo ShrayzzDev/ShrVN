@@ -20,7 +20,8 @@ public:
     void AddDialogueToBuffer(const Dialogue & dial);
     std::pair<std::string,std::string> & GetLastDialogue();
     void AddOnScreenToBuffer(const std::string & img_path, Point coord);
-    void UpdateScriptPos(int nb_lines);
+    void RemoveOnScreenFromBuffer(const std::string & img_path);
+    void UpdateScriptPos(long long script_pos);
     void UpdateBackground(const std::string & bg_path);
     void ClearCurrentDial();
     void SetTextMode(text_mode txt_mode);

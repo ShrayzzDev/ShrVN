@@ -410,11 +410,11 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
         sc->UpdateButton(savenb,win->GetRenderer(),win);
         break;
     case Loading:
-        unsigned short old_save_line = sc->GetCurrentSave().GetNbCurrentDial();
         if (sc->SetCurrentSave(nb_page,savenb+1))
         {
             InGameWindow & igw = win->GetIgw();
-            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),old_save_line,*win->GetCharMap(),win);
+            igw.m_sl->LoadSave(*igw.GetCurrentScript(),&igw,sc->GetCurrentSave(),*win->GetCharMap(),win);
+            igw.ShowText();
             win->SetCurrentScreen(in_game);
         }
         break;

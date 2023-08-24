@@ -27,6 +27,9 @@ std::ostream & operator<<(std::ostream & os, std::list<Point> Pts);
 // Overload to create a stream with a vector of point.
 std::ostream & operator<<(std::ostream & os, std::vector<Point> Pts);
 
+// Compares the coordinates
+bool operator==(Point pt1, Point pt2);
+
 // Overloads of the operator * for it to work in both ways
 Point operator*(float Coef, Point Pt);
 

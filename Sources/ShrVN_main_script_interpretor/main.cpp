@@ -124,29 +124,37 @@ int main(int argc, char* argv[])
     file.open("Movement.shrvn");
     map<string,Movement> * Movement_Map = mvt_parse.FileParserer(file);
     file.close();
-    int nb_line = 0, relative_nb_line = 0;
+    std::streampos script_pos;
+    long long nb_line = 0;
     bool dbpt, text;
     unsigned short x_value, y_value;
     std::string word, message, temp, char_name, next_word, img, img_path, value, line;
     Characters *current_char;
     Dialogue new_dialogue;
+    file.seekg(0);
     while (fen.IsOpen() && !main_script.eof())
     {
         text = false;
         while (!text)
         {
+            for (int i = 0; i < 30; ++i)
+            {
+                std::cout << "-";
+            }
+            std::cout << std::endl;
+            script_pos = main_script.tellg();
+            std::cout << script_pos - std::streampos(36) << std::endl;
             dbpt = false;
             if (CheckEmptyLine(main_script))
             {
                 ++nb_line;
-                ++relative_nb_line;
                 continue;
             }
             getline(main_script,word,' ');
+            std::cout << word << std::endl;
             if (CheckComment(main_script,word))
             {
                 ++nb_line;
-                ++relative_nb_line;
                 continue;
             }
             if (word == "From")
@@ -173,23 +181,21 @@ int main(int argc, char* argv[])
                     {
                         getline(main_script,value,',');
                         x_value = stof(value);
-                        getline(main_script,value,'\n');
+                        getline(main_script,value);
                         y_value = stof(value);
                         Point pt = {x_value,y_value};
-                        fen.GetIgw().AddOnScreenSprite(img_path,pt,fen.GetRenderer());
+                        fen.AddSprite(img_path,pt);
                     }
                     else if (next_word == "With")
                     {
-                        getline(main_script,next_word,'\n');
+                        getline(main_script,next_word);
                         if (!Movement_Map->contains(next_word))
                         {
                             word = next_word;
                             goto wrong_argument;
                         }
                         Movement & mvt = Movement_Map->at(next_word);
-                        fen.GetIgw().AddOnScreenSprite(img_path,mvt.control_points.front(),fen.GetRenderer());
-                        fen.GetIgw().AddMovementToSprite(img_path,mvt);
-                        fen.AddSpriteToBuffer(img_path,mvt.control_points.back());
+                        fen.AddSpriteWithMovement(img_path,mvt);
                     }
                     else
                     {
@@ -199,14 +205,14 @@ int main(int argc, char* argv[])
                 }
                 else if (next_word == "Hide")
                 {
-                    getline(main_script,img,'\n');
+                    getline(main_script,img);
                     img_path = current_char->GetImage(img);
                     if (img_path == Characters::image_not_found)
                     {
                         word = img;
                         goto wrong_argument;
                     }
-                    fen.GetIgw().RemoveOnScreenSprite(img_path);
+                    fen.RemoveSprite(img_path);
                 }
                 else
                 {
@@ -228,12 +234,12 @@ int main(int argc, char* argv[])
                     word = next_word;
                     goto unknown_keyword;
                 }
-                getline(main_script,img_path,'\n');
+                getline(main_script,img_path);
                 fen.UpdateBackground(img_path);
             }
             else if (word == "Switch")
             {
-                getline(main_script,next_word,'\n');
+                getline(main_script,next_word);
                 if (next_word != "Mode")
                 {
                     word = next_word;
@@ -245,7 +251,7 @@ int main(int argc, char* argv[])
             }
             else if (word == "Clear")
             {
-                getline(main_script,next_word,'\n');
+                getline(main_script,next_word);
                 if (next_word != "Messages")
                 {
                     word = next_word;
@@ -276,7 +282,7 @@ int main(int argc, char* argv[])
                     getline(main_script,temp,'"');
                     getline(main_script,message,'"');
                 }
-                getline(main_script,temp,'\n');
+                getline(main_script,temp);
                 if (fen.GetIgw().GetTextMode() == ADV)
                 {
                     fen.GetSc().GetCurrentSave().ClearCurrentDial();
@@ -284,19 +290,17 @@ int main(int argc, char* argv[])
                 text = true;
             }
             ++nb_line;
-            ++relative_nb_line;
         }
         new_dialogue = fen.GetIgw().CreateDialogue(message,Characters_map.at(word),fen.GetRenderer());
         fen.GetIgw().AddCurrentDialogue(new_dialogue);
         fen.GetIgw().AddPreviousDialogue(new_dialogue);
-        fen.UpdateSave(relative_nb_line,new_dialogue);
+        fen.UpdateSave(script_pos,new_dialogue);
         while (!fen.IsClicked)
         {
             fen.ReactEvent();
             fen.RenderImage();
             std::this_thread::sleep_for(33ms);
         }
-        relative_nb_line = 0;
         fen.IsClicked = false;
     }
     free(igo_Parameters);

@@ -50,6 +50,7 @@ public:
     void SetCurrentScript(std::ifstream * file);
     void SetTextMode(text_mode txt_mode);
     void SwitchTextMode();
+    void ShowText();
     void AddPreviousDialogue(const Dialogue & dial);
     void AddCurrentDialogue(const Dialogue & dial);
     void AddCurrentDialogueAtFront(const Dialogue & dial);
@@ -62,6 +63,7 @@ public:
     void DestroyDialogues();
     void CleanCurrentMessages();
     void CleanPreviousDialogue();
+    void CleanOnScreenSprites();
     void ReactEvent(Window * win, SDL_Event & event) override;
     void Click(Window * win);
     void RenderWindow(SDL_Renderer * rend, unsigned short window_length, unsigned short window_height) override;

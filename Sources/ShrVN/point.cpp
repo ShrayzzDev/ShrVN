@@ -31,6 +31,11 @@ Point MultiplyCoefPoint(float Coef, Point Pt)
     return temp;
 }
 
+bool operator==(Point pt1, Point pt2)
+{
+    return (pt1.m_x == pt2.m_x) && (pt1.m_y == pt2.m_y);
+}
+
 Point operator*(float Coef, Point Pt)
 {
     return MultiplyCoefPoint(Coef,Pt);

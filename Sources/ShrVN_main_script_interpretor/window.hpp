@@ -54,7 +54,9 @@ public:
     void SetOptionsMenuParameters(OptionsMenuParameters * omp);
     void SetMainMenuParameters(MainMenuParameters * mmp);
     void SetCurrentScreen(CurrentScreenEnum cs);
-    void AddSpriteToBuffer(const std::string & img_path, Point coord);
+    void AddSprite(const std::string & img_path, Point coord);
+    void AddSpriteWithMovement(const std::string & img_path,Movement & mvt);
+    void RemoveSprite(const std::string & img_path);
     void Maximize();
     void UpdateSave(int nb_line,const Dialogue & dial);
     void UpdateBackground(const std::string & img_path);

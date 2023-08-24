@@ -13,7 +13,7 @@ void ReadStringVarAssignation(ifstream & file, const string & word, string & res
     {
         file.get();
     }
-    getline(file, result, '\n');
+    getline(file,result);
     return;
 }
 
@@ -26,9 +26,10 @@ void ReadIntVarAssignation(ifstream & file, const string & word, int & result)
 
 bool CheckEmptyLine(std::ifstream &file)
 {
-    if ((char)file.peek() == '\n')
+    std::string temp;
+    if ((char)file.peek() == '\n' || (char)file.peek() == '\r')
     {
-        file.get();
+        getline(file,temp);
         return true;
     }
     return false;
@@ -39,7 +40,7 @@ bool CheckComment(std::ifstream & file, const std::string & word)
     string temp;
     if (word.starts_with("//"))
     {
-        getline(file, temp, '\n');
+        getline(file, temp);
         return true;
     }
     return false;

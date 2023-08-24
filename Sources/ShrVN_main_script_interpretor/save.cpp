@@ -114,10 +114,15 @@ void Save::AddOnScreenToBuffer(const std::string & img_path, Point coord)
     m_buffer.m_on_screen.emplace(std::pair<std::string,Point>(img_path,coord));
 }
 
-void Save::UpdateScriptPos(int nb_lines)
+void Save::RemoveOnScreenFromBuffer(const std::string & img_path)
+{
+    m_buffer.m_on_screen.erase(img_path);
+}
+
+void Save::UpdateScriptPos(long long script_pos)
 {
     m_user_data.nb_dial++;
-    m_user_data.script_line += nb_lines;
+    m_user_data.script_line = script_pos;
     m_buffer.nb_current_dial++;
 }
 

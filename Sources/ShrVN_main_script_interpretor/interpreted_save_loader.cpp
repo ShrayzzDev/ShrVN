@@ -6,13 +6,16 @@
 #include "window.hpp"
 #include "save.h"
 
-void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, unsigned short current_line, std::map<std::string,Characters> & char_map, Window * win) const
+void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, std::map<std::string,Characters> & char_map, Window * win) const
 {
     std::string temp;
-    for (int i = 0; i < save.GetScriptLine() - current_line; ++i)
+    file.seekg(save.GetScriptLine(),std::ios::beg);
+    if (!file.good())
     {
-        std::getline(file,temp);
+        std::cout << "j'ai raté" << std::endl;
     }
+    std::cout << save.GetScriptLine() << std::endl;
+    std::cout << file.tellg() << std::endl;
     igw->CleanCurrentMessages();
     igw->CleanPreviousDialogue();
     igw->SetTextMode(save.GetTextMode());
@@ -40,9 +43,11 @@ void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, S
         igw->AddCurrentDialogueAtFront(dial);
         ++i;
     }
+    igw->CleanOnScreenSprites();
     for (auto & img : save.GetOnScreen())
     {
         igw->AddOnScreenSprite(img.first,img.second,win->GetRenderer(),nullptr);
     }
     win->UpdateBackground(save.GetBgPath());
+
 }

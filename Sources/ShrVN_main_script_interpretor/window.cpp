@@ -158,9 +158,22 @@ void Window::SetCurrentScreen(CurrentScreenEnum cs)
     }
 }
 
-void Window::AddSpriteToBuffer(const std::string &img_path, Point coord)
+void Window::AddSprite(const std::string &img_path, Point coord)
 {
+    m_igw.AddOnScreenSprite(img_path,coord,m_renderer);
     m_sw.m_current_save.AddOnScreenToBuffer(img_path,coord);
+}
+
+void Window::AddSpriteWithMovement(const std::string &img_path, Movement &mvt)
+{
+    AddSprite(img_path,mvt.control_points.back());
+    m_igw.AddMovementToSprite(img_path,mvt);
+}
+
+void Window::RemoveSprite(const std::string & img_path)
+{
+    m_igw.RemoveOnScreenSprite(img_path);
+    m_sw.m_current_save.RemoveOnScreenFromBuffer(img_path);
 }
 
 void Window::Maximize()
@@ -170,6 +183,7 @@ void Window::Maximize()
 }
 
 void Window::UpdateSave(int nb_line, const Dialogue &dial)
+
 {
     m_sw.m_current_save.UpdateScriptPos(nb_line);
     m_sw.m_current_save.AddDialogueToBuffer(dial);

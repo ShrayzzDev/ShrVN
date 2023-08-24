@@ -77,6 +77,12 @@ void InGameWindow::SwitchTextMode()
     }
 }
 
+void InGameWindow::ShowText()
+{
+    IsMenuOpen = false;
+    IsTextShown = true;
+}
+
 const Sprite * InGameWindow::GetSprite(const std::string &img_path) const
 {
     return &m_onscreen_sprites.at(img_path);
@@ -120,6 +126,15 @@ void InGameWindow::CleanCurrentMessages()
 void InGameWindow::CleanPreviousDialogue()
 {
     m_previous_dialogue.clear();
+}
+
+void InGameWindow::CleanOnScreenSprites()
+{
+    for (auto & sprt : m_onscreen_sprites)
+    {
+        SDL_DestroyTexture(sprt.second.GetTexture());
+    }
+    m_onscreen_sprites.clear();
 }
 
 void InGameWindow::ReactEvent(Window * win, SDL_Event & event)
