@@ -18,18 +18,22 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
     unsigned long long nb_line = 1;
     int value;
     InGameOverlayParameters *Parameters = new InGameOverlayParameters();
-    string word, temp, equal_sign, next_word;
+    string word, temp, equal_sign, next_word, line;
     while (!file.eof())
     {
+        std::cout << "je suis la" << std::endl;
         if (CheckEmptyLine(file))
         {
             ++nb_line;
             continue;
         }
+        std::cout << "je suis la2" << std::endl;
         getline(file,word,' ');
+        std::cout << "je suis la3" << std::endl;
         if (CheckComment(file,word))
         {
             ++nb_line;
+            std::cout << "je suis la4" << std::endl;
             continue;
         }
         else if (word.starts_with("text_mode"))
@@ -161,6 +165,7 @@ InGameOverlayParameters * InGameOverlayParserer::ReadInGameOverlayParametersFile
         {
             goto unknown_keyword;
         }
+        std::cout << "je suis la5" << std::endl;
         ++nb_line;
     }
     return Parameters;

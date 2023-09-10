@@ -17,7 +17,7 @@ text_mode = ADV
 
 in_game_option_position = inside_bottom
 
-// This parameter defines how the text block shoudl look
+// This parameter defines how the text block should look
 // base_rectangle = a rectangle with rounded corners
 // fading_rectangle = a rectangle that gradualy fades to the screen borders
 // NOTE : Used only in ADV mode.

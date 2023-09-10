@@ -78,7 +78,7 @@ void InitInGameOverlay(ofstream & file)
          << '\n'
          << "in_game_option_position = inside_bottom" << '\n'
          << '\n'
-         << "// This parameter defines how the text block shoudl look" << '\n'
+         << "// This parameter defines how the text block should look" << '\n'
          << "// base_rectangle = a rectangle with rounded corners" << '\n'
          << "// fading_rectangle = a rectangle that gradualy fades to the screen borders" << '\n'
          << "// NOTE : Used only in ADV mode." << '\n'
