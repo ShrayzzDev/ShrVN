@@ -58,6 +58,18 @@ bool IsOnlyWhiteSpaces(const string & word)
     return true;
 }
 
+// This is used when getting supposed last word on a line
+// This is meant to deal with LF CRLF CR shit when reading file
+// as binary.
+void GetLastWordOnLine(std::ifstream & stream, std::string & outputWord)
+{
+    getline(stream,outputWord);
+    if (outputWord.ends_with('\n') || outputWord.ends_with('\r'))
+    {
+        outputWord.pop_back();
+    }
+}
+
 string GetSaveDataFolder(const std::string & project_name)
 {
     std::string save_folder;

@@ -34,6 +34,7 @@
 #include "movement_interpretor.h"
 #include "movement_file_parserer.h"
 #include "init.h"
+#include "parserer_utils.h"
 #include "interpreted_save_loader.hpp"
 
 using namespace std;
@@ -190,14 +191,14 @@ int main(int argc, char* argv[])
                     {
                         getline(main_script,value,',');
                         x_value = stof(value);
-                        getline(main_script,value);
+                        GetLastWordOnLine(main_script,value);
                         y_value = stof(value);
                         Point pt = {x_value,y_value};
                         fen.AddSprite(img_path,pt);
                     }
                     else if (next_word == "With")
                     {
-                        getline(main_script,next_word);
+                        GetLastWordOnLine(main_script,next_word);
                         if (!Movement_Map->contains(next_word))
                         {
                             word = next_word;
@@ -214,7 +215,7 @@ int main(int argc, char* argv[])
                 }
                 else if (next_word == "Hide")
                 {
-                    getline(main_script,img);
+                    GetLastWordOnLine(main_script,img);
                     img_path = current_char->GetImage(img);
                     if (img_path == Characters::image_not_found)
                     {
@@ -243,13 +244,13 @@ int main(int argc, char* argv[])
                     word = next_word;
                     goto unknown_keyword;
                 }
-                getline(main_script,img_path);
+                GetLastWordOnLine(main_script,img_path);
 
                 fen.UpdateBackground(img_path);
             }
             else if (word == "Switch")
             {
-                getline(main_script,next_word);
+                GetLastWordOnLine(main_script,next_word);
                 if (next_word != "Mode")
                 {
                     word = next_word;
@@ -261,7 +262,7 @@ int main(int argc, char* argv[])
             }
             else if (word == "Clear")
             {
-                getline(main_script,next_word);
+                GetLastWordOnLine(main_script,next_word);
                 if (next_word != "Messages")
                 {
                     word = next_word;
@@ -284,14 +285,14 @@ int main(int argc, char* argv[])
                 {
                     getline(main_script,temp,'"');
                     getline(main_script,message,'"');
-                    getline(main_script,temp,'\n');
+                    GetLastWordOnLine(main_script,temp);
                 }
                 else
                 {
                     getline(main_script,temp,':');
                     getline(main_script,temp,'"');
                     getline(main_script,message,'"');
-                    getline(main_script,temp);
+                    GetLastWordOnLine(main_script,temp);
                 }
                 getline(main_script,temp);
                 if (fen.GetIgw().GetTextMode() == ADV)

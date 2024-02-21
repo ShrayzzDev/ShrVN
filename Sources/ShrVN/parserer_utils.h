@@ -16,4 +16,6 @@ bool IsOnlyWhiteSpaces(const std::string & word);
 
 std::string GetSaveDataFolder(const std::string & project_name);
 
+void GetLastWordOnLine(std::ifstream & stream, std::string & outputWord);
+
 #endif // PARSERER_UTILS_H
