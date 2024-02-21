@@ -9,6 +9,7 @@
 void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, Save save, std::map<std::string,Characters> & char_map, Window * win) const
 {
     std::string temp;
+    file.seekg(0,std::ios::beg);
     file.seekg(save.GetScriptLine(),std::ios::beg);
     if (!file.good())
     {

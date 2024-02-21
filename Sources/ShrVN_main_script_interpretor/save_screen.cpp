@@ -61,7 +61,7 @@ void SaveScreen::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend
     m_background_img = IMG_LoadTexture(rend,full_path.generic_string().c_str());
     if (m_background_img == nullptr)
     {
-        throw std::invalid_argument("ERROR : Couldn't open file " + bg_img);
+        throw std::invalid_argument("ERROR : Couldn't open background file " + bg_img);
     }
 }
 

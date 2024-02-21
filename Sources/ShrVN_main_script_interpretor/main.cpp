@@ -90,22 +90,32 @@ int main(int argc, char* argv[])
     std::string full_path = filesystem::current_path().generic_string();
     std::string project_name = full_path.substr(full_path.find_last_of("/") + 1);
     ifstream main_script;
-    main_script.open("main.shrvn");
+    main_script.open("Main.shrvn",ios::binary);
     filesystem::current_path("init/");
     ifstream file;
-    std::cout << "protu" << std::endl;
     file.open("InGameOverlay.shrvn");
+    if (!file.is_open())
+    {
+        std::cerr << "ERROR: Could not open InGameOverlay.shrvn" << std::endl;
+    }
     InGameOverlayInterpretor igo_interpretor;
     InGameOverlayParserer igo_parse(&igo_interpretor);
     InGameOverlayParameters * igo_Parameters = igo_parse.ReadInGameOverlayParametersFile(file);
     file.close();
-    std::cout << "protu" << std::endl;
     file.open("InGameMenu.shrvn");
+    if (!file.is_open())
+    {
+        std::cerr << "ERROR: Could not open InGameMenu.shrvn" << std::endl;
+    }
     InGameMenuInterpretor igm_interpretor;
     InGameMenuParserer igm_parse(&igm_interpretor);
     InGameMenuParameters * igm_Parameters = igm_parse.ReadInGameMenuParametersFile(file);
     file.close();
     file.open("SavesMenu.shrvn");
+    if (!file.is_open())
+    {
+        std::cerr << "ERROR: Could not open SaveMenu.shrvn" << std::endl;
+    }
     SavesMenuInterpretor smi_interpretor;
     SavesMenuParserer smi_parse(&smi_interpretor);
     SavesMenuParameters * smi_Parameters = smi_parse.ReadSavesMenuParametersFile(file);
@@ -131,7 +141,6 @@ int main(int argc, char* argv[])
     std::string word, message, temp, char_name, next_word, img, img_path, value, line;
     Characters *current_char;
     Dialogue new_dialogue;
-    file.seekg(0);
     while (fen.IsOpen() && !main_script.eof())
     {
         text = false;
@@ -143,9 +152,6 @@ int main(int argc, char* argv[])
             }
             std::cout << std::endl;
             script_pos = main_script.tellg();
-#ifdef _WIN64
-            script_pos += nb_line;
-#endif
             std::cout << script_pos << std::endl;
             dbpt = false;
             if (CheckEmptyLine(main_script))
@@ -238,6 +244,7 @@ int main(int argc, char* argv[])
                     goto unknown_keyword;
                 }
                 getline(main_script,img_path);
+
                 fen.UpdateBackground(img_path);
             }
             else if (word == "Switch")
@@ -267,7 +274,6 @@ int main(int argc, char* argv[])
             {
                 if (word.back() == ':')
                 {
-                    word.pop_back();
                     dbpt = true;
                 }
                 if (!Characters_map.contains(word))
@@ -278,12 +284,14 @@ int main(int argc, char* argv[])
                 {
                     getline(main_script,temp,'"');
                     getline(main_script,message,'"');
+                    getline(main_script,temp,'\n');
                 }
                 else
                 {
                     getline(main_script,temp,':');
                     getline(main_script,temp,'"');
                     getline(main_script,message,'"');
+                    getline(main_script,temp);
                 }
                 getline(main_script,temp);
                 if (fen.GetIgw().GetTextMode() == ADV)

@@ -25,9 +25,12 @@ SDL_Texture *InGameWindow::GetBgImg() const
 void InGameWindow::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend)
 {
     std::filesystem::path full_path = std::filesystem::current_path().generic_string() + "/images/" + bg_img;
+    std::cout << std::filesystem::current_path() << std::endl;
+    std::cout << bg_img << std::endl;
     if (! std::filesystem::exists(full_path))
     {
-        throw std::invalid_argument("ERROR : Couldn't find the " + bg_img);
+        std::string mess = "ERROR : Couldn't find the \'" + bg_img + "'";
+        throw std::invalid_argument(mess);
     }
     if (m_background_img != nullptr)
     {
@@ -36,7 +39,7 @@ void InGameWindow::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * re
     m_background_img = IMG_LoadTexture(rend,full_path.generic_string().c_str());
     if (m_background_img == nullptr)
     {
-        throw std::invalid_argument("ERROR : Couldn't open file " + bg_img);
+        throw std::invalid_argument("ERROR : Couldn't open background file while setting it" + bg_img);
     }
 }
 
