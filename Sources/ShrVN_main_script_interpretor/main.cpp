@@ -87,7 +87,8 @@ int main(int argc, char* argv[])
     //     return 0;
     // }
     // filesystem::current_path(argv[2]);
-    filesystem::current_path("../Scripts/ScriptTest");
+    filesystem::current_path("..//Scripts/ScriptTest");
+    std::cout << "ha ha ha"  << std::endl;
     std::string full_path = filesystem::current_path().generic_string();
     std::string project_name = full_path.substr(full_path.find_last_of("/") + 1);
     ifstream main_script;
