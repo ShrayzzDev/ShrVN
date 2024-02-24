@@ -147,13 +147,7 @@ int main(int argc, char* argv[])
         text = false;
         while (!text)
         {
-            for (int i = 0; i < 30; ++i)
-            {
-                std::cout << "-";
-            }
-            std::cout << std::endl;
             script_pos = main_script.tellg();
-            std::cout << script_pos << std::endl;
             dbpt = false;
             if (CheckEmptyLine(main_script))
             {
@@ -161,7 +155,6 @@ int main(int argc, char* argv[])
                 continue;
             }
             getline(main_script,word,' ');
-            std::cout << word << std::endl;
             if (CheckComment(main_script,word))
             {
                 ++nb_line;
