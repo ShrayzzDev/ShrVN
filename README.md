@@ -47,6 +47,44 @@ This project use SDL2 libraries (SDL, SDL_image and SDL_ttf).
 
 This project also uses qmake to build.
 
+So, to build this project:  
+If you don't have qmake you will need to install it.  
+On Linux:   
+Make sure you have g++ (almost all distros have it by default, but if not):  
+ * `sudo apt install g++`  
+To install qmake:   
+(NOTE : The first one should not be requiered, but QT recommend to install those depedencies)  
+ * `sudo apt-get install build-essential libgl1-mesa-dev`  
+ * `sudo apt install qmake6`  
+
+On windows you will need to install qt via the QT installer, there no command line tool to my knowledge
+Here is [the official documentation to install qmake](https://doc.qt.io/qt-6/get-and-install-qt.html)
+
+Now, you should pull this repo :
+`git pull git@github.com:ShrayzzDev/ShrVN.git` (via ssh)  
+Or  
+`git pull https://github.com/ShrayzzDev/ShrVN.git` (via http)  
+
+Now, to build the engine you will need to install the sdl2 libraries.  
+On Linux :   
+ * `sudo apt-get install libsdl2-dev`  
+ * `sudo apt-get install libsdl2-image-dev`  
+ * `sudo apt-get install libsdl2-ttf-dev`  
+
+On Windows:  
+NOTE : You may not want to download any SDL 3.0 versions. This is tested with 2.0 for the moment.  
+ * Download the last [x64 SDL2 binary](https://github.com/libsdl-org/SDL/releases/)
+ * Same with : [x64 SDL2 image binary](https://github.com/libsdl-org/SDL_image/releases)
+ * Same with : [x64 SDL2 ttf binary](https://github.com/libsdl-org/SDL_ttf/releases)
+ * Put all the DLLs into the /3rdparty/SDL2/bin/ folder (relative to the root of the repo)  
+
+Now, you should be able to build this.  
+
+On Linux:   
+ * (relative to the root of the repo) `cd Sources/ShrVN_main_script_interpretor`  
+ * `qmake6`  
+ * `make`  
+
 --------------
 
 ## Plans for the future :
