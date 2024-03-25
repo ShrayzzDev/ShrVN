@@ -244,7 +244,7 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
                 m_current_dialogue.back().m_rect = rect;
                 SDL_RenderCopy(rend,m_current_dialogue.back().m_texture,NULL,&m_current_dialogue.back().m_rect);
                 SDL_Surface * char_name_surface;
-                char_name_surface = TTF_RenderText_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
+                char_name_surface = TTF_RenderUTF8_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
                 SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(rend,char_name_surface);
                 SDL_QueryTexture(char_name_text,NULL,NULL,&w,&h);
                 SDL_Rect char_name_rect = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y - (h+20),w + 20,h + 20};
@@ -297,7 +297,7 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
             for (auto & dial : m_current_dialogue)
             {
                 SDL_Surface * name_surface;
-                name_surface = TTF_RenderText_Solid_Wrapped(m_font,dial.m_talking->GetName().c_str(),m_text_color,300);
+                name_surface = TTF_RenderUTF8_Solid_Wrapped(m_font,dial.m_talking->GetName().c_str(),m_text_color,300);
                 SDL_Texture * name = SDL_CreateTextureFromSurface(rend,name_surface);
                 SDL_QueryTexture(name,NULL,NULL,&w,&h);
                 SDL_Rect rect_char_name = {(300-w)/3,y_coord,w,h};
@@ -320,7 +320,7 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
 Dialogue InGameWindow::CreateDialogue(const std::string &text, Characters &chr, SDL_Renderer * rend)
 {
     SDL_Surface * text_surface;
-    text_surface = TTF_RenderText_Solid_Wrapped(m_font,text.c_str(),m_text_color,m_igop->m_text_block_lenght);
+    text_surface = TTF_RenderUTF8_Solid_Wrapped(m_font,text.c_str(),m_text_color,m_igop->m_text_block_lenght);
     SDL_Texture * text_texture = SDL_CreateTextureFromSurface(rend,text_surface);
     return {text_texture,text,&chr,{0,0,0,0}};
 }
