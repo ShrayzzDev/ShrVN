@@ -19,8 +19,9 @@
 #include "CurrentScreen.h"
 #include "save_screen.h"
 #include "sprite.hpp"
+#include "IListener.hpp"
 
-class Window
+class Window : public IListener
 {
     std::string m_name;
     unsigned short m_height;
@@ -47,6 +48,7 @@ public:
     std::map<std::string,Characters> * GetCharMap();
     InGameWindow & GetIgw();
     SaveScreen & GetSc();
+    void Update();
     void TakeScreenShot();
     void SaveScreenShot(const std::string & file_name, const std::string & file_path);
     void SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp);

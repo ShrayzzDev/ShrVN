@@ -42,7 +42,7 @@ TTF_Font * CreateFont(const std::string & font_type, unsigned short font_size)
                 font = TTF_OpenFont(current_font.generic_string().c_str(),font_size);
                 if (font == NULL)
                 {
-                    std::cout << SDL_GetError() << std::endl;
+                    std::cerr << SDL_GetError() << std::endl;
                 }
                 return font;
             }

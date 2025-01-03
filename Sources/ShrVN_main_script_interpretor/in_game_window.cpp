@@ -5,11 +5,17 @@
 #include "font.h"
 #include "window.hpp"
 #include "button.hpp"
+#include "adv_text_box.h"
+#include "nvl_text_box.h"
+
+InGameWindow::InGameWindow()
+{
+}
 
 InGameWindow::InGameWindow(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igmp)
     :m_igop{igop}, m_igmp{igmp}, m_sl{isl}
 {
-
+    SetTextMode(igop->m_text_mode);
 }
 
 InGameOverlayParameters *InGameWindow::GetIgop() const
@@ -25,8 +31,6 @@ SDL_Texture *InGameWindow::GetBgImg() const
 void InGameWindow::SetBackgroundImg(const std::string &bg_img, SDL_Renderer * rend)
 {
     std::filesystem::path full_path = std::filesystem::current_path().generic_string() + "/images/" + bg_img;
-    std::cout << std::filesystem::current_path() << std::endl;
-    std::cout << bg_img << std::endl;
     if (! std::filesystem::exists(full_path))
     {
         std::string mess = "ERROR : Couldn't find the \'" + bg_img + "'";
@@ -64,18 +68,29 @@ void InGameWindow::SetCurrentScript(std::ifstream * file)
 
 void InGameWindow::SetTextMode(text_mode txt_mode)
 {
-    m_igop->m_text_mode = txt_mode;
+    if (m_igop != nullptr) m_igop->m_text_mode = txt_mode;
+    if (m_textDisplayer != nullptr) free(m_textDisplayer);
+    switch (txt_mode)
+    {
+        case ADV:
+            m_textDisplayer = new AdvTextBox(m_igop, m_font, m_text_color);
+            break;
+
+        case NVL:
+            m_textDisplayer = new NvlTextBox(m_igop, m_font, m_text_color);
+            break;
+    }
 }
 
 void InGameWindow::SwitchTextMode()
 {
     switch(m_igop->m_text_mode) {
     case ADV:
-        m_igop->m_text_mode = NVL;
+        SetTextMode(NVL);
         break;
 
     case NVL:
-        m_igop->m_text_mode = ADV;
+        SetTextMode(ADV);
         break;
     }
 }
@@ -123,7 +138,7 @@ const std::list<Dialogue> & InGameWindow::GetPreviousDialogue() const
 
 void InGameWindow::CleanCurrentMessages()
 {
-    m_current_dialogue.clear();
+    m_textDisplayer->ClearDialogue();
 }
 
 void InGameWindow::CleanPreviousDialogue()
@@ -214,106 +229,24 @@ void InGameWindow::RenderWindow(SDL_Renderer *rend, unsigned short window_length
             std::cerr << "Error while rendering image : " << SDL_GetError() << std::endl;
         }
     }
-    switch(m_igop->m_text_mode) {
-    case ADV:
+    if (!IsMenuOpen)
     {
-        if (!IsMenuOpen)
+        if (IsTextShown)
         {
-            if (IsTextShown)
-            {
-                if (m_current_dialogue.empty())
-                {
-                    break;
-                }
-                switch (m_igop->m_block_shape) {
-                case base_rectangle:
-                {
-                    SDL_SetRenderDrawColor(rend,255,128,0,200);
-                    SDL_Rect main_text_block = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y, m_igop->m_text_block_lenght, m_igop->m_text_block_height};
-                    SDL_RenderFillRect(rend,&main_text_block);
-                    break;
-                }
-                case fading_rectangle:
-                {
-                    break;
-                }
-                }
-                int w,h;
-                SDL_QueryTexture(m_current_dialogue.back().m_texture,NULL,NULL,&w,&h);
-                SDL_Rect rect = {m_igop->m_text_block_position.m_x + 10, m_igop->m_text_block_position.m_y + 10, w, h};
-                m_current_dialogue.back().m_rect = rect;
-                SDL_RenderCopy(rend,m_current_dialogue.back().m_texture,NULL,&m_current_dialogue.back().m_rect);
-                SDL_Surface * char_name_surface;
-                char_name_surface = TTF_RenderUTF8_Solid(m_font,m_current_dialogue.back().m_talking->GetName().c_str(),m_text_color);
-                SDL_Texture * char_name_text = SDL_CreateTextureFromSurface(rend,char_name_surface);
-                SDL_QueryTexture(char_name_text,NULL,NULL,&w,&h);
-                SDL_Rect char_name_rect = {m_igop->m_text_block_position.m_x, m_igop->m_text_block_position.m_y - (h+20),w + 20,h + 20};
-                SDL_RenderFillRect(rend,&char_name_rect);
-                SDL_Rect rect_char = char_name_rect;
-                rect_char.x += 5;
-                rect_char.y += 5;
-                rect_char.w -= 10;
-                rect_char.h -= 10;
-                SDL_RenderCopy(rend,char_name_text,NULL,&rect_char);
-                SDL_DestroyTexture(char_name_text);
-                SDL_FreeSurface(char_name_surface);
-            }
+            m_textDisplayer->Render(rend);
         }
-        else
-        {
-            SDL_SetRenderDrawColor(rend,0,0,0,190);
-            SDL_Rect rect = {0,0,window_length,window_height};
-            SDL_RenderFillRect(rend,&rect);
-            int x,y;
-            SDL_GetMouseState(&x,&y);
-            for (auto & btn : m_buttons)
-            {
-                btn.RenderButton(rend,x,y,true);
-            }
-        }
-        break;
     }
-    case NVL:
+    else
     {
-        if ((IsTextShown && !IsMenuOpen) || IsMenuOpen)
+        SDL_SetRenderDrawColor(rend,0,0,0,190);
+        SDL_Rect rect = {0,0,window_length,window_height};
+        SDL_RenderFillRect(rend,&rect);
+        int x,y;
+        SDL_GetMouseState(&x,&y);
+        for (auto & btn : m_buttons)
         {
-            SDL_SetRenderDrawColor(rend,0,0,0,190);
-            SDL_Rect rect = {0,0,window_length,window_height};
-            SDL_RenderFillRect(rend,&rect);
-            if (IsMenuOpen)
-            {
-                int x,y;
-                SDL_GetMouseState(&x,&y);
-                for (auto & btn : m_buttons)
-                {
-                    btn.RenderButton(rend,x,y,true);
-                }
-            }
+            btn.RenderButton(rend,x,y,true);
         }
-        if (!IsMenuOpen && IsTextShown)
-        {
-            unsigned short y_coord = 100;
-            int w,h;
-            for (auto & dial : m_current_dialogue)
-            {
-                SDL_Surface * name_surface;
-                name_surface = TTF_RenderUTF8_Solid_Wrapped(m_font,dial.m_talking->GetName().c_str(),m_text_color,300);
-                SDL_Texture * name = SDL_CreateTextureFromSurface(rend,name_surface);
-                SDL_QueryTexture(name,NULL,NULL,&w,&h);
-                SDL_Rect rect_char_name = {(300-w)/3,y_coord,w,h};
-                SDL_RenderCopy(rend,name,NULL,&rect_char_name);
-                SDL_QueryTexture(dial.m_texture,NULL,NULL,&w,&h);
-                SDL_Rect rect = {220, y_coord, w, h};
-                dial.m_rect = rect;
-                SDL_RenderCopy(rend,dial.m_texture,NULL,&dial.m_rect);
-                y_coord += h + 20;
-                SDL_DestroyTexture(name);
-                SDL_FreeSurface(name_surface);
-            }
-        }
-        break;
-    }
-    break;
     }
 }
 
@@ -346,20 +279,12 @@ void InGameWindow::InitButtons(SDL_Renderer * rend)
 
 void InGameWindow::AddCurrentDialogue(const Dialogue & dial)
 {
-    if (m_igop->m_text_mode == ADV && !m_current_dialogue.empty())
-    {
-        m_current_dialogue.pop_back();
-    }
-    m_current_dialogue.push_back(dial);
+    m_textDisplayer->AddDialogue(dial);
 }
 
 void InGameWindow::AddCurrentDialogueAtFront(const Dialogue &dial)
 {
-    if (m_igop->m_text_mode == ADV && !m_current_dialogue.empty())
-    {
-        m_current_dialogue.pop_back();
-    }
-    m_current_dialogue.push_front(dial);
+    m_textDisplayer->AddDialogueAtFront(dial);
 }
 
 void InGameWindow::AddPreviousDialogue(const Dialogue & dial)
@@ -378,7 +303,7 @@ void InGameWindow::RemoveOnScreenSprite(const std::string &image_path)
     {
         throw std::invalid_argument("ERROR : image located at " + image_path + " isn't curretly used as an on screen sprite.");
     }
-    Sprite current = m_onscreen_sprites.at(image_path);
+    Sprite & current = m_onscreen_sprites.at(image_path);
     current.ClearMovement();
     SDL_DestroyTexture(current.GetTexture());
     m_onscreen_sprites.erase(image_path);
@@ -424,7 +349,6 @@ void InGameWindow::AddOnScreenSprite(const std::string &image_path, Point coord,
     }
     SDL_QueryTexture(texture,NULL,NULL,&rect.w,&rect.h);
     Sprite current_sprite = Sprite(rect,texture);
-    std::cout << "'" << image_path << "'" << std::endl;
     m_onscreen_sprites.insert(std::pair(image_path,current_sprite));
 }
 
@@ -460,13 +384,13 @@ void InGameWindow::Click(Window * win)
     }
 }
 
-void InGameWindow::AddMovementToSprite(const std::string &image_path, Movement &mvt)
+void InGameWindow::AddMovementToSprite(const std::string &image_path, Movement &mvt, SDL_Renderer * rend)
 {
     if (!m_onscreen_sprites.contains(image_path))
     {
         throw std::invalid_argument("ERROR : image located at " + image_path + " isn't curretly used as an on screen sprite.");
     }
-    m_onscreen_sprites.at(image_path).SetMovement(mvt,100);
+    m_onscreen_sprites.at(image_path).SetMovement(mvt, 100, rend);
 }
 
 void SettingButton(Window * win, CurrentScreen * cs)

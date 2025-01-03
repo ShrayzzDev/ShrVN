@@ -13,6 +13,7 @@
 Window::Window(const std::string & name, unsigned short height, unsigned short length, ISaveLoader * isl, InGameOverlayParameters * igop, OptionsMenuParameters * omp, InGameMenuParameters * igmp, SavesMenuParameters * smp, MainMenuParameters * mmp, std::map<std::string,Characters> * char_map)
     : m_name{name}, m_height{height}, m_length{length}, m_open{true}, m_char_map{char_map}, m_omp{omp}, m_mmp{mmp}, m_screenshot{nullptr}, IsClicked{false}
 {
+    std::cout << "RAH: " << igop << std::endl;
     SetInGame(isl,igop,igmp);
     SetSaveScreen(smp);
     m_current = &m_igw;
@@ -110,6 +111,7 @@ void Window::SetInGame(ISaveLoader * isl, InGameOverlayParameters * igop, InGame
     {
         SDL_DestroyTexture(m_igw.GetBgImg());
     }
+    std::cout << "allez: " << igop << std::endl;
     InGameWindow igw = {isl,igop,igmp};
     SDL_Color color = {0,0,0,0};
     igw.SetTextColor(color);
@@ -162,7 +164,7 @@ void Window::AddSprite(const std::string &img_path, Point coord)
 void Window::AddSpriteWithMovement(const std::string &img_path, Movement &mvt)
 {
     AddSprite(img_path,mvt.control_points.back());
-    m_igw.AddMovementToSprite(img_path,mvt);
+    m_igw.AddMovementToSprite(img_path,mvt, m_renderer);
 }
 
 void Window::RemoveSprite(const std::string & img_path)
@@ -209,7 +211,14 @@ void Window::RenderImage()
 {
     SDL_RenderClear(m_renderer);
     m_current->RenderWindow(m_renderer,m_length,m_height);
+    std::cout << "way" << std::endl;
     SDL_RenderPresent(m_renderer);
+    std::cout << "azy cheeeeef" << std::endl;
+}
+
+void Window::Update()
+{
+    RenderImage();
 }
 
 void Window::ReactEvent()

@@ -8,7 +8,7 @@
 #include "font.h"
 
 Button::Button(const std::string & name, const std::string &texture_path, SDL_Rect rect, SDL_Renderer * rend)
-    :m_name{name}, m_title{nullptr}, m_rect{rect}, m_font{nullptr}, IsTextTexture{false}
+    :m_name{name}, m_rect{rect}, m_font{nullptr}, IsTextTexture{false}, m_title{nullptr}
 {
     std::string full_path = "images/" + texture_path;
     if (!std::filesystem::exists(full_path))
@@ -24,7 +24,7 @@ Button::Button(const std::string & name, const std::string &texture_path, SDL_Re
 }
 
 Button::Button(const std::string &name, const std::string &text, SDL_Color rect_col, SDL_Rect rect, SDL_Renderer *rend)
-    :m_name{name}, m_title{nullptr}, m_rect{rect}, m_color{rect_col}, IsTextTexture{true}
+    :m_name{name}, m_rect{rect}, m_color{rect_col}, IsTextTexture{true}, m_title{nullptr}
 {
     SDL_Color text_col = {0,0,0,255};
 #ifdef _WIN64
@@ -38,10 +38,9 @@ Button::Button(const std::string &name, const std::string &text, SDL_Color rect_
     m_rect = {rect.x, rect.y - (rect.h+20), rect.w + 20, rect.h + 20};
 }
 
-long long pas_joli = 0;
 void Button::RenderButton(SDL_Renderer *rend, short mouse_x, short mouse_y, bool show_title)
 {
-    if (IsWithinBound(mouse_x,mouse_y))
+    if ( IsWithinBound(mouse_x,mouse_y))
     {
         SDL_SetRenderDrawColor(rend,255,255,255,50);
         SDL_RenderFillRect(rend,&m_rect);
@@ -69,10 +68,32 @@ void Button::RenderButton(SDL_Renderer *rend, short mouse_x, short mouse_y, bool
     SDL_RenderCopy(rend,m_texture,NULL,&m_rect);
 }
 
+void Button::ReactEvent()
+{
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type) {
+        case SDL_MOUSEMOTION:
+            int x,y;
+            SDL_GetMouseState(&x,&y);
+            if (IsWithinBound(x, y) ^ IsHovered)
+            {
+                IsHovered = !IsHovered;
+                Notify();
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
 bool Button::IsWithinBound(short x, short y)
 {
     if ((x < m_rect.x) || (x > m_rect.x + m_rect.w) || (y < m_rect.y) || (y > m_rect.y + m_rect.h))
     {
+
         return false;
     }
     return true;
@@ -84,4 +105,9 @@ Point Button::GetMiddle()
     pt.m_x = m_rect.x + m_rect.w/2;
     pt.m_y = m_rect.y + m_rect.h/2;
     return pt;
+}
+
+Button::~Button()
+{
+    SDL_DestroyTexture(m_texture);
 }

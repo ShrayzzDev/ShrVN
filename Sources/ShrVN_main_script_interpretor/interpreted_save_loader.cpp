@@ -13,10 +13,8 @@ void InterpretedSaveLoader::LoadSave(std::ifstream & file, InGameWindow * igw, S
     file.seekg(save.GetScriptLine(),std::ios::beg);
     if (!file.good())
     {
-        std::cout << "j'ai raté" << std::endl;
+        std::cerr << "ERROR : Could not load save" << std::endl;
     }
-    std::cout << save.GetScriptLine() << std::endl;
-    std::cout << file.tellg() << std::endl;
     igw->CleanCurrentMessages();
     igw->CleanPreviousDialogue();
     igw->SetTextMode(save.GetTextMode());

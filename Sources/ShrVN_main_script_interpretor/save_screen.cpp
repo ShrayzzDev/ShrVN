@@ -148,7 +148,6 @@ void SaveScreen::UpdateButton(unsigned short slot_nb, SDL_Renderer * rend, Windo
 
 void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short page, unsigned short slot)
 {
-    std::cout << "serfghsrth" << std::endl;
     std::string old_path = std::filesystem::current_path().generic_string();
     std::string save_path = GetSaveDataFolder(project_name);
     std::filesystem::current_path(std::filesystem::path(save_path).parent_path());
@@ -177,12 +176,10 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
         {
             std::filesystem::create_directory("savedata");
         }
-        std::cout << "serfghsrth2" << std::endl;
         if (!std::filesystem::exists("buffer/"))
         {
             std::filesystem::create_directory("buffer");
         }
-        std::cout << "serfghsrth3" << std::endl;
         if (!std::filesystem::exists("savedata/"+std::to_string(page)))
         {
             std::filesystem::current_path("savedata");
@@ -191,7 +188,6 @@ void SaveScreen::WriteSaveData(const std::string & project_name, unsigned short 
             std::filesystem::create_directory(std::to_string(page));
             std::filesystem::current_path("..");
         }
-        std::cout << "serfghsrth4" << std::endl;
     }
     std::cout << std::filesystem::current_path() << std::endl;
     std::ofstream save_file;
@@ -278,12 +274,18 @@ void SaveScreen::ReactEvent(Window *win, SDL_Event &event)
         switch(event.key.keysym.sym) {
         case SDLK_ESCAPE:
             win->SetCurrentScreen(in_game);
+            win->RenderImage();
             break;
         case SDLK_RETURN:
             Click(win);
             break;
         }
         break;
+    default:
+        for (auto & btn : m_save_buttons)
+        {
+
+        }
     }
 }
 
@@ -415,4 +417,5 @@ void SaveButtonClicked(Window * win, CurrentScreen * cs)
         }
         break;
     }
+
 }

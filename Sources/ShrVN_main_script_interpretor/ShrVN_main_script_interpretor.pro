@@ -10,12 +10,16 @@ PROJECT_DIR = ../ShrVN
 INCLUDEPATH += $$PROJECT_DIR
 
 SOURCES += \
+        adv_text_box.cpp \
         button.cpp \
         font.cpp \
+        handler.cpp \
         in_game_window.cpp \
         initialisation_error.cpp \
         interpreted_save_loader.cpp \
         main.cpp \
+        nvl_text_box.cpp \
+        observableobject.cpp \
         save.cpp \
         save_button.cpp \
         save_screen.cpp \
@@ -29,15 +33,21 @@ HEADERS += \
     BufferData.h \
     CurrentScreen.h \
     CurrentScreenEnum.h \
+    IListener.hpp \
     ISaveLoader.hpp \
     SaveData.h \
     SaveMenuState.h \
+    adv_text_box.h \
     button.hpp \
     dialogue.h \
     font.h \
+    handler.hpp \
     in_game_window.hpp \
     initialisation_error.hpp \
     interpreted_save_loader.hpp \
+    itextdisplayer.h \
+    nvl_text_box.h \
+    observableobject.h \
     save.h \
     save_button.h \
     save_screen.h \

@@ -14,6 +14,7 @@
 #include "dialogue.h"
 #include "sprite.hpp"
 #include "button.hpp"
+#include "itextdisplayer.h"
 
 class Window;
 
@@ -22,19 +23,20 @@ class InGameWindow : public CurrentScreen
     SDL_Texture * m_background_img = nullptr;
     SDL_Color m_text_color;
     TTF_Font * m_font = nullptr;
-    InGameOverlayParameters * m_igop;
-    InGameMenuParameters * m_igmp;
+    InGameOverlayParameters * m_igop = nullptr;
+    InGameMenuParameters * m_igmp = nullptr;
+    ITextDisplayer * m_textDisplayer;
     bool IsMenuOpen = false;
     bool IsTextShown = true;
     std::ifstream * m_script;
     std::map<std::string,Sprite> m_onscreen_sprites;
     std::list<Dialogue> m_previous_dialogue;
-    std::list<Dialogue> m_current_dialogue;
     std::vector<Button> m_buttons;
     short m_btn_choice_count = -1;
 public:
     ISaveLoader * m_sl;
-    InGameWindow(ISaveLoader * isl = nullptr, InGameOverlayParameters * igop = nullptr, InGameMenuParameters * igmp = nullptr);
+    InGameWindow();
+    InGameWindow(ISaveLoader * isl, InGameOverlayParameters * igop, InGameMenuParameters * igm);
     InGameOverlayParameters * GetIgop() const;
     SDL_Texture * GetBgImg() const;
     const Sprite * GetSprite(const std::string &img_path) const;
@@ -55,7 +57,7 @@ public:
     void AddCurrentDialogue(const Dialogue & dial);
     void AddCurrentDialogueAtFront(const Dialogue & dial);
     void AddOnScreenSprite(const std::string &image_path, Point coord, SDL_Renderer * rend, SDL_Texture *texture = nullptr);
-    void AddMovementToSprite(const std::string &image_path, Movement &mvt);
+    void AddMovementToSprite(const std::string &image_path, Movement &mvt, SDL_Renderer * rend);
     void RemoveOnScreenSprite(const std::string &image_path);
     Dialogue CreateDialogue(const std::string &text, Characters &chr, SDL_Renderer * rend);
     void InitButtons(SDL_Renderer * rend);

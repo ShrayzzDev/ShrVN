@@ -1,6 +1,8 @@
 #ifndef SAVE_BUTTON_H
 #define SAVE_BUTTON_H
 
+#include "observableobject.h"
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -12,7 +14,7 @@ class CurrentScreen;
 
 namespace button
 {
-    class SaveButton
+    class SaveButton : ObservableObject
     {
         SDL_Texture * m_preview;
         SDL_Texture * m_last_char_name;
@@ -29,6 +31,10 @@ namespace button
         bool IsWithinBound(short mouse_x, short mouse_y);
         void SetSave(Save * save, SDL_Renderer * rend);
         void LoadImage(short save_slot, short save_page, Window * win);
+
+        // ObservableObject interface
+    public:
+        void ReactEvent() override;
     };
 }
 

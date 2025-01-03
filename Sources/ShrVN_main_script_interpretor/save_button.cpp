@@ -109,6 +109,7 @@ void SaveButton::SetSave(Save * save, SDL_Renderer * rend)
     surf = TTF_RenderText_Solid(m_char_name_font,last_dial.first.c_str(),color);
     m_last_char_name = SDL_CreateTextureFromSurface(rend,surf);
     SDL_FreeSurface(surf);
+    Notify();
 }
 
 void SaveButton::LoadImage(short save_slot, short save_page, Window * win)
@@ -129,4 +130,9 @@ void SaveButton::LoadImage(short save_slot, short save_page, Window * win)
     surf = SDL_LoadBMP(save_folder.c_str());
     m_preview = SDL_CreateTextureFromSurface(win->GetRenderer(),surf);
     SDL_FreeSurface(surf);
+}
+
+void SaveButton::ReactEvent()
+{
+
 }
